@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "description": "Basic User Task",
+  "properties": {
+    "basicUserTask": {
+      "name": "Basic User Task",
+      "type": "object",
+      "properties": {
+        "checkbox": {
+          "name": "Check box",
+          "description": "Select or Unselect the Check box",
+          "type": "boolean",
+          "format": "checkbox",
+          "info": "This is a Check box"
+        },
+        "listbox": {
+          "name": "List box",
+          "description": "Only one item can be selected",
+          "type": "string",
+          "format": "select-list",
+          "info": "This displays list of items. Single item can be selected in the list.",
+          "enum": [
+            "ITEM_1",
+            "ITEM_2",
+            "ITEM_3"
+          ],
+          "enumNames": [
+            "Item 1",
+            "Item 2",
+            "Item 3"
+          ],
+          "default": "ITEM_1"
+        }
+      },
+      "required": [
+        "checkbox",
+        "listbox"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "basicUserTask"
+  ],
+  "additionalProperties": false
+}
+

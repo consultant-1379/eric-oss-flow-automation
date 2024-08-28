@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_05j7wxd" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.7.0">
+  <bpmn:process id="validateUserTaskSchema-setup" name="Setup" isExecutable="true">
+    <bpmn:startEvent id="setup-start" camunda:asyncAfter="true">
+      <bpmn:outgoing>SequenceFlow_0ap3up4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_06xq6iz" default="file-input-not-supplied">
+      <bpmn:incoming>SequenceFlow_0ap3up4</bpmn:incoming>
+      <bpmn:outgoing>file-input-not-supplied</bpmn:outgoing>
+      <bpmn:outgoing>file-input-supplied</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0ap3up4" sourceRef="setup-start" targetRef="ExclusiveGateway_06xq6iz" />
+    <bpmn:sequenceFlow id="file-input-not-supplied" name="File Input not supplied" sourceRef="ExclusiveGateway_06xq6iz" targetRef="prepareDateTimePickerScript" />
+    <bpmn:sequenceFlow id="file-input-supplied" name="File Input supplied" sourceRef="ExclusiveGateway_06xq6iz" targetRef="updateReportSummaryScript">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty execution.getVariable('flowInput')}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="EndEvent_02f4s7y">
+      <bpmn:incoming>Flow_0uxzwvv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="nestedDateTimeUserTask" name="Nested Date-Time" camunda:formKey="setup:nestedDateTime">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="checkboxDateTimeInput">${checkboxDateTimeInput}</camunda:inputParameter>
+          <camunda:inputParameter name="radioDateTimeInput">${radioDateTimeInput}</camunda:inputParameter>
+          <camunda:outputParameter name="nestedDateTime">${nestedDateTime}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1bcary8</bpmn:incoming>
+      <bpmn:outgoing>Flow_061goea</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="dateTimePickerUserTask" name="Date and Time Picker" camunda:formKey="setup:dateTimePicker">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="readOnlyDateTimeInput">${readOnlyDateTimeInput}</camunda:inputParameter>
+          <camunda:inputParameter name="nameExtra">Validate Schema</camunda:inputParameter>
+          <camunda:inputParameter name="dateTimeInput">${dateTimeInput}</camunda:inputParameter>
+          <camunda:outputParameter name="dateTimePicker">${dateTimePicker}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1pj2op6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1aqtsgn</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1aqtsgn" sourceRef="dateTimePickerUserTask" targetRef="validateDateTimePickerScript" />
+    <bpmn:endEvent id="EndEvent_0p8oqwd">
+      <bpmn:incoming>Flow_05edikv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="validateNestedDateTimeScript" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>Flow_061goea</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oeo9u6</bpmn:outgoing>
+      <bpmn:script>flowInput.nestedDateTime = nestedDateTime</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="validateDateTimePickerScript" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1aqtsgn</bpmn:incoming>
+      <bpmn:outgoing>Flow_17cgsgu</bpmn:outgoing>
+      <bpmn:script>flowInput.dateTimePicker = dateTimePicker</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="dateTimeInTablesUserTask" name="Date-Time in Tables" camunda:formKey="setup:dateTimeInTables">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="editTableData">${editTableData}</camunda:inputParameter>
+          <camunda:inputParameter name="readOnlyTableData">${readOnlyTableData}</camunda:inputParameter>
+          <camunda:inputParameter name="informationalTableData">${informationalTableData}</camunda:inputParameter>
+          <camunda:inputParameter name="selectedNodes">${selectedNodes}</camunda:inputParameter>
+          <camunda:inputParameter name="dateTimePlaceholder">${dateTimePlaceholder}</camunda:inputParameter>
+          <camunda:inputParameter name="selectionTableData">${selectionTableData}</camunda:inputParameter>
+          <camunda:outputParameter name="dateTimeInTables">${dateTimeInTables}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1u5mvm2</bpmn:incoming>
+      <bpmn:outgoing>Flow_0k9wn7v</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="validateDateTimeInTablesScript" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0k9wn7v</bpmn:incoming>
+      <bpmn:outgoing>Flow_15aiept</bpmn:outgoing>
+      <bpmn:script>flowInput.dateTimeInTables = dateTimeInTables</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="FAInternal-review-confirm-execute" name="Review and Confirm Execute">
+      <bpmn:incoming>Flow_15aiept</bpmn:incoming>
+      <bpmn:outgoing>Flow_05edikv</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_05edikv" sourceRef="FAInternal-review-confirm-execute" targetRef="EndEvent_0p8oqwd" />
+    <bpmn:scriptTask id="prepareTablesScript" name="Prepare User Task" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1oeo9u6</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u5mvm2</bpmn:outgoing>
+      <bpmn:script>def selectionTableData = []
+selectionTableData.add("dateTimeColumn": "2022-01-05T01:30:00-01:00")
+selectionTableData.add("dateTimeColumn": "2022-01-05T02:30:00-01:00")
+selectionTableData.add("dateTimeColumn": "2022-01-05T03:30:00-01:00")
+
+def informationalTableData = []
+informationalTableData.add("dateTimeColumn": "2022-02-05T01:30:00-01:00")
+informationalTableData.add("dateTimeColumn": "2022-02-05T02:30:00-01:00")
+informationalTableData.add("dateTimeColumn": "2022-02-05T03:30:00-01:00")
+
+def readOnlyTableData = []
+readOnlyTableData.add("dateTimeColumn": "2022-03-05T01:30:00-01:00")
+readOnlyTableData.add("dateTimeColumn": "2022-03-05T02:30:00-01:00")
+readOnlyTableData.add("dateTimeColumn": "2022-03-05T03:30:00-01:00")
+
+def editTableData = []
+editTableData.add("dateTimeColumn": "2022-06-02")
+editTableData.add("dateTimeColumn": "2022-06-03")
+editTableData.add("dateTimeColumn": "2022-06-04")
+
+execution.setVariable("selectionTableData", selectionTableData)
+execution.setVariable("selectedNodes", [])
+execution.setVariable("informationalTableData", informationalTableData)
+execution.setVariable("readOnlyTableData", readOnlyTableData)
+execution.setVariable("editTableData", editTableData)
+execution.setVariable("dateTimePlaceholder", "2022-06-01")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1u5mvm2" sourceRef="prepareTablesScript" targetRef="dateTimeInTablesUserTask" />
+    <bpmn:sequenceFlow id="Flow_0k9wn7v" sourceRef="dateTimeInTablesUserTask" targetRef="validateDateTimeInTablesScript" />
+    <bpmn:scriptTask id="prepareDateTimePickerScript" name="Prepare User  Task" scriptFormat="groovy">
+      <bpmn:incoming>file-input-not-supplied</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pj2op6</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Setting up")
+
+execution.setVariable("dateTimeInput", "2022-09-27 11:39:00");
+
+execution.setVariable("readOnlyDateTimeInput", "2022-09-27 12:39:00");</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1pj2op6" sourceRef="prepareDateTimePickerScript" targetRef="dateTimePickerUserTask" />
+    <bpmn:scriptTask id="updateReportSummaryScript" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>file-input-supplied</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uxzwvv</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Setting up")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_15aiept" sourceRef="validateDateTimeInTablesScript" targetRef="FAInternal-review-confirm-execute" />
+    <bpmn:sequenceFlow id="Flow_17cgsgu" sourceRef="validateDateTimePickerScript" targetRef="Activity_0t648f5" />
+    <bpmn:sequenceFlow id="Flow_0uxzwvv" sourceRef="updateReportSummaryScript" targetRef="EndEvent_02f4s7y" />
+    <bpmn:sequenceFlow id="Flow_1bcary8" sourceRef="Activity_0t648f5" targetRef="nestedDateTimeUserTask" />
+    <bpmn:scriptTask id="Activity_0t648f5" name="Prepare User  Task" scriptFormat="groovy">
+      <bpmn:incoming>Flow_17cgsgu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bcary8</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("radioDateTimeInput", "2022-08-10T05:30:00+0100");
+
+execution.setVariable("checkboxDateTimeInput", "2022-08-10T05:30:00+0200");</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_061goea" sourceRef="nestedDateTimeUserTask" targetRef="validateNestedDateTimeScript" />
+    <bpmn:sequenceFlow id="Flow_1oeo9u6" sourceRef="validateNestedDateTimeScript" targetRef="prepareTablesScript" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="validateUserTaskSchema-setup">
+      <bpmndi:BPMNEdge id="Flow_1oeo9u6_di" bpmnElement="Flow_1oeo9u6">
+        <di:waypoint x="1290" y="442" />
+        <di:waypoint x="1346" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_061goea_di" bpmnElement="Flow_061goea">
+        <di:waypoint x="1130" y="442" />
+        <di:waypoint x="1190" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bcary8_di" bpmnElement="Flow_1bcary8">
+        <di:waypoint x="970" y="442" />
+        <di:waypoint x="1030" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uxzwvv_di" bpmnElement="Flow_0uxzwvv">
+        <di:waypoint x="490" y="120" />
+        <di:waypoint x="522" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17cgsgu_di" bpmnElement="Flow_17cgsgu">
+        <di:waypoint x="810" y="442" />
+        <di:waypoint x="870" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15aiept_di" bpmnElement="Flow_15aiept">
+        <di:waypoint x="1756" y="442" />
+        <di:waypoint x="1806" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pj2op6_di" bpmnElement="Flow_1pj2op6">
+        <di:waypoint x="490" y="442" />
+        <di:waypoint x="550" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k9wn7v_di" bpmnElement="Flow_0k9wn7v">
+        <di:waypoint x="1606" y="442" />
+        <di:waypoint x="1656" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u5mvm2_di" bpmnElement="Flow_1u5mvm2">
+        <di:waypoint x="1446" y="442" />
+        <di:waypoint x="1506" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05edikv_di" bpmnElement="Flow_05edikv">
+        <di:waypoint x="1906" y="442" />
+        <di:waypoint x="1978" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1aqtsgn_di" bpmnElement="SequenceFlow_1aqtsgn">
+        <di:waypoint x="650" y="442" />
+        <di:waypoint x="710" y="442" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1555.5" y="1182" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ashlht_di" bpmnElement="file-input-supplied">
+        <di:waypoint x="270" y="225" />
+        <di:waypoint x="270" y="120" />
+        <di:waypoint x="390" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="275" y="93" width="90" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tsbvli_di" bpmnElement="file-input-not-supplied">
+        <di:waypoint x="270" y="275" />
+        <di:waypoint x="270" y="442" />
+        <di:waypoint x="390" y="442" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="288" y="456" width="64" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ap3up4_di" bpmnElement="SequenceFlow_0ap3up4">
+        <di:waypoint x="178" y="250" />
+        <di:waypoint x="245" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="134" y="263" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="setup-start">
+        <dc:Bounds x="142" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="91" y="302" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_06xq6iz_di" bpmnElement="ExclusiveGateway_06xq6iz" isMarkerVisible="true">
+        <dc:Bounds x="245" y="225" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="264" y="278" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_02f4s7y_di" bpmnElement="EndEvent_02f4s7y">
+        <dc:Bounds x="522" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="454" y="184" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1tjpolj_di" bpmnElement="nestedDateTimeUserTask">
+        <dc:Bounds x="1030" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_14sf2bs_di" bpmnElement="dateTimePickerUserTask">
+        <dc:Bounds x="550" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0p8oqwd_di" bpmnElement="EndEvent_0p8oqwd">
+        <dc:Bounds x="1978" y="424" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1914" y="1225" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_02kkbqy_di" bpmnElement="validateNestedDateTimeScript">
+        <dc:Bounds x="1190" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1q6sdoe_di" bpmnElement="validateDateTimePickerScript">
+        <dc:Bounds x="710" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08wjzvq_di" bpmnElement="dateTimeInTablesUserTask">
+        <dc:Bounds x="1506" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oarsoo_di" bpmnElement="validateDateTimeInTablesScript">
+        <dc:Bounds x="1656" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10xdin6_di" bpmnElement="FAInternal-review-confirm-execute">
+        <dc:Bounds x="1806" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19s5nkt_di" bpmnElement="prepareTablesScript">
+        <dc:Bounds x="1346" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10tdo4j_di" bpmnElement="prepareDateTimePickerScript">
+        <dc:Bounds x="390" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0h8x7vv_di" bpmnElement="updateReportSummaryScript">
+        <dc:Bounds x="390" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16oz11t_di" bpmnElement="Activity_0t648f5">
+        <dc:Bounds x="870" y="402" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

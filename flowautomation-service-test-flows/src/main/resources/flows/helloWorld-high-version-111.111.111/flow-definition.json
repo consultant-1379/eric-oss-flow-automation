@@ -1,0 +1,9 @@
+{
+    "flowId": "com.ericsson.oss.fa.flows.helloWorldHighVersion",
+    "flowName": "Hello World",
+    "flowVersion": "111.111.111",
+    "description": "Hello world flow with high version",
+    "execute": {
+        "processId": "hello-execute-high-version"
+    }
+}

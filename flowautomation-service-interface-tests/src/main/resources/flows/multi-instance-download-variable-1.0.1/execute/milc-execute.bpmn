@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="milc-execute" name="Execute" isExecutable="true">
+    <bpmn:startEvent id="milc-execute-start">
+      <bpmn:outgoing>SequenceFlow_0s3nb1w</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0s3nb1w" sourceRef="milc-execute-start" targetRef="initialise" />
+    <bpmn:sequenceFlow id="SequenceFlow_0gnmpft" sourceRef="initialise" targetRef="handle-elements" />
+    <bpmn:subProcess id="handle-elements" name="Handle Elements">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="elementResult">Unknown</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0gnmpft</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0moz74j</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="elementsOngoing" camunda:elementVariable="elementId" />
+      <bpmn:startEvent id="handle-elements-start">
+        <bpmn:outgoing>SequenceFlow_1uavezf</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:subProcess id="next-element" name="Next Element" camunda:asyncBefore="true" camunda:asyncAfter="true">
+        <bpmn:incoming>SequenceFlow_01lue68</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1wm61cq</bpmn:outgoing>
+        <bpmn:startEvent id="next-element-start">
+          <bpmn:outgoing>SequenceFlow_07sv1hj</bpmn:outgoing>
+        </bpmn:startEvent>
+        <bpmn:sequenceFlow id="SequenceFlow_07sv1hj" sourceRef="next-element-start" targetRef="select-next-element" />
+        <bpmn:exclusiveGateway id="ExclusiveGateway_0eblh28" default="SequenceFlow_0pbmqe9">
+          <bpmn:incoming>SequenceFlow_0gh690x</bpmn:incoming>
+          <bpmn:outgoing>SequenceFlow_0pbmqe9</bpmn:outgoing>
+          <bpmn:outgoing>SequenceFlow_1c5x9ax</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:sequenceFlow id="SequenceFlow_0gh690x" sourceRef="select-next-element" targetRef="ExclusiveGateway_0eblh28" />
+        <bpmn:endEvent id="next-element-end">
+          <bpmn:incoming>SequenceFlow_0pbmqe9</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="SequenceFlow_0pbmqe9" name="no more elements" sourceRef="ExclusiveGateway_0eblh28" targetRef="next-element-end" />
+        <bpmn:sequenceFlow id="SequenceFlow_1c5x9ax" sourceRef="ExclusiveGateway_0eblh28" targetRef="add-element-to-multi-instance">
+          <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${! empty execution.getVariableLocal("nextElementId")}</bpmn:conditionExpression>
+        </bpmn:sequenceFlow>
+        <bpmn:endEvent id="next-element-added-end">
+          <bpmn:incoming>SequenceFlow_080hssi</bpmn:incoming>
+        </bpmn:endEvent>
+        <bpmn:sequenceFlow id="SequenceFlow_080hssi" sourceRef="add-element-to-multi-instance" targetRef="next-element-added-end" />
+        <bpmn:serviceTask id="add-element-to-multi-instance" name="Add Element To Multi-Instance" camunda:class="com.ericsson.oss.services.flowautomation.flowapi.AddMultiInstanceElement">
+          <bpmn:extensionElements>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="elementName">elementId</camunda:inputParameter>
+              <camunda:inputParameter name="elementValue">${nextElementId}</camunda:inputParameter>
+              <camunda:inputParameter name="multiInstanceActivityName">handle-elements</camunda:inputParameter>
+            </camunda:inputOutput>
+          </bpmn:extensionElements>
+          <bpmn:incoming>SequenceFlow_1c5x9ax</bpmn:incoming>
+          <bpmn:outgoing>SequenceFlow_080hssi</bpmn:outgoing>
+        </bpmn:serviceTask>
+        <bpmn:scriptTask id="select-next-element" name="Select Next Element" scriptFormat="groovy">
+          <bpmn:incoming>SequenceFlow_07sv1hj</bpmn:incoming>
+          <bpmn:outgoing>SequenceFlow_0gh690x</bpmn:outgoing>
+          <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def nextElementId = null
+if (elementsQueued.size() &gt; 0) {
+  nextElementId = elementsQueued.remove(0)
+}
+
+if (nextElementId != null) {
+  execution.setVariableLocal("nextElementId", nextElementId)
+  elementsOngoing.add(nextElementId)
+}
+
+Reporter.updateReportVariable(execution, "numElementsOngoing", elementsOngoing.size())
+Reporter.updateReportVariable(execution, "numElementsQueued", elementsQueued.size())
+
+println "-----------------------------------------------------"
+println "Select Next Element"
+println "elementId: " + elementId
+println "nextElementId: " + nextElementId
+println "elementsOngoing=" + elementsOngoing
+println "elementsQueued=" + elementsQueued
+println "-----------------------------------------------------"</bpmn:script>
+        </bpmn:scriptTask>
+      </bpmn:subProcess>
+      <bpmn:endEvent id="handle-elements-end">
+        <bpmn:incoming>SequenceFlow_1wm61cq</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1wm61cq" sourceRef="next-element" targetRef="handle-elements-end" />
+      <bpmn:sequenceFlow id="SequenceFlow_1uavezf" sourceRef="handle-elements-start" targetRef="handle-element" />
+      <bpmn:sequenceFlow id="SequenceFlow_1vjjtmy" sourceRef="handle-element" targetRef="handle-element-completion" />
+      <bpmn:scriptTask id="handle-element-completion" name="Handle Element Completion" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1vjjtmy</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_01lue68</bpmn:outgoing>
+        <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+elementsOngoing.remove(elementId)
+elementsCompleted.add(elementId)
+
+def elementResult = execution.getVariableLocal("elementResult")
+if (elementResult == "Success") {
+    elementsSuccess.add(elementId)
+}
+else if (elementResult == "Failure") {
+    elementsFailure.add(elementId)
+}
+else {
+    elementsError.add(elementId)
+}
+
+Reporter.updateReportVariable(execution, "numElementsOngoing", elementsOngoing.size())
+Reporter.updateReportVariable(execution, "numElementsCompleted", elementsCompleted.size())
+Reporter.updateReportVariable(execution, "numElementsSuccess", elementsSuccess.size())
+Reporter.updateReportVariable(execution, "numElementsFailure", elementsFailure.size())
+Reporter.updateReportVariable(execution, "numElementsError", elementsError.size())
+
+println "-----------------------------------------------------"
+println "elementId=" + elementId
+println "elementResult=" + elementResult
+println "elementsOngoing=" + elementsOngoing
+println "elementsCompleted=" + elementsCompleted
+println "elementsSuccess=" + elementsSuccess
+println "elementsFailure=" + elementsFailure
+println "elementsError=" + elementsError
+println "-----------------------------------------------------"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:callActivity id="handle-element" name="Handle Element" calledElement="handle-element" camunda:calledElementBinding="deployment">
+        <bpmn:extensionElements>
+          <camunda:in businessKey="#{execution.processBusinessKey}" />
+          <camunda:in source="flowInput" target="flowInput" />
+          <camunda:in source="elementId" target="elementId" />
+          <camunda:out local="true" variables="all" />
+          <camunda:inputOutput>
+            <camunda:outputParameter name="elementResult">${elementResult}</camunda:outputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_1uavezf</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1vjjtmy</bpmn:outgoing>
+      </bpmn:callActivity>
+      <bpmn:sequenceFlow id="SequenceFlow_01lue68" sourceRef="handle-element-completion" targetRef="next-element" />
+    </bpmn:subProcess>
+    <bpmn:endEvent id="milc-execute-end">
+      <bpmn:incoming>SequenceFlow_15o2ln9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0moz74j" sourceRef="handle-elements" targetRef="update-report" />
+    <bpmn:scriptTask id="initialise" name="Initialise" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0s3nb1w</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0gnmpft</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def numElements = flowInput.configuration.numElements as Integer
+def loadControlPoolSize = flowInput.configuration.loadControlPoolSize as Integer
+
+def elements = []
+
+for (i = 0; i &lt; numElements; i++) {
+  def elementId = "element"+i
+  elements.add(elementId)
+  Reporter.updateReportVariable(execution, elementId+".elementId", elementId)
+  Reporter.updateReportVariable(execution, elementId+".state", "Queued")
+  Reporter.updateReportVariable(execution, elementId+".result", "Not Available")
+}
+
+execution.setVariable("elements", elements)
+
+Reporter.updateReportVariable(execution, "elements", elements.join(","))
+Reporter.updateReportVariable(execution, "numElements", elements.size())
+
+def elementsOngoing = []
+def elementsQueued = []
+def elementsCompleted = []
+def elementsSuccess = []
+def elementsFailure = []
+def elementsError = []
+
+if (numElements &gt; loadControlPoolSize) {
+  elementsOngoing = elements[0..loadControlPoolSize-1] 
+  elementsQueued = elements[loadControlPoolSize..-1]
+}
+else {
+  elementsOngoing = elements
+}
+
+execution.setVariable("elementsOngoing", elementsOngoing)
+execution.setVariable("elementsQueued", elementsQueued)
+execution.setVariable("elementsCompleted", elementsCompleted)
+execution.setVariable("elementsSuccess", elementsSuccess)
+execution.setVariable("elementsFailure", elementsFailure)
+execution.setVariable("elementsError", elementsError)
+
+Reporter.updateReportVariable(execution, "numElementsOngoing", elementsOngoing.size())
+Reporter.updateReportVariable(execution, "numElementsQueued", elementsQueued.size())
+Reporter.updateReportVariable(execution, "numElementsCompleted", elementsCompleted.size())
+Reporter.updateReportVariable(execution, "numElementsSuccess", elementsSuccess.size())
+Reporter.updateReportVariable(execution, "numElementsFailure", elementsFailure.size())
+Reporter.updateReportVariable(execution, "numElementsError", elementsError.size())
+
+println "-----------------------------------------------------"
+println "Initialise"
+println "elements=" + elements
+println "elementsOngoing=" + elementsOngoing
+println "elementsQueued=" + elementsQueued
+println "elementsCompleted=" + elementsCompleted
+println "elementsSuccess=" + elementsSuccess
+println "elementsFailure=" + elementsFailure
+println "elementsError=" + elementsError
+println "-----------------------------------------------------"</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="update-report" name="Update Report" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0moz74j</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15o2ln9</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Our work is done here")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_15o2ln9" sourceRef="update-report" targetRef="milc-execute-end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="milc-execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="milc-execute-start">
+        <dc:Bounds x="121" y="363" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="94" y="399" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0s3nb1w_di" bpmnElement="SequenceFlow_0s3nb1w">
+        <di:waypoint x="157" y="381" />
+        <di:waypoint x="207" y="381" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="137" y="360" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gnmpft_di" bpmnElement="SequenceFlow_0gnmpft">
+        <di:waypoint x="307" y="381" />
+        <di:waypoint x="357" y="381" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="287" y="360" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1flw81g_di" bpmnElement="handle-elements" isExpanded="true">
+        <dc:Bounds x="357" y="148" width="753" height="465" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0etrme5_di" bpmnElement="handle-elements-start">
+        <dc:Bounds x="402" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="375" y="272" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_19sdiee_di" bpmnElement="next-element" isExpanded="true">
+        <dc:Bounds x="408" y="343" width="580" height="225" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0h02b06_di" bpmnElement="next-element-start">
+        <dc:Bounds x="434" y="415" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="452" y="455" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_07sv1hj_di" bpmnElement="SequenceFlow_07sv1hj">
+        <di:waypoint x="470" y="433" />
+        <di:waypoint x="520" y="433" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="495" y="412" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0eblh28_di" bpmnElement="ExclusiveGateway_0eblh28" isMarkerVisible="true">
+        <dc:Bounds x="670" y="408" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="695" y="386" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gh690x_di" bpmnElement="SequenceFlow_0gh690x">
+        <di:waypoint x="620" y="433" />
+        <di:waypoint x="670" y="433" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="645" y="412" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_067zhr9_di" bpmnElement="next-element-end">
+        <dc:Bounds x="677" y="509" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="695" y="549" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pbmqe9_di" bpmnElement="SequenceFlow_0pbmqe9">
+        <di:waypoint x="695" y="458" />
+        <di:waypoint x="695" y="509" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="669" y="476" width="87" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c5x9ax_di" bpmnElement="SequenceFlow_1c5x9ax">
+        <di:waypoint x="720" y="433" />
+        <di:waypoint x="770" y="433" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="745" y="412" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0xpg6m1_di" bpmnElement="next-element-added-end">
+        <dc:Bounds x="920" y="415" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="938" y="455" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_080hssi_di" bpmnElement="SequenceFlow_080hssi">
+        <di:waypoint x="870" y="433" />
+        <di:waypoint x="920" y="433" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="895" y="412" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1v9casy_di" bpmnElement="add-element-to-multi-instance">
+        <dc:Bounds x="770" y="393" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1oylb5v_di" bpmnElement="handle-elements-end">
+        <dc:Bounds x="1038" y="438" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1011" y="478" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wm61cq_di" bpmnElement="SequenceFlow_1wm61cq">
+        <di:waypoint x="988" y="456" />
+        <di:waypoint x="1038" y="456" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="968" y="435" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1vt11q5_di" bpmnElement="milc-execute-end">
+        <dc:Bounds x="1314" y="363" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1287" y="403" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0moz74j_di" bpmnElement="SequenceFlow_0moz74j">
+        <di:waypoint x="1110" y="381" />
+        <di:waypoint x="1161" y="381" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1091" y="360" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1nym0pj_di" bpmnElement="initialise">
+        <dc:Bounds x="207" y="341" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_12lvjc2_di" bpmnElement="select-next-element">
+        <dc:Bounds x="520" y="393" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0b1kp65_di" bpmnElement="update-report">
+        <dc:Bounds x="1161" y="341" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_15o2ln9_di" bpmnElement="SequenceFlow_15o2ln9">
+        <di:waypoint x="1261" y="381" />
+        <di:waypoint x="1314" y="381" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1243" y="360" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0qtuxu6_di" bpmnElement="handle-element">
+        <dc:Bounds x="498" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1uavezf_di" bpmnElement="SequenceFlow_1uavezf">
+        <di:waypoint x="438" y="250" />
+        <di:waypoint x="498" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="423" y="229" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vjjtmy_di" bpmnElement="SequenceFlow_1vjjtmy">
+        <di:waypoint x="598" y="250" />
+        <di:waypoint x="648" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="578" y="229" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0jy9tz8_di" bpmnElement="handle-element-completion">
+        <dc:Bounds x="648" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01lue68_di" bpmnElement="SequenceFlow_01lue68">
+        <di:waypoint x="698" y="290" />
+        <di:waypoint x="698" y="343" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="713" y="310.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

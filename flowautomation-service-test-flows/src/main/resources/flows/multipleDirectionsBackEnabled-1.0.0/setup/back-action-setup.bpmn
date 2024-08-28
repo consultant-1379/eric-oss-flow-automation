@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.7.0">
+  <bpmn:process id="back-action-setup" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0ehxuwa</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_0gx8usv">
+      <bpmn:incoming>Flow_0oglxya</bpmn:incoming>
+      <bpmn:incoming>Flow_129g7np</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="selectedPhaseUserTaskId" name="Select Phases" camunda:formKey="setup:phasesSelection">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="phasesSelection">${phasesSelection}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ehxuwa</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p83wh8</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_16nxepv" name="Validate Selected Phases" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1p83wh8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0thzw0j</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+flowInput.phasesSelection = phasesSelection
+
+Reporter.updateReportSummary(execution, "Validated Selected Phases")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="activationPhaseUserTaskId" name="Activation Phase" camunda:formKey="setup:activationPhaseUserTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="activationPhaseUserTask">${activationPhaseUserTask}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01mbpbq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lzrlp9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="preparationPhaseUserTaskId" name="Preparation Phase" camunda:formKey="setup:preparationPhaseUserTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="preparationPhaseUserTask">${preparationPhaseUserTask}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0npdbv0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1un0j6p</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1vmukb2" default="Flow_1lranuy">
+      <bpmn:incoming>Flow_0thzw0j</bpmn:incoming>
+      <bpmn:outgoing>Flow_01mbpbq</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1lranuy</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_01mbpbq" sourceRef="Gateway_1vmukb2" targetRef="activationPhaseUserTaskId">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phasesSelection.activationPhase != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_0yk8wg1" name="Validate Activation Phase" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1lzrlp9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jrrmi9</bpmn:outgoing>
+      <bpmn:script>flowInput.activationPhaseUserTask = activationPhaseUserTask</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0ehxuwa" sourceRef="StartEvent_1" targetRef="selectedPhaseUserTaskId" />
+    <bpmn:sequenceFlow id="Flow_1p83wh8" sourceRef="selectedPhaseUserTaskId" targetRef="Activity_16nxepv" />
+    <bpmn:sequenceFlow id="Flow_0thzw0j" sourceRef="Activity_16nxepv" targetRef="Gateway_1vmukb2" />
+    <bpmn:sequenceFlow id="Flow_1lzrlp9" sourceRef="activationPhaseUserTaskId" targetRef="Activity_0yk8wg1" />
+    <bpmn:exclusiveGateway id="Gateway_1vfhro2" default="Flow_0oglxya">
+      <bpmn:incoming>Flow_0jrrmi9</bpmn:incoming>
+      <bpmn:incoming>Flow_1lranuy</bpmn:incoming>
+      <bpmn:outgoing>Flow_0oglxya</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0npdbv0</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0jrrmi9" sourceRef="Activity_0yk8wg1" targetRef="Gateway_1vfhro2" />
+    <bpmn:sequenceFlow id="Flow_1un0j6p" sourceRef="preparationPhaseUserTaskId" targetRef="Activity_12r02mv" />
+    <bpmn:sequenceFlow id="Flow_153961y" sourceRef="Activity_12r02mv" targetRef="finalPhaseUserTaskId" />
+    <bpmn:sequenceFlow id="Flow_0oglxya" sourceRef="Gateway_1vfhro2" targetRef="EndEvent_0gx8usv" />
+    <bpmn:sequenceFlow id="Flow_1lranuy" sourceRef="Gateway_1vmukb2" targetRef="Gateway_1vfhro2" />
+    <bpmn:scriptTask id="Activity_12r02mv" name="Validate Preparation Phase" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1un0j6p</bpmn:incoming>
+      <bpmn:outgoing>Flow_153961y</bpmn:outgoing>
+      <bpmn:script>flowInput.preparationPhaseUserTask = preparationPhaseUserTask</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0npdbv0" sourceRef="Gateway_1vfhro2" targetRef="preparationPhaseUserTaskId">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${phasesSelection.preparationPhase != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1qnzfm0" sourceRef="finalPhaseUserTaskId" targetRef="Activity_0hsuary" />
+    <bpmn:userTask id="finalPhaseUserTaskId" name="Final Task" camunda:formKey="setup:finalPhaseUserTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="finalPhaseUserTask">${finalPhaseUserTask}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_153961y</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qnzfm0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_129g7np" sourceRef="Activity_0hsuary" targetRef="EndEvent_0gx8usv" />
+    <bpmn:scriptTask id="Activity_0hsuary" name="Validate Final Phase" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1qnzfm0</bpmn:incoming>
+      <bpmn:outgoing>Flow_129g7np</bpmn:outgoing>
+      <bpmn:script>flowInput.finalPhaseUserTask = finalPhaseUserTask</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="back-action-setup">
+      <bpmndi:BPMNEdge id="Flow_129g7np_di" bpmnElement="Flow_129g7np">
+        <di:waypoint x="980" y="936" />
+        <di:waypoint x="980" y="1032" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qnzfm0_di" bpmnElement="Flow_1qnzfm0">
+        <di:waypoint x="970" y="760" />
+        <di:waypoint x="970" y="856" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0npdbv0_di" bpmnElement="Flow_0npdbv0">
+        <di:waypoint x="635" y="560" />
+        <di:waypoint x="730" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lranuy_di" bpmnElement="Flow_1lranuy">
+        <di:waypoint x="480" y="295" />
+        <di:waypoint x="480" y="560" />
+        <di:waypoint x="585" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oglxya_di" bpmnElement="Flow_0oglxya">
+        <di:waypoint x="610" y="585" />
+        <di:waypoint x="610" y="1050" />
+        <di:waypoint x="962" y="1050" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_153961y_di" bpmnElement="Flow_153961y">
+        <di:waypoint x="970" y="600" />
+        <di:waypoint x="970" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1un0j6p_di" bpmnElement="Flow_1un0j6p">
+        <di:waypoint x="830" y="560" />
+        <di:waypoint x="920" y="560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jrrmi9_di" bpmnElement="Flow_0jrrmi9">
+        <di:waypoint x="610" y="450" />
+        <di:waypoint x="610" y="535" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lzrlp9_di" bpmnElement="Flow_1lzrlp9">
+        <di:waypoint x="620" y="310" />
+        <di:waypoint x="620" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0thzw0j_di" bpmnElement="Flow_0thzw0j">
+        <di:waypoint x="480" y="160" />
+        <di:waypoint x="480" y="245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p83wh8_di" bpmnElement="Flow_1p83wh8">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="430" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ehxuwa_di" bpmnElement="Flow_0ehxuwa">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01mbpbq_di" bpmnElement="Flow_01mbpbq">
+        <di:waypoint x="505" y="270" />
+        <di:waypoint x="560" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0gx8usv_di" bpmnElement="EndEvent_0gx8usv">
+        <dc:Bounds x="962" y="1032" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="427" y="142" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16qi630_di" bpmnElement="selectedPhaseUserTaskId">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zmg1hz_di" bpmnElement="Activity_16nxepv">
+        <dc:Bounds x="430" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wwz83j_di" bpmnElement="activationPhaseUserTaskId">
+        <dc:Bounds x="560" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1v353zv_di" bpmnElement="preparationPhaseUserTaskId">
+        <dc:Bounds x="730" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vmukb2_di" bpmnElement="Gateway_1vmukb2" isMarkerVisible="true">
+        <dc:Bounds x="455" y="245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1383e0m_di" bpmnElement="Activity_0yk8wg1">
+        <dc:Bounds x="570" y="370" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1vfhro2_di" bpmnElement="Gateway_1vfhro2" isMarkerVisible="true">
+        <dc:Bounds x="585" y="535" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18gwlr7_di" bpmnElement="Activity_12r02mv">
+        <dc:Bounds x="920" y="520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dry4y1_di" bpmnElement="finalPhaseUserTaskId">
+        <dc:Bounds x="920" y="680" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_05ezpq2_di" bpmnElement="Activity_0hsuary">
+        <dc:Bounds x="930" y="856" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

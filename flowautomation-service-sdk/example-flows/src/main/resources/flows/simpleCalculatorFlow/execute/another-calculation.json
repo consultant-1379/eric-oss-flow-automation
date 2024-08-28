@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "name": "Another Calculation ?",
+  "type": "object",
+  "properties": {
+    "performAnotherCalculation": {
+      "name": "Perform another calculation ?",
+      "type": "boolean",
+      "format": "checkbox",
+      "default": false
+    }
+  },
+  "required": [ 
+    "performAnotherCalculation" 
+  ],
+  "additionalProperties": false
+}

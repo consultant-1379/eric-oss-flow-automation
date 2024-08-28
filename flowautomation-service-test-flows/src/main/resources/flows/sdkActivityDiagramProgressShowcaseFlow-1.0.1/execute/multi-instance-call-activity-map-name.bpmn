@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0cc7gvw" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.14.0">
+  <bpmn:process id="multi-instance-call-activity-map-name" name="Multi-instance call activity map name" isExecutable="true">
+    <bpmn:startEvent id="start">
+      <bpmn:outgoing>SequenceFlow_0a7mgk7</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="end">
+      <bpmn:incoming>SequenceFlow_1rrpkud</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0a7mgk7" sourceRef="start" targetRef="init" />
+    <bpmn:sequenceFlow id="SequenceFlow_0i5dsge" sourceRef="init" targetRef="sleep10s" />
+    <bpmn:scriptTask id="init" name="Init" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0a7mgk7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0i5dsge</bpmn:outgoing>
+      <bpmn:script>println "################# " + instance.name + " sleeping for 10s"</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1rrpkud" sourceRef="sleep10s" targetRef="end" />
+    <bpmn:intermediateCatchEvent id="sleep10s" name="Sleep 10s">
+      <bpmn:incoming>SequenceFlow_0i5dsge</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rrpkud</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="multi-instance-call-activity-map-name">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="147" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="122" y="118" width="87" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1tahncv_di" bpmnElement="end">
+        <dc:Bounds x="470" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="488" y="122" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0a7mgk7_di" bpmnElement="SequenceFlow_0a7mgk7">
+        <di:waypoint x="183" y="100" />
+        <di:waypoint x="227" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="205" y="79" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0i5dsge_di" bpmnElement="SequenceFlow_0i5dsge">
+        <di:waypoint x="327" y="100" />
+        <di:waypoint x="382" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="354.5" y="79" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1aiwqu7_di" bpmnElement="init">
+        <dc:Bounds x="227" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rrpkud_di" bpmnElement="SequenceFlow_1rrpkud">
+        <di:waypoint x="418" y="100" />
+        <di:waypoint x="470" y="100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="444" y="79" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_14jzwzf_di" bpmnElement="sleep10s">
+        <dc:Bounds x="382" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="376" y="122" width="48" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

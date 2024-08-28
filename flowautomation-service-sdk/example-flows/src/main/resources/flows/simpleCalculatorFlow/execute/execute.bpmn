@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.4.2">
+  <bpmn:process id="execute" name="Simple Calculator" isExecutable="true">
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>SequenceFlow1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow1" sourceRef="start" targetRef="setupAction" />
+    <bpmn:sequenceFlow id="Flow_0v420pn" sourceRef="setupAction" targetRef="ChooseOperation_Gateway" />
+    <bpmn:exclusiveGateway id="ChooseOperation_Gateway" name="operation&#10;chosen ?" camunda:asyncBefore="true">
+      <bpmn:incoming>Flow_0v420pn</bpmn:incoming>
+      <bpmn:outgoing>sumid</bpmn:outgoing>
+      <bpmn:outgoing>multiplyid</bpmn:outgoing>
+      <bpmn:outgoing>sutractid</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="sumid" name="sum" sourceRef="ChooseOperation_Gateway" targetRef="Activity_Sum">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${operation.arithmetic.sum == 'true'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="multiplyid" name="multiply" sourceRef="ChooseOperation_Gateway" targetRef="Activity_Multiply">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${operation.arithmetic.multiply == 'true'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="end" name="End">
+      <bpmn:incoming>Flow_FinalDecision_No</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_2" camunda:asyncBefore="true">
+      <bpmn:incoming>Flow_0mww14h</bpmn:incoming>
+      <bpmn:incoming>Flow_0ofc21p</bpmn:incoming>
+      <bpmn:incoming>Flow_0g5864t</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ix9539</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0mww14h" sourceRef="Activity_Sum" targetRef="Gateway_2" />
+    <bpmn:sequenceFlow id="Flow_0ofc21p" sourceRef="Activity_Multiply" targetRef="Gateway_2" />
+    <bpmn:sequenceFlow id="Flow_0ix9539" sourceRef="Gateway_2" targetRef="Activity_CheckResults" />
+    <bpmn:userTask id="setupAction" name="Define numbers and math operation" camunda:formKey="execute:define-numbers-and-math-operation.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="value1">${value1}</camunda:outputParameter>
+          <camunda:outputParameter name="value2">${value2}</camunda:outputParameter>
+          <camunda:outputParameter name="operation">${operation}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow1</bpmn:incoming>
+      <bpmn:incoming>Flow_FinalDecision_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_0v420pn</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="sutractid" name="subtract" sourceRef="ChooseOperation_Gateway" targetRef="Activity_Subtract">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${operation.arithmetic.subtract == 'true'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0g5864t" sourceRef="Activity_Subtract" targetRef="Gateway_2" />
+    <bpmn:userTask id="Activity_CheckResults" name="Result" camunda:formKey="execute:result.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="result">${result}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ix9539</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vn5hn3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0vn5hn3" sourceRef="Activity_CheckResults" targetRef="Activity_00a2n73" />
+    <bpmn:exclusiveGateway id="FinalDecision_Gateway" name="Another ?" default="Flow_FinalDecision_No">
+      <bpmn:incoming>Flow_14fgne0</bpmn:incoming>
+      <bpmn:outgoing>Flow_FinalDecision_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_FinalDecision_No</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_FinalDecision_Yes" name="Yes&#10;&#10;" sourceRef="FinalDecision_Gateway" targetRef="setupAction">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${performAnotherCalculation == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_FinalDecision_No" name="No" sourceRef="FinalDecision_Gateway" targetRef="end" />
+    <bpmn:userTask id="Activity_00a2n73" name="Another Calculation ?" camunda:formKey="execute:another-calculation.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="performAnotherCalculation">${performAnotherCalculation}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0vn5hn3</bpmn:incoming>
+      <bpmn:outgoing>Flow_14fgne0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_14fgne0" sourceRef="Activity_00a2n73" targetRef="FinalDecision_Gateway" />
+    <bpmn:scriptTask id="Activity_Subtract" name="Subtract &#10;Action" scriptFormat="groovy" camunda:resultVariable="result">
+      <bpmn:incoming>sutractid</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g5864t</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("result", value1-value2)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_Sum" name="Sum &#10;Action" scriptFormat="groovy" camunda:resultVariable="result">
+      <bpmn:incoming>sumid</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mww14h</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("result", value1+value2)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_Multiply" name="Multiply &#10;Action" scriptFormat="groovy" camunda:resultVariable="result">
+      <bpmn:incoming>multiplyid</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ofc21p</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("result", value1*value2)</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="152" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="248" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0t4lq9b_di" bpmnElement="ChooseOperation_Gateway" isMarkerVisible="true">
+        <dc:Bounds x="445" y="205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="407" y="241" width="46" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_16xxnxr_di" bpmnElement="end">
+        <dc:Bounds x="1262" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1270" y="255" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1sr4fda_di" bpmnElement="Gateway_2" isMarkerVisible="true">
+        <dc:Bounds x="715" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03i9nvz_di" bpmnElement="setupAction">
+        <dc:Bounds x="260" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_109s7li_di" bpmnElement="Activity_CheckResults">
+        <dc:Bounds x="820" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0bfssn9_di" bpmnElement="FinalDecision_Gateway" isMarkerVisible="true">
+        <dc:Bounds x="1135" y="205" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1136" y="266" width="48" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1q8a3ju" bpmnElement="Activity_00a2n73">
+        <dc:Bounds x="970" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m8280h_di" bpmnElement="Activity_Subtract">
+        <dc:Bounds x="560" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1jne4s9_di" bpmnElement="Activity_Sum">
+        <dc:Bounds x="560" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1s10u40_di" bpmnElement="Activity_Multiply">
+        <dc:Bounds x="560" y="290" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_08va5r8_di" bpmnElement="SequenceFlow1">
+        <di:waypoint x="188" y="230" />
+        <di:waypoint x="260" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="337.5" y="110" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0v420pn_di" bpmnElement="Flow_0v420pn">
+        <di:waypoint x="360" y="230" />
+        <di:waypoint x="445" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_072xlt4_di" bpmnElement="sumid">
+        <di:waypoint x="495" y="230" />
+        <di:waypoint x="560" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="514" y="213" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xm0tcd_di" bpmnElement="multiplyid">
+        <di:waypoint x="470" y="255" />
+        <di:waypoint x="470" y="330" />
+        <di:waypoint x="560" y="330" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="486" y="313" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mww14h_di" bpmnElement="Flow_0mww14h">
+        <di:waypoint x="660" y="230" />
+        <di:waypoint x="715" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ofc21p_di" bpmnElement="Flow_0ofc21p">
+        <di:waypoint x="660" y="330" />
+        <di:waypoint x="740" y="330" />
+        <di:waypoint x="740" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ix9539_di" bpmnElement="Flow_0ix9539">
+        <di:waypoint x="765" y="230" />
+        <di:waypoint x="820" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pb03ro_di" bpmnElement="sutractid">
+        <di:waypoint x="470" y="205" />
+        <di:waypoint x="470" y="130" />
+        <di:waypoint x="560" y="130" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="490" y="113" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g5864t_di" bpmnElement="Flow_0g5864t">
+        <di:waypoint x="660" y="130" />
+        <di:waypoint x="740" y="130" />
+        <di:waypoint x="740" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vn5hn3_di" bpmnElement="Flow_0vn5hn3">
+        <di:waypoint x="920" y="230" />
+        <di:waypoint x="970" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bg7c87_di" bpmnElement="Flow_FinalDecision_Yes">
+        <di:waypoint x="1160" y="205" />
+        <di:waypoint x="1160" y="40" />
+        <di:waypoint x="310" y="40" />
+        <di:waypoint x="310" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1171" y="113" width="18" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13jh2sv_di" bpmnElement="Flow_FinalDecision_No">
+        <di:waypoint x="1185" y="230" />
+        <di:waypoint x="1262" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1217" y="212" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14fgne0_di" bpmnElement="Flow_14fgne0">
+        <di:waypoint x="1070" y="230" />
+        <di:waypoint x="1135" y="230" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

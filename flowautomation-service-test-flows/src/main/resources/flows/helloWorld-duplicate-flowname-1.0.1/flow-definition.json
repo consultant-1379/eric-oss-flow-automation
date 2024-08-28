@@ -1,0 +1,12 @@
+{
+    "flowId": "com.ericsson.oss.fa.flows.helloWorld.duplicate.flowname",
+    "flowName": "Hello World",
+    "flowVersion": "1.0.1",
+    "description": "Hello world flow",
+    "setup": {
+        "processId": "hello-setup"
+    },
+    "execute": {
+        "processId": "hello-execute"
+    }
+}

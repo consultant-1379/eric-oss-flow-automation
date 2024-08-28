@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Multi-Instance Load Control flow report schema body",
+  "description": "Multi-Instance Load Control flow report schema body",
+  "type": "object",
+  "properties": {
+    "numInstances": {
+      "name": "Number of Instances",
+      "type": "integer",
+      "default": 0,
+      "objectGen": {
+        "binding": "variable:report:numInstances"
+      }
+    },
+    "elementsTable1": {
+      "name": "Elements Table 1",
+      "description": "Elements table 1",
+      "type": "array",
+      "objectGen": {
+        "indexBinding": "instanceNames",
+        "indexName": "instanceName"
+      },
+      "items": {
+        "name": "Element Status 1",
+        "description": "Status for an element",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "name": "Element ID",
+            "description": "Element ID",
+            "type": "string",
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.instanceName"
+            }
+          },
+          "state": {
+            "name": "State",
+            "description": "State",
+            "type": "string",
+            "enum": [
+              "Queued",
+              "Executing",
+              "Completed"
+            ],
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.state"
+            }
+          },
+          "result": {
+            "name": "Result",
+            "description": "Result",
+            "type": "string",
+            "enum": [
+              "Not Available",
+              "Success",
+              "Failure",
+              "Error"
+            ],
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.result"
+            }
+          },
+          "duration": {
+            "name": "Duration",
+            "description": "Duration",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.duration"
+            }
+          },
+          "summary": {
+            "name": "Summary",
+            "description": "Summary",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.summary"
+            }
+          }
+        },
+        "required": [
+          "instanceName",
+          "state",
+          "result",
+          "summary",
+          "duration"
+        ]
+      }
+    },
+    "elementsTable2": {
+      "name": "Elements Table 2",
+      "description": "Elements table 2",
+      "type": "array",
+      "objectGen": {
+        "indexBinding": "instanceNames",
+        "indexName": "instanceName"
+      },
+      "items": {
+        "name": "Element Status 2",
+        "description": "Status for an element",
+        "type": "object",
+        "properties": {
+          "instanceName": {
+            "name": "Element ID",
+            "description": "Element ID",
+            "type": "string",
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.instanceName"
+            }
+          },
+          "state": {
+            "name": "State",
+            "description": "State",
+            "type": "string",
+            "enum": [
+              "Queued",
+              "Executing",
+              "Completed"
+            ],
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.state"
+            }
+          },
+          "result": {
+            "name": "Result",
+            "description": "Result",
+            "type": "string",
+            "enum": [
+              "Not Available",
+              "Success",
+              "Failure",
+              "Error"
+            ],
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.result"
+            }
+          },
+          "duration": {
+            "name": "Duration",
+            "description": "Duration",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.duration"
+            }
+          },
+          "summary": {
+            "name": "Summary",
+            "description": "Summary",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{instanceName}.summary"
+            }
+          }
+        },
+        "required": [
+          "instanceName",
+          "state",
+          "result",
+          "summary",
+          "duration"
+        ]
+      }
+    }
+  },
+  "required": ["numInstances"]
+}

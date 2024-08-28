@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2021
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <modules>
+        <module>flowautomation-service-jboss</module>
+        <module>flowautomation-service-rest-api</module>
+        <module>flowautomation-service-rest-war</module>
+        <module>flowautomation-service-db</module>
+        <module>flowautomation-service-api</module>
+        <module>flowautomation-service-jpa</module>
+        <module>flowautomation-service-jar</module>
+        <module>flowautomation-service-flow-api</module>
+        <module>flowautomation-service-ejb</module>
+        <module>flowautomation-service-ear</module>
+        <module>flowautomation-service-bragent</module>
+        <module>flowautomation-service-integration-jee</module>
+        <module>flowautomation-service-test-framework</module>
+        <module>flowautomation-service-test-h2db</module>
+        <module>flowautomation-service-test-flows</module>
+        <module>flowautomation-service-internal-flows</module>
+        <module>flowautomation-service-interface-tests</module>
+        <module>flowautomation-service-interface-tests-rest</module>
+        <module>flowautomation-service-camunda-plugin</module>
+        <module>flowautomation-service-sdk</module>
+<!--        flowautomation-service-coverage should be the last module in this list to pull the local jars-->
+        <module>flowautomation-service-coverage</module>
+    </modules>
+
+    <groupId>com.ericsson.oss.ae</groupId>
+    <artifactId>eric-oss-flow-automation</artifactId>
+    <version>1.68.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>eric-oss-flow-automation</name>
+
+    <scm>
+        <developerConnection>${ericsson.scm.url}</developerConnection>
+        <connection>${ericsson.scm.url}</connection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <version.jee>8</version.jee>
+
+        <version.spock>1.1-groovy-2.4</version.spock>
+        <version.byteBuddy>1.7.5</version.byteBuddy>
+        <!-- Groovy version for flowautomation-service-test-flows module -->
+        <version.groovy>3.0.12</version.groovy>
+        <version.groovy-all>2.5.6</version.groovy-all>
+        <version.groovy-dateutil>2.5.6</version.groovy-dateutil>
+        <version.cucumber>1.2.5</version.cucumber>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=955584 -->
+        <version.apache.commons-lang>3.12.0</version.apache.commons-lang>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1025337 -->
+        <version.jackson>2.14.0-rc1</version.jackson>
+
+        <version.maven-ejb-plugin>2.5</version.maven-ejb-plugin>
+        <version.ejb>3.1</version.ejb>
+
+        <project.child.artifactId>flowautomation-service</project.child.artifactId>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <ericsson.scm.url>
+            scm:git:[fetch=]ssh://gerrit.ericsson.se:29418/OSS/com.ericsson.oss.ae/eric-oss-flow-automation[push=]ssh://gerrit.ericsson.se:29418/OSS/com.ericsson.oss.ae/eric-oss-flow-automation
+        </ericsson.scm.url>
+
+        <!-- 3PP Versions -->
+
+        <!-- JBOSS Versions-->
+        <version.jboss>7.4.10</version.jboss>
+        <version.jboss.jee.spec>1.0.4.Final</version.jboss.jee.spec>
+        <version.jboss.javaee>3.0.2.Final</version.jboss.javaee>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1018981 -->
+        <version.jboss-vfs>3.2.16.Final</version.jboss-vfs>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=654409 -->
+        <version.jboss-as-maven-plugin>7.9.Final</version.jboss-as-maven-plugin>
+
+        <version.camunda>7.18.5-ee</version.camunda>
+        
+
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1017012  -->
+        <version.jackson-databind-nullable>0.2.3</version.jackson-databind-nullable>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1016826  -->
+        <version.jaeger-client>1.8.1</version.jaeger-client>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1020679 -->
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1021184 -->
+        <version.micrometer>1.9.3</version.micrometer>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1025168 -->
+        <version.swagger.jaxrs>1.6.7</version.swagger.jaxrs>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=992682 -->
+        <version.resteasy.multipart>5.0.4.Final</version.resteasy.multipart>
+        <version.resteasy-client>5.0.4.Final</version.resteasy-client>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1007979 -->
+        <version.lombok>1.18.24</version.lombok>
+
+        <!-- Ericsson Dependency Versions -->
+        <version.eric-common-logging>1.0.23</version.eric-common-logging>
+        <version.enm-checkstyle-module>1.1.103</version.enm-checkstyle-module>
+
+        <!-- DB Dependencies -->
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1017020 -->
+        <version.flyway>8.5.13</version.flyway>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1021673 -->
+        <version.postgres.driver>42.5.0</version.postgres.driver>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1042353 -->
+        <version.spring>2.7.10</version.spring>
+
+        <!-- Build Dependencies -->
+        <version.checkstyle-tool>8.41</version.checkstyle-tool>
+        <version.maven-checkstyle-plugin>3.1.2</version.maven-checkstyle-plugin>
+        <version.openapi-generator-maven-plugin>5.0.0</version.openapi-generator-maven-plugin>
+        <version.maven-sortpom-plugin>2.13.1</version.maven-sortpom-plugin>
+        <version.maven-release-plugin>2.4.2</version.maven-release-plugin>
+        <version.maven-scm-provider-gitexe>1.8.1</version.maven-scm-provider-gitexe>
+        <java.version>11</java.version>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=954934 -->
+        <version.junit>4.13.2</version.junit>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=979055 -->
+        <version.slf4j-api>1.7.32</version.slf4j-api>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=708842 -->
+        <version.maven-ear-plugin>3.0.1</version.maven-ear-plugin>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=915391 -->
+        <version.maven-war-plugin>3.2.2</version.maven-war-plugin>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=934853 -->
+        <version.maven-surefire-plugin>2.22.2</version.maven-surefire-plugin>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1011730 -->
+        <version.maven-javadoc-plugin>3.4.0</version.maven-javadoc-plugin>
+        <!-- Test Dependencies -->
+        <version.license-maven-plugin>3.0</version.license-maven-plugin>
+        <version.sonar-maven-plugin>3.8.0.2131</version.sonar-maven-plugin>
+        <!-- JaCoCo plugin for Java Code Coverage -->
+        <version.jcoco-maven.plugin>0.8.5</version.jcoco-maven.plugin>
+        <!-- Minimum ratio or percentage of instructions to be covered, used by
+                JaCoCo plugin. Industry standard is 0.8 or 80% which allows at least 80%
+                of the code to be covered by the test cases. -->
+        <jacoco-maven-plugin.coveredratio.minimum>0.0</jacoco-maven-plugin.coveredratio.minimum>
+<!--        jacoco config to collect all code coverage -->
+        <sonar.exclusions>
+            flowautomation-service-coverage/**,
+            flowautomation-service-db/target/**,
+            flowautomation-service-interface-tests/**,
+            flowautomation-service-interface-tests-rest/**,
+            flowautomation-service-test-framework/**,
+            flowautomation-service-test-flows/**
+        </sonar.exclusions>
+        <aggregate.report.dir>../flowautomation-service-coverage/target/site/jacoco-aggregate/jacoco.xml</aggregate.report.dir>
+        <sonar.coverage.jacoco.xmlReportPaths>${basedir}/${aggregate.report.dir}</sonar.coverage.jacoco.xmlReportPaths>
+
+        <!-- Testing Dependencies Service Test Framework -->
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=929509 -->
+        <version.h2>1.4.200</version.h2>
+        <version.weld.se>2.4.0.Final</version.weld.se>
+        <version.javax.json-api>1.1.4</version.javax.json-api>
+        <version.javax.json>1.1</version.javax.json>
+        <version.hibernate-entitymanager>4.3.1.Final</version.hibernate-entitymanager>
+        <version.jandex>2.0.5.Final</version.jandex>
+        <version.awaitility>3.0.0</version.awaitility>
+        <version.wiremock>1.58</version.wiremock>
+        <version.httpclient>4.5.5</version.httpclient>
+        <version.json-path>2.4.0</version.json-path>
+        <version.json-path-assert>2.2.0</version.json-path-assert>
+        <version.hamcrest-library>1.3</version.hamcrest-library>
+        <version.hibernate-validator>4.3.1.Final</version.hibernate-validator>
+        <version.camunda-bpm-mockito>3.2.1</version.camunda-bpm-mockito>
+        <version.swagger-coverage-rest-assured>1.5.0</version.swagger-coverage-rest-assured>
+        <version.rest-assured>5.1.1</version.rest-assured>
+        <version.freemarker>2.3.31</version.freemarker>
+        <version.jayway-rest-assured>2.9.0</version.jayway-rest-assured>
+        <version.wildfly-arquillian>3.0.1.Final</version.wildfly-arquillian>
+        <version.arquillian-junit>1.6.0.Final</version.arquillian-junit>
+        <version.gmavenplus>1.13.1</version.gmavenplus>
+        <version.maven-compiler-plugin>3.10.1</version.maven-compiler-plugin>
+        <version.mockito-core>4.6.1</version.mockito-core>
+
+        <!-- service-jar -->
+        <version.json-schema-validator>2.2.14</version.json-schema-validator>
+        <version.commons-io>2.11.0</version.commons-io>
+        <version.commons.collections>3.2.2</version.commons.collections>
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=1007231 -->
+        <version.apache.poi>5.2.2</version.apache.poi>
+        <version.apache.commons>4.4</version.apache.commons>
+
+        <!-- service-ejb -->
+        <!-- https://bazaar.internal.ericsson.com/b-view-component.php?componentid=970522 -->
+        <version.jboss-security-spi>5.0.3.Final-redhat-00007</version.jboss-security-spi>
+
+        <!-- mitigation -->
+        <kotlin.stblib>1.7.20</kotlin.stblib>
+        <version.snakeyaml>1.33</version.snakeyaml>
+        <version.rhino>1.7.14</version.rhino>
+
+        <!-- service-sdk -->
+        <version.maven-assembly-plugin>3.3.0</version.maven-assembly-plugin>
+
+        <!-- flow-archetype -->
+        <version.maven.archetype>3.1.0</version.maven.archetype>
+        <version.build-helper-maven-plugin>3.0.0</version.build-helper-maven-plugin>
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-checkstyle-plugin -->
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${version.maven-checkstyle-plugin}</version>
+            </dependency>
+
+<!--            FROM POC -->
+            <dependency>
+                <groupId>org.camunda.bpm</groupId>
+                <artifactId>camunda-bom</artifactId>
+                <version>${version.camunda}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${version.jackson}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${version.jackson}</version>
+            </dependency>
+
+            <!-- You local managed dependency versions -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.child.artifactId}-ear</artifactId>
+                <version>${project.version}</version>
+                <type>ear</type>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${version.jackson}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.8.0.2131</version>
+            </dependency>
+        </dependencies>
+
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-javaee-8.0</artifactId>
+            <version>${version.jboss.jee.spec}</version>
+            <type>pom</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Ericsson Dependencies -->
+        <dependency>
+            <groupId>com.ericsson.oss.orchestration.eo</groupId>
+            <artifactId>eric-common-logging</artifactId>
+            <version>${version.eric-common-logging}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy.modules.http-builder</groupId>
+            <artifactId>http-builder</artifactId>
+            <version>0.7.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.13</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${version.jackson-databind-nullable}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jaegertracing</groupId>
+            <artifactId>jaeger-client</artifactId>
+            <version>${version.jaeger-client}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jetbrains.kotlin</groupId>
+                    <artifactId>kotlin-stdlib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Jaeger Client Mitigation-->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.stblib}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-core</artifactId>
+            <version>${version.micrometer}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${version.micrometer}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <version>${version.resteasy.multipart}</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.activation</groupId>
+                    <artifactId>jakarta.activation-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- resteasy-multipart fix -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${version.lombok}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.maven-surefire-plugin}</version>
+                    <configuration>
+                        <!-- don't set argLine here as it breaks jacoco, set as a property instead -->
+                        <enableAssertions>true</enableAssertions>
+                        <skipAfterFailureCount>1</skipAfterFailureCount>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${version.maven-javadoc-plugin}</version>
+                    <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${version.license-maven-plugin}</version>
+                    <configuration>
+                        <header>license/copyright-2023.txt</header>
+                        <validHeaders>
+                            <validHeader>license/copyright-2020.txt</validHeader>
+                            <validHeader>license/copyright-2021.txt</validHeader>
+                            <validHeader>license/copyright-2022.txt</validHeader>
+                        </validHeaders>
+                        <excludes>
+                            <exclude>bob/*</exclude>
+                            <exclude>bob*/</exclude>
+                            <exclude>.bob/*</exclude>
+                            <exclude>.bob*/</exclude>
+                            <exclude>k8s-logs/*</exclude>
+                            <exclude>doc/**</exclude>
+                            <exclude>**/.helmignore</exclude>
+                            <exclude>**/*.html</exclude>
+                            <exclude>**/_helpers.tpl</exclude>
+                            <exclude>**/*.tgz</exclude>
+                            <exclude>**/VERSION*</exclude>
+                            <exclude>**/*.repo</exclude>
+                            <exclude>license/copyright*</exclude>
+                            <exclude>design-rule-check-report*</exclude>
+                            <exclude>helm-install-dry-run.log</exclude>
+                            <exclude>*artifact.properties</exclude>
+                            <exclude>**/rest_conversion_log.txt</exclude>
+                            <exclude>**/rest2html*.zip</exclude>
+                            <exclude>settings.xml</exclude>
+                            <exclude>**/*.sql</exclude>
+                            <exclude>**/*.bpmn</exclude>
+                            <exclude>**/*.json</exclude>
+                            <exclude>**/*.ftl</exclude>
+                            <exclude>**/*.txt</exclude>
+                            <exclude>**/*.groovy</exclude>
+                            <exclude>**/*.sh</exclude>
+                            <exclude>**/*.properties</exclude>
+                            <exclude>**/*.ldif</exclude>
+                            <exclude>bob/**</exclude>
+                        </excludes>
+                        <headerDefinitions>
+                            <headerDefinition>./license/javaHeaderDefinition.xml</headerDefinition>
+                            <headerDefinition>./license/xmlHeaderDefinition.xml</headerDefinition>
+                        </headerDefinitions>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${version.maven-checkstyle-plugin}</version>
+                    <configuration>
+                        <consoleOutput>true</consoleOutput>
+                        <logViolationsToConsole>true</logViolationsToConsole>
+                        <configLocation>${project.basedir}/src/main/resources/checkstyle.xml</configLocation>
+                        <suppressionsFileExpression>checkstyle.suppressions.file</suppressionsFileExpression>
+                        <violationSeverity>warning</violationSeverity>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                        <encoding>UTF-8</encoding>
+                        <consoleOutput>true</consoleOutput>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${version.checkstyle-tool}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.ericsson.cds</groupId>
+                            <artifactId>checkstyle-module</artifactId>
+                            <version>${version.enm-checkstyle-module}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.github.ekryd.sortpom</groupId>
+                            <artifactId>sortpom-maven-plugin</artifactId>
+                            <version>${version.maven-sortpom-plugin}</version>
+                            <type>maven-plugin</type>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${version.sonar-maven-plugin}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+
+            <!-- JaCoCo plugin for Java Code Coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${version.jcoco-maven.plugin}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*.jar</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshot</id>
+            <name>armseligic-snapshot</name>
+            <url>https://arm.seli.gic.ericsson.se/artifactory/proj-eric-oss-dev-local</url>
+        </snapshotRepository>
+        <repository>
+            <id>release</id>
+            <name>armseligic-release</name>
+            <url>https://arm.seli.gic.ericsson.se/artifactory/proj-eric-oss-release-local</url>
+        </repository>
+    </distributionManagement>
+
+</project>

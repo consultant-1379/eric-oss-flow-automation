@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "description": "Simple User Task",
+  "properties": {
+    "continue": {
+      "name": "Continue",
+      "type" : "object",
+      "format": "informational",
+      "properties" : {
+        "message": {
+          "name": "Press Submit to continue",
+          "type": "string",
+          "format": "informational"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

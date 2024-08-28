@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1a9ufj4" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="sdk-flow-example-execute" name="sdk flow example execute phase" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="start">
+      <bpmn:outgoing>SequenceFlow_1i9kqjy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1i9kqjy" sourceRef="StartEvent_1" targetRef="Task_0zdh64h" />
+    <bpmn:scriptTask id="Task_0zdh64h" name="PreUpgrade Node Health Check" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1i9kqjy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13rsvt5</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+
+Reporter.updateReportSummary(execution,"PreUpgrade Node Health Check Completed")
+EventRecorder.info(execution,"PreUpgrade Node Health Check Completed")
+
+def nodeName = flowInput.nodeSelection.nodes
+def softwarePackage = flowInput.softwarePackageSelection.softwarePackages
+
+Reporter.updateReportVariable(execution, "nodeName", nodeName)
+Reporter.updateReportVariable(execution, "softwarePackage", softwarePackage)
+
+def nodeUpgradeActivities = [];
+
+def activityName = "PreUpgrade Node Health Check"
+nodeUpgradeActivities.add(activityName)
+
+Reporter.updateReportVariable(execution, activityName +".time", new Date().format("yyyy-mm-dd hh:mm:ss.S"))
+Reporter.updateReportVariable(execution, activityName +".activityName", activityName)
+Reporter.updateReportVariable(execution, activityName +".result", "Success")
+Reporter.updateReportVariable(execution, activityName +".summary", "PreUpgrade Node Health Check Completed")
+
+execution.setVariable("nodeUpgradeActivities", nodeUpgradeActivities)
+
+Reporter.updateReportVariable(execution, "nodeUpgradeActivities", nodeUpgradeActivities.join(","))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_13rsvt5" sourceRef="Task_0zdh64h" targetRef="Task_0n7uuwv" />
+    <bpmn:sequenceFlow id="SequenceFlow_129e2l5" sourceRef="Task_0n7uuwv" targetRef="Task_1jwt2fw" />
+    <bpmn:sequenceFlow id="SequenceFlow_1jrplnq" sourceRef="Task_1jwt2fw" targetRef="Task_0cvbakw" />
+    <bpmn:sequenceFlow id="SequenceFlow_1052pod" sourceRef="Task_0cvbakw" targetRef="Task_1vzhilx" />
+    <bpmn:sequenceFlow id="SequenceFlow_16z02q7" sourceRef="Task_1vzhilx" targetRef="Task_0vqlmrq" />
+    <bpmn:sequenceFlow id="SequenceFlow_03dxqde" sourceRef="Task_0vqlmrq" targetRef="Task_0ie9t2v" />
+    <bpmn:scriptTask id="Task_0n7uuwv" name="PreUpgrade Licence Check" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_13rsvt5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_129e2l5</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+Reporter.updateReportSummary(execution,"PreUpgrade Licence Check Completed")
+EventRecorder.info(execution,"PreUpgrade Licence Check Completed")
+
+
+def nodeUpgradeActivities = execution.getVariable("nodeUpgradeActivities");
+
+def activityName = "PreUpgrade Licence Check"
+nodeUpgradeActivities.add(activityName)
+
+Reporter.updateReportVariable(execution, activityName +".time", new Date().format("yyyy-mm-dd hh:mm:ss.S"))
+Reporter.updateReportVariable(execution, activityName +".activityName", activityName)
+Reporter.updateReportVariable(execution, activityName +".result", "Success")
+Reporter.updateReportVariable(execution, activityName +".summary", "PreUpgrade Licence Check Completed")
+
+execution.setVariable("nodeUpgradeActivities", nodeUpgradeActivities)
+
+Reporter.updateReportVariable(execution, "nodeUpgradeActivities", nodeUpgradeActivities.join(","))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_1jwt2fw" name="PreUpgrade Backup" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_129e2l5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1jrplnq</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+Reporter.updateReportSummary(execution,"PreUpgrade Backup Completed")
+EventRecorder.info(execution,"PreUpgrade Backup Completed")
+
+
+def nodeUpgradeActivities = execution.getVariable("nodeUpgradeActivities");
+
+def activityName = "PreUpgrade Backup"
+nodeUpgradeActivities.add(activityName)
+
+Reporter.updateReportVariable(execution, activityName +".time", new Date().format("yyyy-mm-dd hh:mm:ss.S"))
+Reporter.updateReportVariable(execution, activityName +".activityName", activityName)
+Reporter.updateReportVariable(execution, activityName +".result", "Success")
+Reporter.updateReportVariable(execution, activityName +".summary", "PreUpgrade Backup Completed")
+
+execution.setVariable("nodeUpgradeActivities", nodeUpgradeActivities)
+
+Reporter.updateReportVariable(execution, "nodeUpgradeActivities", nodeUpgradeActivities.join(","))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_0cvbakw" name="Perform Node Upgrade" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1jrplnq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1052pod</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+
+Reporter.updateReportSummary(execution,"Performing Node Upgrade")
+EventRecorder.info(execution,"Performing Node Upgrade")
+
+def nodeUpgradeActivities = execution.getVariable("nodeUpgradeActivities");
+
+def activityName = "Node Upgrade"
+nodeUpgradeActivities.add(activityName)
+
+Reporter.updateReportVariable(execution, activityName +".time", new Date().format("yyyy-mm-dd hh:mm:ss.S"))
+Reporter.updateReportVariable(execution, activityName +".activityName", activityName)
+Reporter.updateReportVariable(execution, activityName +".result", "Success")
+Reporter.updateReportVariable(execution, activityName +".summary", "Node Upgraded")
+
+execution.setVariable("nodeUpgradeActivities", nodeUpgradeActivities)
+
+Reporter.updateReportVariable(execution, "nodeUpgradeActivities", nodeUpgradeActivities.join(","))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_1vzhilx" name="Validate Node Upgrade" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1052pod</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16z02q7</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+
+Reporter.updateReportSummary(execution,"Validating Node Upgrade")
+EventRecorder.info(execution,"Validating Node Upgrade")
+
+def nodeUpgradeActivities = execution.getVariable("nodeUpgradeActivities");
+
+def activityName = "Validate Node Upgrade"
+nodeUpgradeActivities.add(activityName)
+
+Reporter.updateReportVariable(execution, activityName +".time", new Date().format("yyyy-mm-dd hh:mm:ss.S"))
+Reporter.updateReportVariable(execution, activityName +".activityName", activityName)
+Reporter.updateReportVariable(execution, activityName +".result", "Success")
+Reporter.updateReportVariable(execution, activityName +".summary", "Validated Node Upgrade")
+
+execution.setVariable("nodeUpgradeActivities", nodeUpgradeActivities)
+
+Reporter.updateReportVariable(execution, "nodeUpgradeActivities", nodeUpgradeActivities.join(","))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_0vqlmrq" name="PostUpgrade Node Health Check" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_16z02q7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_03dxqde</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+
+Reporter.updateReportSummary(execution,"PostUpgrade Node Health Check Completed")
+EventRecorder.info(execution,"PostUpgrade Node Health Check Completed")
+
+def nodeUpgradeActivities = execution.getVariable("nodeUpgradeActivities");
+
+def activityName = "PostUpgrade Node Health Check"
+nodeUpgradeActivities.add(activityName)
+
+Reporter.updateReportVariable(execution, activityName +".time", new Date().format("yyyy-mm-dd hh:mm:ss.S"))
+Reporter.updateReportVariable(execution, activityName +".activityName", activityName)
+Reporter.updateReportVariable(execution, activityName +".result", "Success")
+Reporter.updateReportVariable(execution, activityName +".summary", "PostUpgrade Node Health Check Completed")
+
+execution.setVariable("nodeUpgradeActivities", nodeUpgradeActivities)
+
+Reporter.updateReportVariable(execution, "nodeUpgradeActivities", nodeUpgradeActivities.join(","))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_0ie9t2v" name="Node Upgraded" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_03dxqde</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_06ag01g</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+Reporter.updateReportSummary(execution,"Node Upgraded Successfully")
+EventRecorder.info(execution,"Node Upgraded Successfully")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_06ag01g" sourceRef="Task_0ie9t2v" targetRef="EndEvent_1lc9pq2" />
+    <bpmn:endEvent id="EndEvent_1lc9pq2" name="end">
+      <bpmn:incoming>SequenceFlow_06ag01g</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sdk-flow-example-execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="145" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i9kqjy_di" bpmnElement="SequenceFlow_1i9kqjy">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="240" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0eespg5_di" bpmnElement="Task_0zdh64h">
+        <dc:Bounds x="240" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_13rsvt5_di" bpmnElement="SequenceFlow_13rsvt5">
+        <di:waypoint x="340" y="120" />
+        <di:waypoint x="400" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_129e2l5_di" bpmnElement="SequenceFlow_129e2l5">
+        <di:waypoint x="500" y="120" />
+        <di:waypoint x="560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jrplnq_di" bpmnElement="SequenceFlow_1jrplnq">
+        <di:waypoint x="660" y="120" />
+        <di:waypoint x="720" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1052pod_di" bpmnElement="SequenceFlow_1052pod">
+        <di:waypoint x="820" y="120" />
+        <di:waypoint x="880" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_16z02q7_di" bpmnElement="SequenceFlow_16z02q7">
+        <di:waypoint x="980" y="120" />
+        <di:waypoint x="1040" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03dxqde_di" bpmnElement="SequenceFlow_03dxqde">
+        <di:waypoint x="1140" y="120" />
+        <di:waypoint x="1200" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1lzkxi4_di" bpmnElement="Task_0n7uuwv">
+        <dc:Bounds x="400" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_08nptek_di" bpmnElement="Task_1jwt2fw">
+        <dc:Bounds x="560" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_00in243_di" bpmnElement="Task_0cvbakw">
+        <dc:Bounds x="720" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0ax90co_di" bpmnElement="Task_1vzhilx">
+        <dc:Bounds x="880" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0jry785_di" bpmnElement="Task_0vqlmrq">
+        <dc:Bounds x="1040" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_01oyzm2_di" bpmnElement="Task_0ie9t2v">
+        <dc:Bounds x="1200" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_06ag01g_di" bpmnElement="SequenceFlow_06ag01g">
+        <di:waypoint x="1300" y="120" />
+        <di:waypoint x="1362" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1lc9pq2_di" bpmnElement="EndEvent_1lc9pq2">
+        <dc:Bounds x="1362" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1371" y="145" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

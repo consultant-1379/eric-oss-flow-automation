@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_05j7wxd" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+  <bpmn:process id="sdkActivityDiagramProgressShowcase-setup" name="Sdk Activity Diagram Progress Showcase Setup" isExecutable="true">
+    <bpmn:startEvent id="setup-start" camunda:asyncAfter="true">
+      <bpmn:outgoing>SequenceFlow_0ap3up4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="scenario-selection" name="Scenario Selection" camunda:formKey="setup:scenarioSelection">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="progressPercent" value="20" />
+        </camunda:properties>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="scenarioSelection">${scenarioSelection}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>input-not-supplied</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0wde3us</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_06xq6iz" default="input-not-supplied">
+      <bpmn:incoming>SequenceFlow_0ap3up4</bpmn:incoming>
+      <bpmn:outgoing>input-not-supplied</bpmn:outgoing>
+      <bpmn:outgoing>input-supplied</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0ap3up4" sourceRef="setup-start" targetRef="ExclusiveGateway_06xq6iz" />
+    <bpmn:sequenceFlow id="input-not-supplied" name="input not supplied" sourceRef="ExclusiveGateway_06xq6iz" targetRef="scenario-selection" />
+    <bpmn:sequenceFlow id="input-supplied" name="input supplied" sourceRef="ExclusiveGateway_06xq6iz" targetRef="validate-nodes">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty execution.getVariable('flowInput')}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="validate-nodes" name="Validate inputs" scriptFormat="groovy">
+      <bpmn:incoming>input-supplied</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1lp0ron</bpmn:outgoing>
+      <bpmn:script>// insert validation here</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1lp0ron" sourceRef="validate-nodes" targetRef="ExclusiveGateway_1x8vviy" />
+    <bpmn:endEvent id="setup-end">
+      <bpmn:incoming>SequenceFlow_0k2uin6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0wde3us" sourceRef="scenario-selection" targetRef="validate-input" />
+    <bpmn:scriptTask id="validate-input" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0wde3us</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0q7245h</bpmn:outgoing>
+      <bpmn:script>flowInput.scenarioSelection = scenarioSelection</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1x8vviy">
+      <bpmn:incoming>SequenceFlow_0q7245h</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1lp0ron</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0k2uin6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0q7245h" sourceRef="validate-input" targetRef="ExclusiveGateway_1x8vviy" />
+    <bpmn:sequenceFlow id="SequenceFlow_0k2uin6" sourceRef="ExclusiveGateway_1x8vviy" targetRef="setup-end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sdkActivityDiagramProgressShowcase-setup">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="setup-start">
+        <dc:Bounds x="118" y="266" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="91" y="302" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1hvrswa_di" bpmnElement="scenario-selection">
+        <dc:Bounds x="314" y="362" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_06xq6iz_di" bpmnElement="ExclusiveGateway_06xq6iz" isMarkerVisible="true">
+        <dc:Bounds x="204" y="259" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="264" y="278" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ap3up4_di" bpmnElement="SequenceFlow_0ap3up4">
+        <di:waypoint x="154" y="284" />
+        <di:waypoint x="204" y="284" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="134" y="263" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tsbvli_di" bpmnElement="input-not-supplied">
+        <di:waypoint x="229" y="309" />
+        <di:waypoint x="229" y="402" />
+        <di:waypoint x="314" y="402" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="221" y="407" width="84" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ashlht_di" bpmnElement="input-supplied">
+        <di:waypoint x="229" y="259" />
+        <di:waypoint x="229" y="162" />
+        <di:waypoint x="314" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="228" y="143" width="66" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1sbbutm_di" bpmnElement="validate-nodes">
+        <dc:Bounds x="314" y="122" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lp0ron_di" bpmnElement="SequenceFlow_1lp0ron">
+        <di:waypoint x="414" y="162" />
+        <di:waypoint x="621" y="162" />
+        <di:waypoint x="621" y="259" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="472.5" y="141" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_02f4s7y_di" bpmnElement="setup-end">
+        <dc:Bounds x="694" y="266" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="667" y="306" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wde3us_di" bpmnElement="SequenceFlow_0wde3us">
+        <di:waypoint x="414" y="402" />
+        <di:waypoint x="449" y="402" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="431.5" y="381" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0p34y9h_di" bpmnElement="validate-input">
+        <dc:Bounds x="449" y="362" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1x8vviy_di" bpmnElement="ExclusiveGateway_1x8vviy" isMarkerVisible="true">
+        <dc:Bounds x="596" y="259" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="586" y="278" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0q7245h_di" bpmnElement="SequenceFlow_0q7245h">
+        <di:waypoint x="549" y="402" />
+        <di:waypoint x="621" y="402" />
+        <di:waypoint x="621" y="309" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="381" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0k2uin6_di" bpmnElement="SequenceFlow_0k2uin6">
+        <di:waypoint x="646" y="284" />
+        <di:waypoint x="694" y="284" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="263" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,31 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Get number of instances usertask schema",
+  "description": "Get number of instances usertask schema",
+  "$id": "get-number-of-instances-usertask-schema",
+  "name": "Get number of instances",
+  "type": "object",
+  "properties": {
+    "getNumberOfInstances": {
+      "name": "Get number of instances",
+      "type": "object",
+      "properties": {
+        "numInstances": {
+          "name": "Number of instances",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000,
+          "default": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "numInstances"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "getNumberOfInstances"
+  ]
+}

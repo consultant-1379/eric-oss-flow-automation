@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2021
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!--
+A JBoss specific deployment descriptor that can be used to control class loading in a fine grained manner.
+It should be placed in the top level deployment, in META-INF (or WEB-INF for web deployments).
+http://docs.wildfly.org/13/Developer_Guide.html#jboss-deployment-structure-file
+-->
+<jboss-deployment-structure>
+    <deployment>
+        <dependencies>
+            <module name="flowautomation-service-rest-api-*.jar"/>
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

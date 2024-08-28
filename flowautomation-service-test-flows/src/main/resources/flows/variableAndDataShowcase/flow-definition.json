@@ -1,0 +1,12 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.variableAndDataShowcase",
+    "flowName" : "Variable and Data Showcase",
+    "flowVersion" : "1.0.1",
+    "description" : "Variable and Data Showcase",
+    "setup" : {
+        "processId" : "variableAndDataShowcase-setup"
+    },
+    "execute" : {
+        "processId" : "variableAndDataShowcase-execute"
+    }
+}

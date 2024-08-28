@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1ay1mep" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="FA-Stop-Flow-Instance" name="Flow Automation Stop Flow Instance" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_142gq5r</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_142gq5r" sourceRef="StartEvent_1" targetRef="Task_0wlro6u" />
+    <bpmn:sequenceFlow id="SequenceFlow_00t0w6a" sourceRef="Task_0wlro6u" targetRef="ExclusiveGateway_1t3j0ga" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_0m2m7uk" name="sleep for 30 seconds">
+      <bpmn:incoming>SequenceFlow_0e4ut2e</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_052rja8</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_04s7lj6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_098y9iu</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${stopFlowInstanceInterval}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_098y9iu" sourceRef="IntermediateThrowEvent_0m2m7uk" targetRef="Task_1n0do10" />
+    <bpmn:serviceTask id="Task_1n0do10" name="Get Parent Process Instance Ids marked as STOP, STOPPING" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.stopflowinstance.FlowExecutionRetrieveDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="parentProcessInstanceIdsMarkedAsStop">${parentProcessInstanceIdsMarkedAsStop}</camunda:outputParameter>
+          <camunda:outputParameter name="parentProcessInstanceIdsMarkedAsStopping">${parentProcessInstanceIdsMarkedAsStopping}</camunda:outputParameter>
+          <camunda:outputParameter name="stopFlowInstance">${stopFlowInstance}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_098y9iu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0pvjptg</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0pvjptg" sourceRef="Task_1n0do10" targetRef="ExclusiveGateway_1m9017h" />
+    <bpmn:serviceTask id="Task_1c52rt7" name="Get All sub process instance ids not suspended yet" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.stopflowinstance.FlowExecutionSubProcessInstancesRetrieveDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentProcessInstanceIdsMarkedAsStop">${parentProcessInstanceIdsMarkedAsStop}</camunda:inputParameter>
+          <camunda:inputParameter name="parentProcessInstanceIdsMarkedAsStopping">${parentProcessInstanceIdsMarkedAsStopping}</camunda:inputParameter>
+          <camunda:outputParameter name="processInstanceIdsToBeSuspended">${processInstanceIdsToBeSuspended}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_046jwgd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jelpgx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0jelpgx" sourceRef="Task_1c52rt7" targetRef="Task_0b4r9fo" />
+    <bpmn:callActivity id="Task_0b4r9fo" name="Suspend Process instances" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="FA-Suspend-Flow-Instance" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="processInstanceIdToBeSuspended" target="processInstanceIdToBeSuspended" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0jelpgx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0e4ut2e</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="processInstanceIdsToBeSuspended" camunda:elementVariable="processInstanceIdToBeSuspended" />
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0e4ut2e" sourceRef="Task_0b4r9fo" targetRef="IntermediateThrowEvent_0m2m7uk" />
+    <bpmn:sequenceFlow id="SequenceFlow_052rja8" sourceRef="ExclusiveGateway_1t3j0ga" targetRef="IntermediateThrowEvent_0m2m7uk" />
+    <bpmn:sequenceFlow id="SequenceFlow_1il14lk" sourceRef="ExclusiveGateway_1t3j0ga" targetRef="IntermediateThrowEvent_0b04tim" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_0b04tim" name="sleep for 30 seconds">
+      <bpmn:incoming>SequenceFlow_1il14lk</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1vgumv2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0s6mfjo</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${stopFlowInstanceInterval}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0s6mfjo" sourceRef="IntermediateThrowEvent_0b04tim" targetRef="Task_0o3l84c" />
+    <bpmn:callActivity id="Task_0o3l84c" name="Update status to STOPPED" calledElement="FA-Update-Flow-Instance-Status" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0s6mfjo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vgumv2</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1vgumv2" sourceRef="Task_0o3l84c" targetRef="IntermediateThrowEvent_0b04tim" />
+    <bpmn:serviceTask id="Task_1w0qgpy" name="Update status from STOP to STOPPING" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.stopflowinstance.FlowExecutionStoppingStatusUpdateDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parentProcessInstanceIdsMarkedAsStop">${parentProcessInstanceIdsMarkedAsStop}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0tji0mu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_046jwgd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_046jwgd" sourceRef="Task_1w0qgpy" targetRef="Task_1c52rt7" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1m9017h" default="SequenceFlow_0k93gbd">
+      <bpmn:incoming>SequenceFlow_0pvjptg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0tji0mu</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0k93gbd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0tji0mu" sourceRef="ExclusiveGateway_1m9017h" targetRef="Task_1w0qgpy">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${(!empty parentProcessInstanceIdsMarkedAsStop || !empty parentProcessInstanceIdsMarkedAsStopping) &amp;&amp; !stopFlowInstance}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0k93gbd" sourceRef="ExclusiveGateway_1m9017h" targetRef="Task_1q95kaf" />
+    <bpmn:scriptTask id="Task_1q95kaf" name="No Flow Instances are marked as STOP, STOPPING" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0k93gbd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_04s7lj6</bpmn:outgoing>
+      <bpmn:script>import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+Logger logger = LoggerFactory.getLogger("FA-STOP-FLOW-INSTANCE")
+logger.debug("No Flow Instances are marked as STOP, STOPPING")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_04s7lj6" sourceRef="Task_1q95kaf" targetRef="IntermediateThrowEvent_0m2m7uk" />
+    <bpmn:parallelGateway id="ExclusiveGateway_1t3j0ga">
+      <bpmn:incoming>SequenceFlow_00t0w6a</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_052rja8</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1il14lk</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="Task_0wlro6u" name="Initialise" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.stopflowinstance.StopFlowInstanceConfigurationDelegate">
+      <bpmn:incoming>SequenceFlow_142gq5r</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00t0w6a</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="FA-Stop-Flow-Instance">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="148" y="132" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_142gq5r_di" bpmnElement="SequenceFlow_142gq5r">
+        <di:waypoint x="184" y="150" />
+        <di:waypoint x="235" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00t0w6a_di" bpmnElement="SequenceFlow_00t0w6a">
+        <di:waypoint x="335" y="150" />
+        <di:waypoint x="369" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1rmvrye_di" bpmnElement="IntermediateThrowEvent_0m2m7uk">
+        <dc:Bounds x="485" y="132" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="476" y="102" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_098y9iu_di" bpmnElement="SequenceFlow_098y9iu">
+        <di:waypoint x="521" y="150" />
+        <di:waypoint x="600" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0kpbtgh_di" bpmnElement="Task_1n0do10">
+        <dc:Bounds x="600" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pvjptg_di" bpmnElement="SequenceFlow_0pvjptg">
+        <di:waypoint x="700" y="150" />
+        <di:waypoint x="769" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_007q4y8_di" bpmnElement="Task_1c52rt7">
+        <dc:Bounds x="1077" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jelpgx_di" bpmnElement="SequenceFlow_0jelpgx">
+        <di:waypoint x="1177" y="150" />
+        <di:waypoint x="1224" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0i4h4lk_di" bpmnElement="Task_0b4r9fo">
+        <dc:Bounds x="1224" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0e4ut2e_di" bpmnElement="SequenceFlow_0e4ut2e">
+        <di:waypoint x="1274" y="190" />
+        <di:waypoint x="1274" y="511" />
+        <di:waypoint x="503" y="511" />
+        <di:waypoint x="503" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_052rja8_di" bpmnElement="SequenceFlow_052rja8">
+        <di:waypoint x="419" y="150" />
+        <di:waypoint x="485" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1il14lk_di" bpmnElement="SequenceFlow_1il14lk">
+        <di:waypoint x="394" y="175" />
+        <di:waypoint x="394" y="766" />
+        <di:waypoint x="494" y="766" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1vqgj15_di" bpmnElement="IntermediateThrowEvent_0b04tim">
+        <dc:Bounds x="494" y="748" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="483" y="794" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0s6mfjo_di" bpmnElement="SequenceFlow_0s6mfjo">
+        <di:waypoint x="530" y="766" />
+        <di:waypoint x="692" y="766" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_025nazi_di" bpmnElement="Task_0o3l84c">
+        <dc:Bounds x="692" y="726" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vgumv2_di" bpmnElement="SequenceFlow_1vgumv2">
+        <di:waypoint x="742" y="726" />
+        <di:waypoint x="742" y="678" />
+        <di:waypoint x="512" y="678" />
+        <di:waypoint x="512" y="748" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0zxorpc_di" bpmnElement="Task_1w0qgpy">
+        <dc:Bounds x="908" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_046jwgd_di" bpmnElement="SequenceFlow_046jwgd">
+        <di:waypoint x="1008" y="150" />
+        <di:waypoint x="1077" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1m9017h_di" bpmnElement="ExclusiveGateway_1m9017h" isMarkerVisible="true">
+        <dc:Bounds x="769" y="125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tji0mu_di" bpmnElement="SequenceFlow_0tji0mu">
+        <di:waypoint x="819" y="150" />
+        <di:waypoint x="908" y="150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0k93gbd_di" bpmnElement="SequenceFlow_0k93gbd">
+        <di:waypoint x="794" y="175" />
+        <di:waypoint x="794" y="238" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_13hsihb_di" bpmnElement="Task_1q95kaf">
+        <dc:Bounds x="744" y="238" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04s7lj6_di" bpmnElement="SequenceFlow_04s7lj6">
+        <di:waypoint x="744" y="278" />
+        <di:waypoint x="503" y="278" />
+        <di:waypoint x="503" y="168" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_03i6xbo_di" bpmnElement="ExclusiveGateway_1t3j0ga">
+        <dc:Bounds x="369" y="125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0e2bmj6_di" bpmnElement="Task_0wlro6u">
+        <dc:Bounds x="235" y="110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Flow with multiple directions with back button enabled",
+  "type": "object",
+  "properties": {
+    "phasesSelection": {
+      "name": "Select Phases",
+      "type": "object",
+      "properties": {
+        "preparationPhase": {
+          "name": "Preparation Phase",
+          "description": "Scripts and activities executed as part of preparation phase can be selected.",
+          "type": "object",
+          "format": "checkbox",
+          "default": "false",
+          "properties": {
+            "buttonBoolean": {
+              "type": "boolean",
+              "name": "buttonBoolean"
+            }
+          }
+        },
+        "activationPhase": {
+          "name": "Activation Phase",
+          "description": "Scripts and activities executed as part of activation phase can be selected.",
+          "type": "object",
+          "format": "checkbox",
+          "default": "false",
+          "properties": {
+            "buttonBoolean": {
+              "type": "boolean",
+              "name": "buttonBoolean"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "preparationPhaseUserTask": {
+      "name": "Preparation Phase",
+      "type": "string",
+      "format": "informational"
+    },
+    "activationPhaseUserTask": {
+      "name": "Activation Phase",
+      "type": "string",
+      "format": "informational"
+    },
+    "finalPhaseUserTask": {
+      "name": "Final Task",
+      "type": "string",
+      "format": "informational"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1c3t0a2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+  <bpmn:process id="parallel-multi-instance-embedded-subprocess-nosleep" name="Parallel multi-instance embedded subprocess no sleep" isExecutable="true">
+    <bpmn:startEvent id="start">
+      <bpmn:outgoing>SequenceFlow_083m03u</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="end">
+      <bpmn:incoming>SequenceFlow_13w0xik</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_083m03u" sourceRef="start" targetRef="get-number-of-instances" />
+    <bpmn:subProcess id="multi-instance-embedded-subprocess" name="Multi-instance embedded subprocess">
+      <bpmn:incoming>SequenceFlow_089tdbd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0euixrw</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="instances" camunda:elementVariable="instance" />
+      <bpmn:startEvent id="StartEvent_0aogl7q">
+        <bpmn:outgoing>start-subprocess</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="start-subprocess" sourceRef="StartEvent_0aogl7q" targetRef="do-something1" />
+      <bpmn:endEvent id="end-subprocess">
+        <bpmn:incoming>SequenceFlow_16p01ue</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_18z0e5c" sourceRef="do-something1" targetRef="do-something2" />
+      <bpmn:scriptTask id="do-something1" name="Do something 1" scriptFormat="groovy">
+        <bpmn:incoming>start-subprocess</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_18z0e5c</bpmn:outgoing>
+        <bpmn:script>println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:scriptTask id="do-something2" name="Do something 2" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_18z0e5c</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0wvd8gh</bpmn:outgoing>
+        <bpmn:script>// println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_0wvd8gh" sourceRef="do-something2" targetRef="do-something3" />
+      <bpmn:scriptTask id="do-something3" name="Do something 3" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_0wvd8gh</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_13s42ga</bpmn:outgoing>
+        <bpmn:script>// println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_13s42ga" sourceRef="do-something3" targetRef="do-something4" />
+      <bpmn:scriptTask id="do-something4" name="Do something 4" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_13s42ga</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1i56u6f</bpmn:outgoing>
+        <bpmn:script>// println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1i56u6f" sourceRef="do-something4" targetRef="do-something5" />
+      <bpmn:scriptTask id="do-something5" name="Do something 5" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1i56u6f</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0ba5z1i</bpmn:outgoing>
+        <bpmn:script>// println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_0ba5z1i" sourceRef="do-something5" targetRef="do-something6" />
+      <bpmn:scriptTask id="do-something6" name="Do something 6" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_0ba5z1i</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1cnel75</bpmn:outgoing>
+        <bpmn:script>// println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1cnel75" sourceRef="do-something6" targetRef="do-something7" />
+      <bpmn:scriptTask id="do-something7" name="Do something 7" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1cnel75</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1ia70sd</bpmn:outgoing>
+        <bpmn:script>// println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1ia70sd" sourceRef="do-something7" targetRef="do-something8" />
+      <bpmn:scriptTask id="do-something8" name="Do something 8" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1ia70sd</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_147a4ts</bpmn:outgoing>
+        <bpmn:script>// println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_147a4ts" sourceRef="do-something8" targetRef="do-something9" />
+      <bpmn:scriptTask id="do-something9" name="Do something 9" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_147a4ts</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_16p01ue</bpmn:outgoing>
+        <bpmn:script>// println "################# " + instance + " doing something"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_16p01ue" sourceRef="do-something9" targetRef="end-subprocess" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_0euixrw" sourceRef="multi-instance-embedded-subprocess" targetRef="update-report" />
+    <bpmn:sequenceFlow id="SequenceFlow_089tdbd" sourceRef="init" targetRef="multi-instance-embedded-subprocess" />
+    <bpmn:scriptTask id="init" name="Init" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1a3s5z2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_089tdbd</bpmn:outgoing>
+      <bpmn:script>def instances = []
+
+for (i = 0; i &lt; getNumberOfInstances.numInstances; i++) {
+  instances.add('instance' + i)
+}
+
+execution.setVariable("instances", instances)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1a3s5z2" sourceRef="get-number-of-instances" targetRef="init" />
+    <bpmn:userTask id="get-number-of-instances" name="Get number of instances" camunda:formKey="execute:get-number-instances.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="getNumberOfInstances">${getNumberOfInstances}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_083m03u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1a3s5z2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_13w0xik" sourceRef="update-report" targetRef="end" />
+    <bpmn:scriptTask id="update-report" name="Update report" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0euixrw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13w0xik</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, 'Parallel multi-instance embedded subprocess no sleep done')</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="parallel-multi-instance-embedded-subprocess-nosleep">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="135" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="108" y="158" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1r8upib_di" bpmnElement="end">
+        <dc:Bounds x="1323" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1296" y="162" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_083m03u_di" bpmnElement="SequenceFlow_083m03u">
+        <di:waypoint x="171" y="140" />
+        <di:waypoint x="222" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="151.5" y="119" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1vf1abn_di" bpmnElement="multi-instance-embedded-subprocess" isExpanded="true">
+        <dc:Bounds x="521" y="37" width="621" height="475" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0euixrw_di" bpmnElement="SequenceFlow_0euixrw">
+        <di:waypoint x="1142" y="140" />
+        <di:waypoint x="1182" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1117" y="119" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_089tdbd_di" bpmnElement="SequenceFlow_089tdbd">
+        <di:waypoint x="475" y="140" />
+        <di:waypoint x="521" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="453" y="119" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_07jormw_di" bpmnElement="init">
+        <dc:Bounds x="375" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1a3s5z2_di" bpmnElement="SequenceFlow_1a3s5z2">
+        <di:waypoint x="322" y="140" />
+        <di:waypoint x="375" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="348.5" y="119" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0o9l3gr_di" bpmnElement="get-number-of-instances">
+        <dc:Bounds x="222" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0aogl7q_di" bpmnElement="StartEvent_0aogl7q">
+        <dc:Bounds x="560" y="117" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="533" y="157" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jh4s4g_di" bpmnElement="start-subprocess">
+        <di:waypoint x="596" y="135" />
+        <di:waypoint x="635" y="135" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="571" y="114" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0dy52d3_di" bpmnElement="end-subprocess">
+        <dc:Bounds x="1068" y="408" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1041" y="448" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18z0e5c_di" bpmnElement="SequenceFlow_18z0e5c">
+        <di:waypoint x="735" y="135" />
+        <di:waypoint x="777" y="135" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="711" y="114" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0ce3m7f_di" bpmnElement="do-something1">
+        <dc:Bounds x="635" y="95" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_13w0xik_di" bpmnElement="SequenceFlow_13w0xik">
+        <di:waypoint x="1282" y="140" />
+        <di:waypoint x="1323" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1257.5" y="119" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_07lroh5_di" bpmnElement="update-report">
+        <dc:Bounds x="1182" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0ig5isi_di" bpmnElement="do-something2">
+        <dc:Bounds x="777" y="95" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wvd8gh_di" bpmnElement="SequenceFlow_0wvd8gh">
+        <di:waypoint x="877" y="135" />
+        <di:waypoint x="918" y="135" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="897.5" y="114" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0xye7qi_di" bpmnElement="do-something3">
+        <dc:Bounds x="918" y="95" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_13s42ga_di" bpmnElement="SequenceFlow_13s42ga">
+        <di:waypoint x="1018" y="135" />
+        <di:waypoint x="1044" y="135" />
+        <di:waypoint x="1044" y="206" />
+        <di:waypoint x="685" y="206" />
+        <di:waypoint x="685" y="238" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1059" y="164.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1ubxv64_di" bpmnElement="do-something4">
+        <dc:Bounds x="635" y="238" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i56u6f_di" bpmnElement="SequenceFlow_1i56u6f">
+        <di:waypoint x="735" y="278" />
+        <di:waypoint x="777" y="278" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="756" y="257" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1yd6opb_di" bpmnElement="do-something5">
+        <dc:Bounds x="777" y="238" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ba5z1i_di" bpmnElement="SequenceFlow_0ba5z1i">
+        <di:waypoint x="877" y="278" />
+        <di:waypoint x="918" y="278" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="897.5" y="257" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_11tf6tu_di" bpmnElement="do-something6">
+        <dc:Bounds x="918" y="238" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1cnel75_di" bpmnElement="SequenceFlow_1cnel75">
+        <di:waypoint x="1018" y="278" />
+        <di:waypoint x="1044" y="278" />
+        <di:waypoint x="1044" y="350" />
+        <di:waypoint x="685" y="350" />
+        <di:waypoint x="685" y="386" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1059" y="308" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1ofguqq_di" bpmnElement="do-something7">
+        <dc:Bounds x="635" y="386" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ia70sd_di" bpmnElement="SequenceFlow_1ia70sd">
+        <di:waypoint x="735" y="426" />
+        <di:waypoint x="777" y="426" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="756" y="405" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1dntoey_di" bpmnElement="do-something8">
+        <dc:Bounds x="777" y="386" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_147a4ts_di" bpmnElement="SequenceFlow_147a4ts">
+        <di:waypoint x="877" y="426" />
+        <di:waypoint x="918" y="426" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="897.5" y="405" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1k72pwr_di" bpmnElement="do-something9">
+        <dc:Bounds x="918" y="386" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_16p01ue_di" bpmnElement="SequenceFlow_16p01ue">
+        <di:waypoint x="1018" y="426" />
+        <di:waypoint x="1068" y="426" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1043" y="405" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

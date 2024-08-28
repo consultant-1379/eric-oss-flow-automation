@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_05j7wxd" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="usertaskShowcase-setup" isExecutable="true">
+    <bpmn:scriptTask id="ScriptTask_1ozxh7s" name="Map to flow-input-schema" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1xf9xim</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_04j0qc5</bpmn:outgoing>
+      <bpmn:script>// _1DynamicObject
+
+def _1dynamicObject = dynamicMultiTaskUsertask._1DynamicObject;
+
+if(_1dynamicObject){
+
+Map _1DynamicObject_Tasks = new HashMap();
+_1DynamicObject_Tasks.put("task1", _1dynamicObject.task1.checkbox);
+_1DynamicObject_Tasks.put("task2", _1dynamicObject.task2.checkbox);
+_1DynamicObject_Tasks.put("listBox1", _1dynamicObject.listBox1);
+
+flowInput._1DynamicObject = _1DynamicObject_Tasks
+
+}
+
+
+// _2DynamicObject
+
+def _2dynamicObject = dynamicMultiTaskUsertask._2DynamicObject;
+
+if(_2dynamicObject){
+
+Map _2DynamicObject_Tasks = new HashMap();
+_2DynamicObject_Tasks.put("task1", _2dynamicObject.task1.checkbox);
+_2DynamicObject_Tasks.put("task2", _2dynamicObject.task2.checkbox);
+_2DynamicObject_Tasks.put("task3", _2dynamicObject.task3.checkbox);
+_2DynamicObject_Tasks.put("task4", _2dynamicObject.task4.checkbox);
+_2DynamicObject_Tasks.put("listBox2", _2dynamicObject.listBox2);
+
+flowInput._2DynamicObject = _2DynamicObject_Tasks
+
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="UserTask_0ka88sy" name="Dynamic Multi-Task UserTask" camunda:formKey="setup:dynamic-multi-task.ftl">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="dynamicObjects">${dynamicObjects}</camunda:inputParameter>
+          <camunda:outputParameter name="dynamicMultiTaskUsertask">${dynamicMultiTaskUsertask}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_06fmg32</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1xf9xim</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="ScriptTask_03bmyqb" name="Prepare Dynamic Multi Tasks" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0oqtx8j</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_06fmg32</bpmn:outgoing>
+      <bpmn:script>def dynamicObjects = []
+
+if(selectDynamicObjects._1DynamicObject){
+
+//_1_dynamicObject
+    def _1_dynamicObject =[:]
+    _1_dynamicObject.id = "_1DynamicObject"
+    _1_dynamicObject.name = "Dynamic Object 1"
+
+    def _1_dynamicObject_Tasks = []
+    def _1_dynamicObject_Task_1 = [:]
+    _1_dynamicObject_Task_1.propertyName = "task1"
+    _1_dynamicObject_Task_1.name = "Task"
+    _1_dynamicObject_Task_1.nameExtra = "1"
+    _1_dynamicObject_Task_1.info = "This is Task 1"
+    _1_dynamicObject_Task_1.default = false
+    _1_dynamicObject_Task_1.checkbox = "Task"
+
+
+    _1_dynamicObject_Tasks.add(_1_dynamicObject_Task_1);
+
+    def _1_dynamicObject_Task_2 = [:]
+    _1_dynamicObject_Task_2.propertyName = "task2"
+    _1_dynamicObject_Task_2.name = "Task"
+    _1_dynamicObject_Task_2.nameExtra = "2"
+    _1_dynamicObject_Task_2.info = "This is Task 2"
+    _1_dynamicObject_Task_2.default = false
+    _1_dynamicObject_Task_2.checkbox = "Task"
+
+
+    _1_dynamicObject_Tasks.add(_1_dynamicObject_Task_2);
+
+
+    def _1_dynamicObject_Task_3 = [:]
+
+    _1_dynamicObject_Task_3.propertyName = "listBox1"
+    _1_dynamicObject_Task_3.name = "List Box"
+    _1_dynamicObject_Task_3.nameExtra = "name extra"
+    _1_dynamicObject_Task_3.info = "This is List Box 1"
+    def enumValues = "[" + "\"" + "ITEM1" + "\"" + "," +"\"" + "ITEM2" + "\"" + "," +"\"" + "ITEM3" + "\"" +"]"
+    def enumNamesValues = "[" + "\"" + "Item 1" + "\"" + "," + "\"" + "Item 2" + "\"" + ","+ "\"" + "Item 3" + "\"" + "]"
+    _1_dynamicObject_Task_3.enum = enumValues
+    _1_dynamicObject_Task_3.enumNames = enumNamesValues
+    _1_dynamicObject_Task_3.default = "ITEM1"
+    _1_dynamicObject_Task_3.listbox = "listbox"
+
+    _1_dynamicObject_Tasks.add(_1_dynamicObject_Task_3);
+
+
+    _1_dynamicObject.tasks = _1_dynamicObject_Tasks
+    dynamicObjects.add(_1_dynamicObject)
+
+}
+
+
+
+if(selectDynamicObjects._2DynamicObject){
+
+//_2_dynamicObject
+
+    def _2_dynamicObject=[:]
+    _2_dynamicObject.id = "_2DynamicObject"
+    _2_dynamicObject.name = "Dynamic Object 2"
+
+    def _2_dynamicObject_Tasks = []
+
+    def _2_dynamicObject_Task_1 = [:]
+    _2_dynamicObject_Task_1.propertyName = "task1"
+    _2_dynamicObject_Task_1.name = "Task 1"
+    _2_dynamicObject_Task_1.nameExtra = "1"
+    _2_dynamicObject_Task_1.info = "This is Task 1"
+    _2_dynamicObject_Task_1.default = false
+    _2_dynamicObject_Task_1.checkbox = "Task"
+
+
+    def _2_dynamicObject_Task_2 = [:]
+    _2_dynamicObject_Task_2.propertyName = "task2"
+    _2_dynamicObject_Task_2.name = "Task 2"
+    _2_dynamicObject_Task_2.nameExtra = "2"
+    _2_dynamicObject_Task_2.info = "This is Task 2"
+    _2_dynamicObject_Task_2.default = false
+    _2_dynamicObject_Task_2.checkbox = "Task"
+
+
+    def _2_dynamicObject_Task_3 = [:]
+    _2_dynamicObject_Task_3.propertyName = "task3"
+    _2_dynamicObject_Task_3.name = "Task 3"
+    _2_dynamicObject_Task_3.nameExtra = "3"
+    _2_dynamicObject_Task_3.info = "This is Task 3"
+    _2_dynamicObject_Task_3.default = false
+    _2_dynamicObject_Task_3.checkbox = "Task"
+
+
+    def _2_dynamicObject_Task_4 = [:]
+    _2_dynamicObject_Task_4.propertyName = "task4"
+    _2_dynamicObject_Task_4.name = "Task 4"
+    _2_dynamicObject_Task_4.nameExtra = "4"
+    _2_dynamicObject_Task_4.info = "This is Task 4"
+    _2_dynamicObject_Task_4.default = false
+    _2_dynamicObject_Task_4.checkbox = "Task"
+
+
+
+    _2_dynamicObject_Tasks.add(_2_dynamicObject_Task_1);
+    _2_dynamicObject_Tasks.add(_2_dynamicObject_Task_2);
+    _2_dynamicObject_Tasks.add(_2_dynamicObject_Task_3);
+    _2_dynamicObject_Tasks.add(_2_dynamicObject_Task_4);
+
+
+
+    def _2_dynamicObject_Task_5 = [:]
+
+    _2_dynamicObject_Task_5.propertyName = "listBox2"
+    _2_dynamicObject_Task_5.name = "List Box"
+    _2_dynamicObject_Task_5.nameExtra = "name extra"
+    _2_dynamicObject_Task_5.info = "This is List Box 2"
+    def enumValues = "[" + "\"" + "ITEM4" + "\"" + "," + "\"" + "ITEM5" + "\"" + "," +"\"" + "ITEM6" + "\"" +"]"
+    def enumNamesValues = "[" + "\"" + "Item 4" + "\"" + ","+ "\"" + "Item 5" + "\"" + "," + "\"" + "Item 6" + "\"" + "]"
+    _2_dynamicObject_Task_5.enum = enumValues
+    _2_dynamicObject_Task_5.enumNames = enumNamesValues
+    _2_dynamicObject_Task_5.default = "ITEM4"
+    _2_dynamicObject_Task_5.listbox = "listbox"
+
+    _2_dynamicObject_Tasks.add(_2_dynamicObject_Task_5);
+
+
+    _2_dynamicObject.tasks = _2_dynamicObject_Tasks
+
+    dynamicObjects.add(_2_dynamicObject)
+}
+
+execution.setVariable("dynamicObjects",dynamicObjects)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="UserTask_12c88ph" name="Select Dynamic Objects" camunda:formKey="setup:select-dynamic-objects.ftl">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="dynamicObjectsOptions">${dynamicObjectsOptions}</camunda:inputParameter>
+          <camunda:outputParameter name="selectDynamicObjects">${selectDynamicObjects}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_07mi74z</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0oqtx8j</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="ScriptTask_0q5kpz6" name="Prepare Selection for Dynamic Objects" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1qqlnnp</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07mi74z</bpmn:outgoing>
+      <bpmn:script>def dynamicObjectsOptions = []
+
+def _1DynamicObject = [propertyName:"_1DynamicObject", name : "Dynamic Object", nameExtra: "1", info : "This is Dynamic Object 1", default : false]
+
+def _2DynamicObject = [propertyName:"_2DynamicObject", name : "Dynamic Object", nameExtra: "2", info : "This is Dynamic Object 2", default : false]
+
+dynamicObjectsOptions.add(_1DynamicObject)
+dynamicObjectsOptions.add(_2DynamicObject)
+
+execution.setVariable("dynamicObjectsOptions",dynamicObjectsOptions)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0enc9ni" default="SequenceFlow_1qqlnnp">
+      <bpmn:incoming>SequenceFlow_00km7oq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qqlnnp</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0zeyj88</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="ScriptTask_1h4bzlv" name="Validate inputs" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0zeyj88</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_11es296</bpmn:outgoing>
+      <bpmn:script>// insert validation here</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEvent_0uhalfw">
+      <bpmn:incoming>SequenceFlow_11es296</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:startEvent id="StartEvent_0nde1nn" camunda:asyncAfter="true">
+      <bpmn:outgoing>SequenceFlow_00km7oq</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1xf9xim" sourceRef="UserTask_0ka88sy" targetRef="ScriptTask_1ozxh7s" />
+    <bpmn:sequenceFlow id="SequenceFlow_06fmg32" sourceRef="ScriptTask_03bmyqb" targetRef="UserTask_0ka88sy" />
+    <bpmn:sequenceFlow id="SequenceFlow_0oqtx8j" sourceRef="UserTask_12c88ph" targetRef="ScriptTask_03bmyqb" />
+    <bpmn:sequenceFlow id="SequenceFlow_07mi74z" sourceRef="ScriptTask_0q5kpz6" targetRef="UserTask_12c88ph" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qqlnnp" name="input not supplied" sourceRef="ExclusiveGateway_0enc9ni" targetRef="ScriptTask_0q5kpz6" />
+    <bpmn:sequenceFlow id="SequenceFlow_00km7oq" sourceRef="StartEvent_0nde1nn" targetRef="ExclusiveGateway_0enc9ni" />
+    <bpmn:sequenceFlow id="SequenceFlow_0zeyj88" name="input supplied" sourceRef="ExclusiveGateway_0enc9ni" targetRef="ScriptTask_1h4bzlv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty execution.getVariable('flowInput')}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_11es296" sourceRef="ScriptTask_1h4bzlv" targetRef="EndEvent_0uhalfw" />
+    <bpmn:endEvent id="EndEvent_04wkhv4">
+      <bpmn:incoming>SequenceFlow_04j0qc5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_04j0qc5" sourceRef="ScriptTask_1ozxh7s" targetRef="EndEvent_04wkhv4" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="usertaskShowcase-setup">
+      <bpmndi:BPMNShape id="ScriptTask_1ozxh7s_di" bpmnElement="ScriptTask_1ozxh7s">
+        <dc:Bounds x="1200" y="317" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0ka88sy_di" bpmnElement="UserTask_0ka88sy">
+        <dc:Bounds x="970" y="317" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_03bmyqb_di" bpmnElement="ScriptTask_03bmyqb">
+        <dc:Bounds x="760" y="317" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_12c88ph_di" bpmnElement="UserTask_12c88ph">
+        <dc:Bounds x="550" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0q5kpz6_di" bpmnElement="ScriptTask_0q5kpz6">
+        <dc:Bounds x="351" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0enc9ni_di" bpmnElement="ExclusiveGateway_0enc9ni" isMarkerVisible="true">
+        <dc:Bounds x="241" y="217" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1h4bzlv_di" bpmnElement="ScriptTask_1h4bzlv">
+        <dc:Bounds x="351" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0uhalfw_di" bpmnElement="EndEvent_0uhalfw">
+        <dc:Bounds x="518" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0nde1nn_di" bpmnElement="StartEvent_0nde1nn">
+        <dc:Bounds x="155" y="224" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xf9xim_di" bpmnElement="SequenceFlow_1xf9xim">
+        <di:waypoint x="1070" y="357" />
+        <di:waypoint x="1200" y="357" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06fmg32_di" bpmnElement="SequenceFlow_06fmg32">
+        <di:waypoint x="860" y="357" />
+        <di:waypoint x="970" y="357" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0oqtx8j_di" bpmnElement="SequenceFlow_0oqtx8j">
+        <di:waypoint x="650" y="360" />
+        <di:waypoint x="760" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07mi74z_di" bpmnElement="SequenceFlow_07mi74z">
+        <di:waypoint x="451" y="360" />
+        <di:waypoint x="550" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qqlnnp_di" bpmnElement="SequenceFlow_1qqlnnp">
+        <di:waypoint x="266" y="267" />
+        <di:waypoint x="266" y="360" />
+        <di:waypoint x="351" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="234" y="267" width="87" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00km7oq_di" bpmnElement="SequenceFlow_00km7oq">
+        <di:waypoint x="191" y="242" />
+        <di:waypoint x="241" y="242" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zeyj88_di" bpmnElement="SequenceFlow_0zeyj88">
+        <di:waypoint x="266" y="217" />
+        <di:waypoint x="266" y="120" />
+        <di:waypoint x="351" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="264" y="101.5" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11es296_di" bpmnElement="SequenceFlow_11es296">
+        <di:waypoint x="451" y="120" />
+        <di:waypoint x="518" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_04wkhv4_di" bpmnElement="EndEvent_04wkhv4">
+        <dc:Bounds x="1432" y="339" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04j0qc5_di" bpmnElement="SequenceFlow_04j0qc5">
+        <di:waypoint x="1300" y="357" />
+        <di:waypoint x="1432" y="357" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

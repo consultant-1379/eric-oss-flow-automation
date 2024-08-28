@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="fileHandling-execute" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0f1hk97</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_0gx8usv">
+      <bpmn:incoming>SequenceFlow_0sfyj62</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0sfyj62" sourceRef="update-report-summary" targetRef="EndEvent_0gx8usv" />
+    <bpmn:scriptTask id="update-report-summary" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_00mzre7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0sfyj62</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+Reporter.updateReportSummary(execution, "Our work is done here")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0f1hk97" sourceRef="StartEvent_1" targetRef="Task_10zic4q" />
+    <bpmn:sequenceFlow id="SequenceFlow_1rgh8l0" sourceRef="Task_10zic4q" targetRef="Task_0u8rrpg" />
+    <bpmn:userTask id="Task_10zic4q" name="Upload File" camunda:formKey="execute:upload-file.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="uploadFile">${uploadFile}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0f1hk97</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rgh8l0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1l2vr2q" sourceRef="Task_0u8rrpg" targetRef="Task_0dgynxz" />
+    <bpmn:scriptTask id="Task_0u8rrpg" name="Report file info" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1rgh8l0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1l2vr2q</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+import org.camunda.bpm.engine.variable.value.FileValue
+
+def FileValue uploadedFile = uploadFile.uploadedFile
+Reporter.updateReportVariable(execution, "uploadedFileName", uploadedFile.filename)
+Reporter.updateReportVariable(execution, "uploadedFileContent", uploadedFile.value.text)
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_00mzre7" sourceRef="Task_184rm8d" targetRef="update-report-summary" />
+    <bpmn:userTask id="Task_184rm8d" name="Wait" camunda:formKey="execute:wait.json">
+      <bpmn:incoming>SequenceFlow_0gkne60</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00mzre7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_16e1cpe" sourceRef="Task_0dgynxz" targetRef="Task_04tos6x" />
+    <bpmn:scriptTask id="Task_0dgynxz" name="Copy file" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1l2vr2q</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16e1cpe</bpmn:outgoing>
+      <bpmn:script>import org.camunda.bpm.engine.variable.Variables
+import org.camunda.bpm.engine.variable.value.FileValue
+
+def fileContent = uploadFile.uploadedFile.value.text.bytes
+def FileValue copiedFile = Variables.fileValue("copiedFile.txt").file(fileContent).create()
+execution.setVariable("copiedFile", copiedFile)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1i56fte" sourceRef="Task_04tos6x" targetRef="Task_1saw7yi" />
+    <bpmn:scriptTask id="Task_04tos6x" name="Report copied file info" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_16e1cpe</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1i56fte</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def copiedFile = execution.getVariableTyped("copiedFile")
+Reporter.updateReportVariable(execution, "copiedFileName", copiedFile.filename)
+Reporter.updateReportVariable(execution, "copiedFileContent", copiedFile.value.text)
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1jwk573" sourceRef="Task_1saw7yi" targetRef="Task_1jiqfvl" />
+    <bpmn:sequenceFlow id="SequenceFlow_0gkne60" sourceRef="Task_1jiqfvl" targetRef="Task_184rm8d" />
+    <bpmn:scriptTask id="Task_1saw7yi" name="Create file" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1i56fte</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1jwk573</bpmn:outgoing>
+      <bpmn:script>import org.camunda.bpm.engine.variable.Variables
+import org.camunda.bpm.engine.variable.value.FileValue
+
+def FileValue createdFile = Variables.fileValue("createdFile.txt").file("content".bytes).create()
+execution.setVariable("createdFile", createdFile)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_1jiqfvl" name="Report created file" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1jwk573</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0gkne60</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def createdFile = execution.getVariableTyped("createdFile")
+Reporter.updateReportVariable(execution, "createdFileName", createdFile.filename)
+Reporter.updateReportVariable(execution, "createdFileContent", createdFile.value.text)
+</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="fileHandling-execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="289" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="325" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0gx8usv_di" bpmnElement="EndEvent_0gx8usv">
+        <dc:Bounds x="765" y="463" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="738" y="503" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sfyj62_di" bpmnElement="SequenceFlow_0sfyj62">
+        <di:waypoint x="700" y="481" />
+        <di:waypoint x="765" y="481" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="688" y="460" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0y3sm4i_di" bpmnElement="update-report-summary">
+        <dc:Bounds x="600" y="441" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0f1hk97_di" bpmnElement="SequenceFlow_0f1hk97">
+        <di:waypoint x="218" y="307" />
+        <di:waypoint x="264" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="241" y="286" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rgh8l0_di" bpmnElement="SequenceFlow_1rgh8l0">
+        <di:waypoint x="364" y="307" />
+        <di:waypoint x="429" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="396.5" y="286" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_12ykrqf_di" bpmnElement="Task_10zic4q">
+        <dc:Bounds x="264" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l2vr2q_di" bpmnElement="SequenceFlow_1l2vr2q">
+        <di:waypoint x="529" y="307" />
+        <di:waypoint x="579" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="509" y="286" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1a41dkj_di" bpmnElement="Task_0u8rrpg">
+        <dc:Bounds x="429" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00mzre7_di" bpmnElement="SequenceFlow_00mzre7">
+        <di:waypoint x="529" y="481" />
+        <di:waypoint x="600" y="481" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="520" y="460" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0jgocei_di" bpmnElement="Task_184rm8d">
+        <dc:Bounds x="429" y="441" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_16e1cpe_di" bpmnElement="SequenceFlow_16e1cpe">
+        <di:waypoint x="679" y="307" />
+        <di:waypoint x="722" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="700.5" y="286" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1jp5zm3_di" bpmnElement="Task_0dgynxz">
+        <dc:Bounds x="579" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i56fte_di" bpmnElement="SequenceFlow_1i56fte">
+        <di:waypoint x="822" y="307" />
+        <di:waypoint x="871" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="846.5" y="286" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_11aelv1_di" bpmnElement="Task_04tos6x">
+        <dc:Bounds x="722" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jwk573_di" bpmnElement="SequenceFlow_1jwk573">
+        <di:waypoint x="971" y="307" />
+        <di:waypoint x="1016" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="993.5" y="286" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gkne60_di" bpmnElement="SequenceFlow_0gkne60">
+        <di:waypoint x="1116" y="307" />
+        <di:waypoint x="1151" y="307" />
+        <di:waypoint x="1151" y="398" />
+        <di:waypoint x="479" y="398" />
+        <di:waypoint x="479" y="441" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1166" y="346.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_14mth03_di" bpmnElement="Task_1saw7yi">
+        <dc:Bounds x="871" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_191yzfb_di" bpmnElement="Task_1jiqfvl">
+        <dc:Bounds x="1016" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

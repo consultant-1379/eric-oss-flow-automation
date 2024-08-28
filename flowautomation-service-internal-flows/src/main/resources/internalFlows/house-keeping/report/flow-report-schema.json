@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "House Keeping Report",
+  "description": "House Keeping Report",
+  "type": "object",
+  "properties": {
+    "nextExecution": {
+      "name": "Next Scheduled Execution",
+      "description": "Next Scheduled Execution",
+      "type": "string",
+      "objectGen": {
+        "binding": "variable:report:nextExecution"
+      }
+    },
+    "reindexResultTable": {
+      "name": "",
+      "description": "Reindex Script",
+      "type": "array",
+      "objectGen": {
+        "indexBinding": "reindexDateTimes",
+        "indexName": "index"
+      },
+      "items": {
+        "name": "Reindex - Latest Executions Details",
+        "description": "Reindex - Latest Executions Details",
+        "type": "object",
+        "properties": {
+          "dateTime": {
+            "name": "Date / Time",
+            "description": "Execution Date and Time",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index}.dateTime"
+            }
+          },
+          "scriptExecutionOutput": {
+            "name": "Output",
+            "description": "Script Execution Output",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{index}.scriptExecutionOutput"
+            }
+          },
+          "reindexExecutionDuration": {
+            "name": "Duration (seconds)",
+            "description": "Reindex Execution Duration",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+              "binding": "variable:report:{index}.reindexExecutionDuration"
+            }
+          },
+          "tableInitialSize": {
+            "name": "Table Initial Size (MB)",
+            "description": "Table Initial Size",
+            "type": "number",
+            "default": 0,
+            "objectGen": {
+              "binding": "variable:report:{index}.tableInitialSize"
+            }
+          },
+          "tableFinalSize": {
+            "name": "Table Final Size (MB)",
+            "description": "Table Final Size",
+            "type": "number",
+            "default": 0,
+            "objectGen": {
+              "binding": "variable:report:{index}.tableFinalSize"
+            }
+          }
+        },
+        "required": ["dateTime","scriptExecutionOutput"]
+      }
+    }
+  },
+  "required": [
+    "nextExecution"
+  ]
+}

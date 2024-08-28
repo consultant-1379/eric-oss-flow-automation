@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="handle-element" name="Handle Element" isExecutable="true">
+    <bpmn:startEvent id="handle-element-start" camunda:asyncBefore="true">
+      <bpmn:outgoing>SequenceFlow_1k6k1d6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="initialise-element" name="Initialise element" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1k6k1d6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0c3aqho</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def elementNumber = elementId.substring(7) as Integer
+execution.setVariable("elementNumber", elementNumber)
+
+def startTimeMs = System.currentTimeMillis()
+execution.setVariable("startTimeMs", startTimeMs)
+
+def sleep = "PT0S"
+
+def instanceSleepSeconds = flowInput.configuration.instanceSleepSeconds as Integer
+if (instanceSleepSeconds &gt; 0) {
+  def sleepOffset = 10 * (elementNumber % 2)
+  instanceSleepSeconds += sleepOffset 
+  sleepTime = "PT"+instanceSleepSeconds+"S"
+}
+execution.setVariable("sleepTime", sleepTime)
+
+def now = new Date().format("yyyy-MM-dd HH:mm:ss.SSS")
+println "&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; " + now + ": Executing " + elementId + " (sleeping for " + instanceSleepSeconds + " seconds)"
+Reporter.updateReportVariable(execution, elementId+".state", "Executing")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1k6k1d6" sourceRef="handle-element-start" targetRef="initialise-element" />
+    <bpmn:sequenceFlow id="SequenceFlow_0c3aqho" sourceRef="initialise-element" targetRef="create-incident-check" />
+    <bpmn:endEvent id="handle-element-end">
+      <bpmn:incoming>SequenceFlow_0ry4fts</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="error-handler" name="Error handler" triggeredByEvent="true">
+      <bpmn:sequenceFlow id="SequenceFlow_18nz8x7" sourceRef="StartEvent_19x4bax" targetRef="handle-error" />
+      <bpmn:endEvent id="EndEvent_1714jh7">
+        <bpmn:incoming>SequenceFlow_1pp780h</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1pp780h" sourceRef="handle-error" targetRef="EndEvent_1714jh7" />
+      <bpmn:startEvent id="StartEvent_19x4bax">
+        <bpmn:outgoing>SequenceFlow_18nz8x7</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:scriptTask id="handle-error" name="Handle error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_18nz8x7</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1pp780h</bpmn:outgoing>
+        <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def now = new Date().format("yyyy-MM-dd HH:mm:ss.SSS")
+println "&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; " + now + ": Completed " + elementId + " with error"
+
+def duration = "????"
+
+def result = "Error"
+Reporter.updateReportVariable(execution, elementId+".state", "Completed")
+Reporter.updateReportVariable(execution, elementId+".result", result)
+Reporter.updateReportVariable(execution, elementId+".summary", "summary for " + elementId)
+Reporter.updateReportVariable(execution, elementId+".duration", ""+duration)
+
+execution.setVariable("elementResult", result)</bpmn:script>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+    <bpmn:intermediateCatchEvent id="sleep" name="Sleep">
+      <bpmn:incoming>SequenceFlow_0l3luth</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1i9rejj</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${sleepTime}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:scriptTask id="update-element-result" name="Update element result" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1i9rejj</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0tqlgkw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ry4fts</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def now = new Date().format("yyyy-MM-dd HH:mm:ss.SSS")
+println "&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt; " + now + ": Completed " + elementId
+
+def startTimeMs = execution.getVariable("startTimeMs")
+def endTimeMs = System.currentTimeMillis()
+def duration = (endTimeMs - startTimeMs) as String
+Integer rank = Integer.valueOf((int)(Math.random() * 20 + 1))
+Double percentage = Double.valueOf(Math.floor(Math.random() * 10000) / 100.0)
+
+def result = "Success"
+if ((elementNumber % 7) == 2) {
+    result = "Failure"
+}
+
+Reporter.updateReportVariable(execution, elementId+".state", "Completed")
+Reporter.updateReportVariable(execution, elementId+".result", result)
+Reporter.updateReportVariable(execution, elementId+".summary", "summary for " + elementId)
+Reporter.updateReportVariable(execution, elementId+".duration", ""+duration)
+Reporter.updateReportVariable(execution, elementId+".rank", rank)
+Reporter.updateReportVariable(execution, elementId+".percentage", percentage)
+
+execution.setVariable("elementResult", result)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1o2s6ft" default="SequenceFlow_0l3luth">
+      <bpmn:incoming>SequenceFlow_1eof8nw</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_102fcfj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0l3luth</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0tqlgkw</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:scriptTask id="create-incident" name="Create incident for every Nth element" scriptFormat="groovy">
+      <bpmn:incoming>create-incident-flow</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1eof8nw</bpmn:outgoing>
+      <bpmn:script>if (elementNumber % 7 == 0) {
+  println "################# Creating incident by throwing runtime exception for " + elementId
+  throw new RuntimeException("element incident")
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0l3luth" sourceRef="ExclusiveGateway_1o2s6ft" targetRef="sleep" />
+    <bpmn:sequenceFlow id="SequenceFlow_1i9rejj" sourceRef="sleep" targetRef="update-element-result" />
+    <bpmn:sequenceFlow id="SequenceFlow_0tqlgkw" name="no sleep" sourceRef="ExclusiveGateway_1o2s6ft" targetRef="update-element-result">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${sleepTime == "PT0S"}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1eof8nw" sourceRef="create-incident" targetRef="ExclusiveGateway_1o2s6ft" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ry4fts" sourceRef="update-element-result" targetRef="handle-element-end" />
+    <bpmn:exclusiveGateway id="create-incident-check" name="Create incident ?" default="SequenceFlow_102fcfj">
+      <bpmn:incoming>SequenceFlow_0c3aqho</bpmn:incoming>
+      <bpmn:outgoing>create-incident-flow</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_102fcfj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="create-incident-flow" name="Yes&#10;&#10;" sourceRef="create-incident-check" targetRef="create-incident">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.configuration.generateIncidents == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_102fcfj" sourceRef="create-incident-check" targetRef="ExclusiveGateway_1o2s6ft" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="handle-element">
+      <bpmndi:BPMNShape id="StartEvent_0etrme5_di" bpmnElement="handle-element-start">
+        <dc:Bounds x="150" y="153" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="123" y="193" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1k6k1d6_di" bpmnElement="SequenceFlow_1k6k1d6">
+        <di:waypoint x="186" y="171" />
+        <di:waypoint x="224" y="171" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="150" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1xhhkff_di" bpmnElement="sleep">
+        <dc:Bounds x="707" y="153" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="711" y="193" width="28" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i9rejj_di" bpmnElement="SequenceFlow_1i9rejj">
+        <di:waypoint x="743" y="171" />
+        <di:waypoint x="807" y="171" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="730" y="150" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_16rv3l6_di" bpmnElement="update-element-result">
+        <dc:Bounds x="807" y="131" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1o2s6ft_di" bpmnElement="ExclusiveGateway_1o2s6ft" isMarkerVisible="true">
+        <dc:Bounds x="605" y="146" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="206" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0l3luth_di" bpmnElement="SequenceFlow_0l3luth">
+        <di:waypoint x="655" y="171" />
+        <di:waypoint x="707" y="171" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="636" y="150" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tqlgkw_di" bpmnElement="SequenceFlow_0tqlgkw">
+        <di:waypoint x="630" y="146" />
+        <di:waypoint x="630" y="100" />
+        <di:waypoint x="857" y="100" />
+        <di:waypoint x="857" y="131" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="641" y="104" width="42" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_13sx0hh_di" bpmnElement="initialise-element">
+        <dc:Bounds x="224" y="131" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1eof8nw_di" bpmnElement="SequenceFlow_1eof8nw">
+        <di:waypoint x="570" y="171" />
+        <di:waypoint x="605" y="171" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="543" y="150" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1f3ldnc_di" bpmnElement="create-incident">
+        <dc:Bounds x="470" y="131" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_06py0fq_di" bpmnElement="error-handler" isExpanded="true">
+        <dc:Bounds x="328" y="269" width="352" height="158" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18nz8x7_di" bpmnElement="SequenceFlow_18nz8x7">
+        <di:waypoint x="400" y="356" />
+        <di:waypoint x="450" y="356" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="380" y="335" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1714jh7_di" bpmnElement="EndEvent_1714jh7">
+        <dc:Bounds x="600" y="338" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="573" y="378" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1pp780h_di" bpmnElement="SequenceFlow_1pp780h">
+        <di:waypoint x="550" y="356" />
+        <di:waypoint x="600" y="356" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="530" y="335" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_00is4j3_di" bpmnElement="StartEvent_19x4bax">
+        <dc:Bounds x="364" y="338" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="337" y="378" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_02036w6_di" bpmnElement="handle-error">
+        <dc:Bounds x="450" y="316" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0c3aqho_di" bpmnElement="SequenceFlow_0c3aqho">
+        <di:waypoint x="324" y="171" />
+        <di:waypoint x="373" y="171" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="303.5" y="150" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_01aqjht_di" bpmnElement="handle-element-end">
+        <dc:Bounds x="947" y="153" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="920" y="193" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ry4fts_di" bpmnElement="SequenceFlow_0ry4fts">
+        <di:waypoint x="907" y="171" />
+        <di:waypoint x="947" y="171" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="882" y="150" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_144rdyz_di" bpmnElement="create-incident-check" isMarkerVisible="true">
+        <dc:Bounds x="373" y="146" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="358" y="124" width="82" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1w5q283_di" bpmnElement="create-incident-flow">
+        <di:waypoint x="423" y="171" />
+        <di:waypoint x="470" y="171" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="438" y="150" width="19" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_102fcfj_di" bpmnElement="SequenceFlow_102fcfj">
+        <di:waypoint x="398" y="196" />
+        <di:waypoint x="398" y="237" />
+        <di:waypoint x="630" y="237" />
+        <di:waypoint x="630" y="196" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="514" y="216" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

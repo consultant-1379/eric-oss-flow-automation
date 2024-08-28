@@ -1,0 +1,102 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "configuration": {
+            "name": "Configuration",
+            "type": "object",
+            "properties": {
+                "parallelPaths": {
+                    "name": "Parallel Paths",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "requiredBehaviour": {
+                    "name": "Required Behaviour",
+                    "type": "object",
+                    "format": "radio",
+                    "oneOf": [
+                        {
+                            "properties": {
+                                "success": {
+                                    "name": "Success",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [ "success" ],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "setupError": {
+                                    "name": "Setup Error",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [ "setupError" ],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "setupIncident": {
+                                    "name": "Setup Incident",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [ "setupIncident" ],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "executeLevel1Error": {
+                                    "name": "Execute Level 1 Error",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [ "executeLevel1Error" ],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "executeLevel1Incident": {
+                                    "name": "Execute Level 1 Incident",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [ "executeLevel1Incident" ],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "executeLevel2Error": {
+                                    "name": "Execute Level 2 Error",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [ "executeLevel2Error" ],
+                            "additionalProperties": false
+                        },
+                        {
+                            "properties": {
+                                "executeLevel2Incident": {
+                                    "name": "Execute Level 2 Incident",
+                                    "type": "boolean"
+                                }
+                            },
+                            "required": [ "executeLevel2Incident" ],
+                            "additionalProperties": false
+                        }
+                    ],
+                    "default": "success"
+                }
+            },
+            "required": [ "parallelPaths", "requiredBehaviour" ],
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "configuration"
+    ],
+    "additionalProperties": false
+}

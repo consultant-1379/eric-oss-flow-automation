@@ -1,0 +1,151 @@
+#
+# COPYRIGHT Ericsson 2022
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+modelVersion: "2.0"
+flavor: "Generic"
+#flavor: "ADP 2.0"
+service:
+  # name of the service:
+  name: "Flow Automation"
+
+  # Design Country (set on the source products)
+  design_countries:
+    - IE
+
+  # Compilation Country (Set on the derivative products)
+  sw_compilation_country: SE
+
+  # Release responsible
+  release_responsible: BCSDBECH
+
+  #  Design responsible
+  design_responsible: BCSDBECH
+
+    # using "Completed" when encryption is not changed compared to previous released version.
+    # encryption_status: "Completed"
+
+    # Bookmarks
+    # bookmark: PRIM
+
+    # The documents is optional if all eridoc document revisions are set
+    #  documents:
+    #    import: "../Documentation/documents.yaml
+    # Read documents revisions from this file
+    # Use munin-adp generate-pri-input and pri.py to generate the file
+    # Relative file path to product_structure.yaml
+    # import: ../build/pri/documents.yaml
+    # Documentation
+
+  # Details of the APR product structure:
+  top_product:
+    alias: ["eric-oss-flow-automation"]
+    # APR Product Number
+    number: APR 201 544
+    # Description
+    description: "Flow Automation is a generic workflow-based automation framework and application. It allows automation designers to automate tasks through the use of Flows. The Flow Automation application provides the run-time for flow execution. North-Bound Interface (NBI) and Graphical User Interface (GUI)  support deployment, execution, and monitoring of flows"
+    # Includes
+    includes:
+      # Documents will also be added here
+      # SUSE Licenses
+      - prim: 1/FAL 115 3215
+        rstate: R1A
+      - prim: 3/FAL 115 3215
+        rstate: R1A
+      - prim: 5/FAL 115 3215
+        rstate: R1A
+      - prim: 7/FAL 115 3215
+        rstate: R1A
+      # Camunda BPM Enterprise Edition
+      - prim: 1/FAL 115 2893
+        rstate: R1A
+      - prim: 3/FAL 115 2893
+        rstate: R1A
+      - prim: 7/FAL 115 2893
+        rstate: R1A
+      # JBoss Enterprise Application Platform, RedHat
+      # customer commercial
+      - prim: 12/FAL 115 2942
+        rstate: R1A
+      # Ericsson Internal
+      - prim: 32/FAL 115 2942
+        rstate: R1A
+      # customer test
+      - prim: 52/FAL 115 2942
+        rstate: R1A
+      # customer trial
+      - prim: 72/FAL 115 2942
+        rstate: R1A
+
+# Details of the Source product structure
+  src_products:
+    # Source Code Product
+    - label: Source
+      number: CAV 101 998
+
+  # Details of zero or more derivative product structures, use [] for zero
+  derivative_products:
+    - label: "HELM"
+      number: "CXD 101 192"
+      alias: ["eric-oss-flow-automation"]
+      derivedFrom:
+        munin: CAV 101 998
+    - label: "Service IMAGE"
+      number: FA_IMAGE_PRODUCT_NUMBER
+      description: "Flow Automation - Service - IMAGE"
+      includes:
+        # Common Base OS
+        - munin: CXC 201 2032
+          version: 5.15.0
+          secondPartyProduct: "True"
+        # Common Base OS
+        - munin: CXC 201 2031
+          version: 5.15.0
+          secondPartyProduct: "True"
+      uses_foss:
+        - dependencies_file: dependencies.yaml        #  FOSSA Scan - Update for License, Primary, Linking Type
+      derivedFrom:
+        munin: CAV 101 998
+    - label: "Database Schema IMAGE"
+      number: FA_DB_IMAGE_PRODUCT_NUMBER
+      description: "Flow Automation - Database Schema - IMAGE"
+      includes:
+        # Common Base OS
+        - munin: CXC 201 2032
+          version: 5.15.0
+          secondPartyProduct: "True"
+        # Common Base OS
+        - munin: CXC 201 2031
+          version: 5.15.0
+          secondPartyProduct: "True"
+      derivedFrom:
+        munin: CAV 101 998
+    - label: "BR Agent IMAGE"
+      number: FA_BRAGENT_IMAGE_PRODUCT_NUMBER
+      description: "Flow Automation - Backup and Restore Agent - IMAGE"
+      includes:
+        # Common Base OS
+        - munin: CXC 201 2032
+          version: 5.15.0
+          secondPartyProduct: "True"
+        # Common Base OS
+        - munin: CXC 201 2031
+          version: 5.15.0
+          secondPartyProduct: "True"
+        # Backup and Restore Orchestration Agent API
+        - munin: CXA 301 09
+          version: 4.0.9
+      derivedFrom:
+        munin: CAV 101 998

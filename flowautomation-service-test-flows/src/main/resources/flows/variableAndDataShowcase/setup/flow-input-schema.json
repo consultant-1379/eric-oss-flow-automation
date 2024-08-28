@@ -1,0 +1,66 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "inputData": {
+      "name": "Input Data",
+      "type": "object",
+      "properties": {
+        "booleanInput": {
+          "name": "Boolean Input",
+          "type": "boolean",
+          "format": "checkbox",
+          "default": false
+        },
+        "integerInput": {
+          "name": "Integer Input",
+          "type": "integer",
+          "default": 0
+        },
+        "stringInput": {
+          "name": "String Input",
+          "type": "string",
+          "default": ""
+        },
+        "dateTimeInput": {
+          "name": "Date Time Input",
+          "type": "string",
+          "format": "date-time"
+        },
+        "fileInput": {
+          "name": "File Input",
+          "type": "object",
+          "info": "File must contain a JSON object with 'foo' key",
+          "format": "file",
+            "properties": {
+              "fileName": {
+                "type": "string"
+              }
+            },
+          "required": [ "fileName" ]
+        }
+      },
+      "required": [ "booleanInput", "integerInput", "stringInput", "dateTimeInput", "fileInput" ],
+      "additionalProperties": false
+    },
+    "visibleDerivedData": {
+      "name": "Visible Derived Data",
+      "type": "object",
+      "properties": {
+        "fooContents": {
+          "name": "Foo Contents",
+          "type": "string",
+          "readOnly": true,
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:fooContents"
+          }
+        }
+      },
+      "required": [ "fooContents" ],
+      "additionalProperties": false
+    }
+  },
+  "required": [ "inputData" ],
+  "additionalProperties": false
+}

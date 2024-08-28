@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="milc-setup" name="Setup" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1mbw148" camunda:asyncAfter="true">
+      <bpmn:outgoing>SequenceFlow_1vh9dhy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="UserTask_1icx07b" name="Configuration" camunda:formKey="setup:configuration">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="progressPercent" value="20" />
+        </camunda:properties>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="configuration">${configuration}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1vh9dhy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qq5gyd</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_0ym8c6c">
+      <bpmn:incoming>SequenceFlow_0v8zyj4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="ScriptTask_11ysz14" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0qq5gyd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0c3hr69</bpmn:outgoing>
+      <bpmn:script>flowInput.configuration= configuration</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1vh9dhy" sourceRef="StartEvent_1mbw148" targetRef="UserTask_1icx07b" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qq5gyd" sourceRef="UserTask_1icx07b" targetRef="ScriptTask_11ysz14" />
+    <bpmn:sequenceFlow id="SequenceFlow_0c3hr69" sourceRef="ScriptTask_11ysz14" targetRef="UserTask_0vgy0g8" />
+    <bpmn:userTask id="UserTask_0vgy0g8" name="Upload File" camunda:formKey="setup:uploadFile">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="uploadFile">${uploadFile}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0c3hr69</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1sjmt4s</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1sjmt4s" sourceRef="UserTask_0vgy0g8" targetRef="ScriptTask_1unl9te" />
+    <bpmn:scriptTask id="ScriptTask_1unl9te" name="Report file info" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1sjmt4s</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0v8zyj4</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+import org.camunda.bpm.engine.variable.value.FileValue
+
+def FileValue uploadedFile = uploadFile.uploadedFile
+Reporter.updateReportVariable(execution, "uploadedFileName", uploadedFile.filename)
+Reporter.updateReportVariable(execution, "uploadedFileContent", uploadedFile.value.text)
+
+flowInput.uploadFile=uploadFile</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0v8zyj4" sourceRef="ScriptTask_1unl9te" targetRef="EndEvent_0ym8c6c" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="milc-setup">
+      <bpmndi:BPMNShape id="StartEvent_1mbw148_di" bpmnElement="StartEvent_1mbw148">
+        <dc:Bounds x="192" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="99" y="225" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1icx07b_di" bpmnElement="UserTask_1icx07b">
+        <dc:Bounds x="372" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0ym8c6c_di" bpmnElement="EndEvent_0ym8c6c">
+        <dc:Bounds x="1022" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="716" y="229" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_11ysz14_di" bpmnElement="ScriptTask_11ysz14">
+        <dc:Bounds x="510" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vh9dhy_di" bpmnElement="SequenceFlow_1vh9dhy">
+        <di:waypoint x="228" y="117" />
+        <di:waypoint x="372" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="142" y="186" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qq5gyd_di" bpmnElement="SequenceFlow_0qq5gyd">
+        <di:waypoint x="472" y="117" />
+        <di:waypoint x="510" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="450" y="304" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0c3hr69_di" bpmnElement="SequenceFlow_0c3hr69">
+        <di:waypoint x="610" y="117" />
+        <di:waypoint x="658" y="117" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="618" y="304" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0vgy0g8_di" bpmnElement="UserTask_0vgy0g8">
+        <dc:Bounds x="658" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1sjmt4s_di" bpmnElement="SequenceFlow_1sjmt4s">
+        <di:waypoint x="758" y="117" />
+        <di:waypoint x="820" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1unl9te_di" bpmnElement="ScriptTask_1unl9te">
+        <dc:Bounds x="820" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0v8zyj4_di" bpmnElement="SequenceFlow_0v8zyj4">
+        <di:waypoint x="920" y="117" />
+        <di:waypoint x="1022" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

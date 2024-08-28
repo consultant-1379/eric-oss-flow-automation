@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Get number of loops usertask schema",
+  "description": "Get number of loops usertask schema",
+  "$id": "get-number-of-loops-usertask-schema",
+  "name": "Get number of loops",
+  "type": "object",
+  "properties":{
+    "getNumberOfLoops": {
+      "name": "Get number of loops",
+      "type": "object",
+      "properties": {
+        "numLoops": {
+          "name": "Number of loops",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "default": 0
+        }
+      },
+      "additionalProperties": false,
+      "required": [ "numLoops" ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [ "getNumberOfLoops" ]
+}

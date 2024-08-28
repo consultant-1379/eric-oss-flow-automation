@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Flow with flow package resources report schema",
+  "description": "Flow with flow package resources report schema",
+  "type": "object",
+  "properties": {
+    "scriptContent": {
+      "name": "Script Content uploaded in flowpackage",
+      "type": "string",
+      "default": "",
+      "objectGen": {
+        "binding": "variable:report:input"
+      }
+    }
+  },
+  "required": [
+    "scriptContent"
+  ]
+}

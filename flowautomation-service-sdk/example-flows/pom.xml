@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2023
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>flowautomation-service-sdk</artifactId>
+        <groupId>com.ericsson.oss.ae</groupId>
+        <version>1.68.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>example-flows</artifactId>
+
+    <properties>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <flows.path>${basedir}/src/main/resources/flows</flows.path>
+        <flowdata.path>${basedir}/src/main/resources/flowdata</flowdata.path>
+        <test.jse.path>${basedir}/src/test/java/com/ericsson/oss/services/flowautomation/flows/test/</test.jse.path>
+        <template.files.path>${basedir}/src/main/resources/templates</template.files.path>
+        <assembly.files.path>${basedir}/src/main/resources/assembly</assembly.files.path>
+        <test.resources.path>${basedir}/src/test/resources/</test.resources.path>
+        <generated.site.resources.dir>${project.build.directory}/generated-zips/</generated.site.resources.dir>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>${project.child.artifactId}-test-framework</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${version.maven-surefire-plugin}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <version>${version.gmavenplus}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compileTests</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <testSources>
+                        <testSource>
+                            <directory>${project.basedir}/src/test/java</directory>
+                            <includes>
+                                <include>**/*.groovy</include>
+                            </includes>
+                        </testSource>
+                    </testSources>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.codehaus.groovy</groupId>
+                        <artifactId>groovy</artifactId>
+                        <!-- any version of Groovy \>= 1.5.0 should work here -->
+                        <version>${version.groovy}</version>
+                        <scope>runtime</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <finalName>simpleCalculatorFlow-1.0.0</finalName>
+                            <outputDirectory>${generated.site.resources.dir}/example-flows/
+                            </outputDirectory>
+                            <descriptors>
+                                <descriptor>
+                                    ${assembly.files.path}/simpleCalculatorFlow-assembly.xml
+                                </descriptor>
+                            </descriptors>
+                            <delimiters>
+                                <delimiter>@{*}</delimiter>
+                            </delimiters>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <attach>false</attach>
+                        </configuration>
+                        <id>simpleCalculatorFlow</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <configuration>
+                            <finalName>simpleCalculatorFlow-1.0.0-project</finalName>
+                            <outputDirectory>${generated.site.resources.dir}/example-flow-projects/
+                            </outputDirectory>
+                            <filters>
+                                <filter>${assembly.files.path}/simpleCalculatorFlow.properties</filter>
+                            </filters>
+                            <descriptors>
+                                <descriptor>
+                                    ${assembly.files.path}/simpleCalculatorFlow-project-assembly.xml
+                                </descriptor>
+                            </descriptors>
+                            <delimiters>
+                                <delimiter>@{*}</delimiter>
+                            </delimiters>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <attach>false</attach>
+                        </configuration>
+                        <id>simpleCalculatorFlowProject</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <configuration>
+                            <finalName>myFirstFlow-1.0.0</finalName>
+                            <outputDirectory>${generated.site.resources.dir}/example-flows/
+                            </outputDirectory>
+                            <descriptors>
+                                <descriptor>
+                                    ${assembly.files.path}/myFirstFlow-assembly.xml
+                                </descriptor>
+                            </descriptors>
+                            <delimiters>
+                                <delimiter>@{*}</delimiter>
+                            </delimiters>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <attach>false</attach>
+                        </configuration>
+                        <id>myFirstFlow</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <configuration>
+                            <finalName>myFirstFlow-1.0.0-project</finalName>
+                            <outputDirectory>${generated.site.resources.dir}/example-flow-projects/
+                            </outputDirectory>
+                            <filters>
+                                <filter>${assembly.files.path}/myFirstFlow.properties</filter>
+                            </filters>
+                            <descriptors>
+                                <descriptor>
+                                    ${assembly.files.path}/myFirstFlow-project-assembly.xml
+                                </descriptor>
+                            </descriptors>
+                            <delimiters>
+                                <delimiter>@{*}</delimiter>
+                            </delimiters>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <attach>false</attach>
+                        </configuration>
+                        <id>myFirstFlowProject</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkCount>0.75C</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <parallel>classes</parallel>
+                    <useUnlimitedThreads>true</useUnlimitedThreads>
+                    <argLine>@{argLine} -Xmx1024m</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

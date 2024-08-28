@@ -1,0 +1,161 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Multi-Instance Load Control flow report schema body",
+    "description": "Multi-Instance Load Control flow report schema body",
+    "type": "object",
+    "properties": {
+        "uploadedFileName": {
+            "name": "Uploaded File Name",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:uploadedFileName"
+            }
+        },
+        "uploadedFileContent": {
+            "name": "Uploaded File Content",
+            "type": "string",
+            "format": "download-link",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:uploadedFileContent"
+            }
+        },
+        "fileContent": {
+            "name": "File Content",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:uploadedFileContent"
+            }
+        },
+        "numElements": {
+            "name": "Number of Elements",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+                "binding": "variable:report:numElements"
+            }
+        },
+        "numElementsOngoing": {
+            "name": "Number of Elements Ongoing",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+                "binding": "variable:report:numElementsOngoing"
+            }
+        },
+        "numElementsQueued": {
+            "name": "Number of Elements Queued",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+                "binding": "variable:report:numElementsQueued"
+            }
+        },
+        "numElementsCompleted": {
+            "name": "Number of Elements Completed",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+                "binding": "variable:report:numElementsCompleted"
+            }
+        },
+        "numElementsSuccess": {
+            "name": "Number of Elements Success",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+                "binding": "variable:report:numElementsSuccess"
+            }
+        },
+        "numElementsFailure": {
+            "name": "Number of Elements Failure",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+                "binding": "variable:report:numElementsFailure"
+            }
+        },
+        "numElementsError": {
+            "name": "Number of Elements Error",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+                "binding": "variable:report:numElementsError"
+            }
+        },
+        "elementsTable": {
+            "name": "Elements Table",
+            "description": "Elements table",
+            "type": "array",
+            "objectGen": {
+                "indexBinding" : "elements",
+                "indexName" : "elementId"
+            },
+            "items": {
+                "name": "Element Status",
+                "description": "Status for an element",
+                "type": "object",
+                "properties": {
+                    "elementId": {
+                        "name": "Element ID",
+                        "description": "Element ID",
+                        "type": "string",
+                        "objectGen": {
+                            "binding": "variable:report:{elementId}.elementId"
+                        }
+                    },
+                    "state": {
+                        "name": "State",
+                        "description": "State",
+                        "type": "string",
+                        "enum": [ "Queued", "Executing", "Completed" ],
+                        "objectGen": {
+                            "binding": "variable:report:{elementId}.state"
+                        }
+                    },
+                    "result": {
+                        "name": "Result",
+                        "description": "Result",
+                        "type": "string",
+                        "enum": [ "Not Available", "Success", "Failure", "Error" ],
+                        "objectGen": {
+                            "binding": "variable:report:{elementId}.result"
+                        }
+                    },
+                    "duration": {
+                        "name": "Duration",
+                        "description": "Duration",
+                        "type": "string",
+                        "default": "",
+                        "objectGen": {
+                            "binding": "variable:report:{elementId}.duration"
+                        }
+                    },
+                    "summary": {
+                        "name": "Summary",
+                        "description": "Summary",
+                        "type": "string",
+                        "default": "",
+                        "objectGen": {
+                            "binding": "variable:report:{elementId}.summary"
+                        }
+                    },
+                    "kpiContent": {
+                        "name": "KPI Content",
+                        "description": "KPI Content",
+                        "type": "string",
+                        "format": "download-link",
+                        "default": "",
+                        "objectGen": {
+                            "binding": "variable:report:{elementId}.kpiContent"
+                        }
+                    }
+                },
+                "required" : [ "elementId", "state", "result", "summary", "duration", "kpiContent" ]
+            }
+        }
+    },
+    "required": [ "numElements", "numElementsOngoing", "numElementsQueued", "numElementsCompleted", "elementsTable" ]
+}

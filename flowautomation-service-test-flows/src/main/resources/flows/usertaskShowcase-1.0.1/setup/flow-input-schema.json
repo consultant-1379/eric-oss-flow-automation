@@ -1,0 +1,1384 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Usertask Showcase - flow input schema",
+  "type": "object",
+  "properties": {
+    "usertaskSelection": {
+      "name": "Usertask Selection",
+      "type": "object",
+      "properties": {
+        "information": {
+          "name": "Information",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "readOnlyUserTask": {
+          "name": "Read Only User Task",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "textInputs": {
+          "name": "Text Inputs",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "textInputsWithInformation": {
+          "name": "Text Inputs With Information",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "dateTimeInput": {
+          "name": "Date Time Inputs",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "checkBoxes": {
+          "name": "Checkboxes",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "radioButtons": {
+          "name": "Radio Buttons",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "selectBoxes": {
+          "name": "Selectboxes",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "listBoxes": {
+          "name": "Listboxes",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "tables": {
+          "name": "Tables",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "groupingAndNesting": {
+          "name": "Grouping And Nesting",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "checkBoxesWithNesting": {
+          "name": "Checkboxes With Nesting",
+          "type": "boolean",
+          "format": "checkbox"
+        },
+        "radioButtonsWithNesting": {
+          "name": "Radio Buttons With Nesting",
+          "type": "boolean",
+          "format": "checkbox"
+        }
+      },
+      "required": [
+        "textInputs",
+        "textInputsWithInformation",
+        "dateTimeInput",
+        "checkBoxes",
+        "radioButtons",
+        "selectBoxes",
+        "listBoxes",
+        "tables",
+        "groupingAndNesting",
+        "checkBoxesWithNesting",
+        "radioButtonsWithNesting"
+      ],
+      "additionalProperties": false
+    },
+    "information": {
+      "name": "Information",
+      "type": "object",
+      "format": "informational",
+
+      "schemaGen": {
+        "type": "nameExtra",
+        "binding": "variable:local:nameExtra"
+      },
+      "properties": {
+        "shortInformation": {
+          "name": "This is short information.",
+          "type": "string",
+          "format": "informational"
+        },
+        "longInformation": {
+          "name": "This is long information. This is long information. This is long information. This is long information. This is long information. This is long information. This is long information. This is long information. ",
+          "type": "string",
+          "info": "This is a test note information note",
+          "format": "informational"
+        },
+        "link": {
+          "name": "This is a sample link to flowautomation",
+          "type": "string",
+          "format": "informational-link",
+          "linkText": "View",
+          "default": "https://enmapache.athtem.eei.ericsson.se/#flow-automation"
+        },
+        "dynamicLink": {
+          "name": "This is a sample dynamic link to ENM application",
+          "type": "string",
+          "format": "informational-link",
+          "linkText": "Go To ENM Application",
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:dynamicLink"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "readOnlyUserTask": {
+      "name": "Read Only User Task",
+      "type": "object",
+      "properties": {
+        "derivedInfo": {
+          "name": "Derived Data",
+          "type": "string",
+          "readOnly": true,
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:derivedInfo"
+          }
+        },
+        "shortInformation": {
+          "name": "Short Information",
+          "type": "string",
+          "readOnly": true,
+          "default": "This is short information"
+        },
+        "derivedDateTimeInput": {
+          "name": "Derived Date Time",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:derivedDateTimeInput"
+          }
+        },
+        "defaultDateTimeInput": {
+          "name": "Default Date Time",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "default": "2020-03-27T22:33:44.000Z"
+        },
+        "readOnlyListBox": {
+          "name": "Read Only List",
+          "type": "array",
+          "format": "list",
+          "info": "This is a test note information",
+          "readOnly": true,
+          "items": {
+            "type": "string",
+            "schemaGen": {
+              "type": "default",
+              "binding": "variable:local:readOnlyListBox"
+            }
+          }
+        },
+        "readOnlyTable": {
+          "name": "Read Only Table",
+          "type": "array",
+          "format": "table",
+          "info": "This is a test note information",
+          "readOnly": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "packageName": {
+                "type": "string",
+                "name": "Package"
+              },
+              "productName": {
+                "type": "string",
+                "name": "Product"
+              },
+              "productId": {
+                "type": "integer",
+                "name": "Id"
+              },
+              "packageTitle": {
+                "type": "string",
+                "name": "Package Title"
+              },
+              "nodeDistance": {
+                "type": "integer",
+                "name": "Node Distance"
+              },
+              "nodeType": {
+                "type": "string",
+                "name": "Node Type"
+              },
+              "customDetails": {
+                "type": "string",
+                "name": "Custom Details"
+              }
+            },
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:readOnlyTable"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "textInputs": {
+      "name": "Text Inputs",
+      "type": "object",
+      "properties": {
+        "textInputNoLengthRestrictions": {
+          "name": "Text input with no length restrictions",
+          "type": "string",
+          "info": "This is a test note information"
+        },
+        "shortTextInput": {
+          "name": "Short text input",
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 10
+        },
+        "mediumTextInput": {
+          "name": "Medium text input",
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 40
+        },
+        "longTextInput": {
+          "name": "Long text input",
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 80
+        },
+        "regexpValidatedTextInput": {
+          "name": "Regular expression validated text input",
+          "description": "Must be lowercase",
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 20,
+          "pattern": "[a-z]+"
+        },
+        "optionalTextInput": {
+          "name": "Optional text input",
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 20
+        },
+        "textInputWithDefault": {
+          "name": "Text input with default",
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 40,
+          "default": "placeholder"
+        },
+        "textInputWithDynamicDefault": {
+          "name": "Text input with dynamic default",
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 40,
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:textInputWithDynamicDefault"
+          }
+        }
+      },
+      "required": [
+        "textInputNoLengthRestrictions",
+        "shortTextInput",
+        "mediumTextInput",
+        "longTextInput",
+        "regexpValidatedTextInput",
+        "textInputWithDefault",
+        "textInputWithDynamicDefault"
+      ],
+      "additionalProperties": false
+    },
+    "textInputsWithInformation": {
+      "name": "Text Inputs With Information",
+      "type": "object",
+      "properties": {
+        "information": {
+          "name": "This is long information",
+          "type": "string",
+          "format": "informational"
+        },
+        "textInput": {
+          "name": "Text input",
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "textInput"
+      ],
+      "additionalProperties": false
+    },
+    "dateTimeInput": {
+      "name": "Date Time Inputs",
+      "type": "object",
+      "properties": {
+        "dateTimeInput": {
+          "name": "Date Time",
+          "type": "string",
+          "format": "date-time",
+          "info": "This is a test note information"
+        }
+      },
+      "additionalProperties": false
+    },
+    "checkBoxes": {
+      "name": "Check Boxes",
+      "type": "object",
+      "properties": {
+        "checkboxShortLabel": {
+          "name": "Short label",
+          "type": "boolean",
+          "format": "checkbox",
+          "info": "This is a test note information"
+        },
+        "checkboxLongLabel": {
+          "name": "Long label long label long label long label",
+          "type": "boolean",
+          "format": "checkbox",
+          "info": "This is a test note information"
+        }
+      },
+      "required": [
+        "checkboxShortLabel",
+        "checkboxLongLabel"
+      ],
+      "additionalProperties": false
+    },
+    "radioButtons": {
+      "name": "Radio Buttons",
+      "type": "object",
+      "properties": {
+        "radioGroup1": {
+          "name": "Radio group label",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [{
+            "properties": {
+              "radioShortLabel": {
+                "name": "Short label",
+                "type": "boolean",
+                "info": "This is a test note information"
+              }
+            },
+            "required": [
+              "radioShortLabel"
+            ],
+            "additionalProperties": false
+          },
+            {
+              "properties": {
+                "radioLongLabel": {
+                  "name": "Long label long label long label long label",
+                  "type": "boolean",
+                  "info": "This is a test note information"
+                }
+              },
+              "required": [
+                "radioLongLabel"
+              ],
+              "additionalProperties": false
+            }
+          ],
+          "default": "radioShortLabel"
+        }
+      },
+      "required": [
+        "radioGroup1"
+      ],
+      "additionalProperties": false
+    },
+    "selectBoxes": {
+      "name": "Select Boxes",
+      "type": "object",
+      "properties": {
+        "selectbox1": {
+          "name": "Select box label",
+          "type": "string",
+          "format": "select",
+          "info": "This is a test note information",
+          "enum": [
+            "SHORT",
+            "MEDIUM",
+            "LONG"
+          ],
+          "enumNames": [
+            "Short contents",
+            "Medium contents Medium contents Medium contents",
+            "Long contents Long contents Long contents Long contents Long contents Long contents"
+          ],
+          "default": "SHORT"
+        },
+        "selectbox2": {
+          "name": "Dynamic select box label",
+          "type": "string",
+          "format": "select",
+          "info": "This is a test note information",
+          "schemaGen": {
+            "type": "enum",
+            "binding": "variable:local:dynamicSelectBoxValues"
+          }
+        }
+      },
+      "required": [
+        "selectbox1",
+        "selectbox2"
+      ],
+      "additionalProperties": false
+    },
+    "listBoxes": {
+      "name": "List Boxes",
+      "type": "object",
+      "properties": {
+        "listbox1": {
+          "name": "List box label",
+          "type": "string",
+          "format": "select-list",
+          "info": "This list displays package information to be displayed for operators. single item can be selected in the list.",
+          "enum": [
+            "SHORT",
+            "MEDIUM",
+            "LONG"
+          ],
+          "enumNames": [
+            "Short contents",
+            "Medium contents Medium contents Medium contents",
+            "Long contents Long contents Long contents Long contents Long contents Long contents"
+          ],
+          "default": "SHORT"
+        },
+        "listbox2": {
+          "name": "Dynamic list box label",
+          "type": "string",
+          "format": "select-list",
+          "schemaGen": {
+            "type": "enum",
+            "binding": "variable:local:dynamicListBoxValues"
+          }
+        },
+        "listbox3": {
+          "name": "Dynamic array list box label",
+          "type": "array",
+          "format": "informational-list",
+          "items": {
+            "type": "string",
+            "schemaGen": {
+              "type": "default",
+              "binding": "variable:local:dynamicArrayListBoxValues"
+            }
+          }
+        }
+      },
+      "required": [
+        "listbox1",
+        "listbox2"
+      ],
+      "additionalProperties": false
+    },
+    "tables": {
+      "name": "List Tables",
+      "type": "object",
+      "properties": {
+        "table1": {
+          "name": "Informational Table",
+          "type": "array",
+          "format": "informational-table",
+          "info": "This table displays package information to be displayed for operators. No items can be selected in the table.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packageName": {
+                "type": "string",
+                "name": "Package"
+              },
+              "productName": {
+                "type": "string",
+                "name": "Product"
+              },
+              "productId": {
+                "type": "integer",
+                "name": "Id"
+              },
+              "packageTitle": {
+                "type": "string",
+                "name": "Package Title"
+              },
+              "nodeDistance": {
+                "type": "integer",
+                "name": "Node Distance"
+              },
+              "nodeType": {
+                "type": "string",
+                "name": "Node Type"
+              },
+              "customDetails": {
+                "type": "string",
+                "name": "Custom Details"
+              }
+            },
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:dynamicTableValues1"
+          }
+        },
+        "table2": {
+          "name": "Single Selectable table",
+          "type": "array",
+          "maxItems": 1,
+          "info": "This table displays package information to be displayed for operators. single items can be selected from this table.",
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packageName": {
+                "type": "string",
+                "name": "Package",
+                "schemaGen": {
+                  "type": "enum",
+                  "binding": "variable:local:packageList"
+                }
+              },
+              "productName": {
+                "type": "string",
+                "name": "Product"
+              },
+              "productId": {
+                "type": "integer",
+                "name": "Id"
+              },
+              "packageTitle": {
+                "type": "string",
+                "name": "Package Title"
+              },
+              "nodeDistance": {
+                "type": "integer",
+                "name": "Node Distance"
+              },
+              "nodeType": {
+                "type": "string",
+                "name": "Node Type"
+              },
+              "customDetails": {
+                "type": "string",
+                "name": "Custom Details"
+              }
+            },
+            "required": [
+              "packageName"
+            ],
+            "additionalProperties": false
+          },
+          "schemaGen": [{
+            "type": "default",
+            "binding": "variable:local:defaultSingleRowSelected"
+          },
+            {
+              "type": "selectableItems",
+              "binding": "variable:local:dynamicTableValues2"
+            }
+          ]
+        },
+        "table3": {
+          "name": "Multi Selectable table",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "packageName": {
+                "type": "string",
+                "name": "Package",
+                "schemaGen": {
+                  "type": "enum",
+                  "binding": "variable:local:packageList"
+                }
+              },
+              "productName": {
+                "type": "string",
+                "name": "Product"
+              },
+              "productId": {
+                "type": "integer",
+                "name": "Id"
+              },
+              "packageTitle": {
+                "type": "string",
+                "name": "Package Title"
+              },
+              "nodeDistance": {
+                "type": "integer",
+                "name": "Node Distance"
+              },
+              "nodeType": {
+                "type": "string",
+                "name": "Node Type"
+              },
+              "customDetails": {
+                "type": "string",
+                "name": "Custom Details"
+              }
+            },
+            "required": [
+              "packageName"
+            ],
+            "additionalProperties": false
+          },
+          "schemaGen": [{
+            "type": "default",
+            "binding": "variable:local:defaultMultiRowsSelected"
+          },
+            {
+              "type": "selectableItems",
+              "binding": "variable:local:dynamicTableValues2"
+            }
+          ]
+        },
+        "table4": {
+          "name": "Multipe Informational Tables",
+          "type": "object",
+          "properties": {
+            "viewDiscoveredNodes": {
+              "name": "View Discovered nodes",
+              "type": "object",
+              "properties": {
+                "discoveredNodes": {
+                  "name": "Discovered Nodes",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "nodeName": {
+                        "name": "Node name",
+                        "type": "string",
+                        "format": "informational"
+                      },
+                      "nodes": {
+                        "name": "Packages",
+                        "type": "array",
+                        "format": "informational-table",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "packageName": {
+                              "type": "string",
+                              "name": "Package"
+                            },
+                            "productName": {
+                              "type": "string",
+                              "name": "Product"
+                            },
+                            "productId": {
+                              "type": "integer",
+                              "name": "Id"
+                            },
+                            "packageTitle": {
+                              "type": "string",
+                              "name": "Package Title"
+                            },
+                            "nodeDistance": {
+                              "type": "integer",
+                              "name": "Node Distance"
+                            },
+                            "nodeType": {
+                              "type": "string",
+                              "name": "Node Type"
+                            },
+                            "customDetails": {
+                              "type": "string",
+                              "name": "Custom Details"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "schemaGen": {
+                    "type": "default",
+                    "binding": "variable:local:dynamicArrayTable1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "table5": {
+          "name": "Multipe Selection Tables",
+          "type": "object",
+          "properties": {
+            "viewDiscoveredNodes": {
+              "name": "View Discovered nodes",
+              "type": "object",
+              "properties": {
+                "discoveredNodes": {
+                  "name": "Discovered Nodes",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "nodeName": {
+                        "name": "Node name",
+                        "type": "string",
+                        "format": "informational"
+                      },
+                      "nodes": {
+                        "name": "Packages",
+                        "type": "array",
+                        "format": "select-table",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "packageName": {
+                              "type": "string",
+                              "name": "Package",
+                              "schemaGen": {
+                                "type": "enum",
+                                "binding": "variable:local:packageList"
+                              }
+                            },
+                            "productName": {
+                              "type": "string",
+                              "name": "Product"
+                            },
+                            "productId": {
+                              "type": "integer",
+                              "name": "Id"
+                            },
+                            "packageTitle": {
+                              "type": "string",
+                              "name": "Package Title"
+                            },
+                            "nodeDistance": {
+                              "type": "integer",
+                              "name": "Node Distance"
+                            },
+                            "nodeType": {
+                              "type": "string",
+                              "name": "Node Type"
+                            },
+                            "customDetails": {
+                              "type": "string",
+                              "name": "Custom Details"
+                            }
+                          },
+                          "required": [
+                            "packageName"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "required": [
+                      "nodeName",
+                      "nodes"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "schemaGen": {
+                    "type": "default",
+                    "binding": "variable:local:dynamicArrayTable2"
+                  }
+                }
+              },
+              "required": [
+                "discoveredNodes"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "viewDiscoveredNodes"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "table2",
+        "table3",
+        "table5"
+      ],
+      "additionalProperties": false
+    },
+    "groupingAndNesting": {
+      "name": "Grouping And Nesting",
+      "type": "object",
+      "properties": {
+        "groupWithTextInputs": {
+          "name": "Group with text inputs",
+          "type": "object",
+          "properties": {
+            "textInput1": {
+              "name": "Text input 1",
+              "type": "string",
+              "minLength": 4,
+              "maxLength": 20,
+              "info": "this is a test Note information"
+            },
+            "textInput2": {
+              "name": "Text input 2",
+              "type": "string",
+              "minLength": 4,
+              "maxLength": 20,
+              "info": "this is a test Note information"
+            }
+          },
+          "required": [
+            "textInput1",
+            "textInput2"
+          ],
+          "additionalProperties": false
+        },
+        "groupWithCheckboxes": {
+          "name": "Group with checkboxes",
+          "type": "object",
+          "properties": {
+            "checkbox1": {
+              "name": "Checkbox 1",
+              "type": "boolean",
+              "format": "checkbox",
+              "info": "this is a test Note information"
+            },
+            "checkbox2": {
+              "name": "Checkbox 2",
+              "type": "boolean",
+              "format": "checkbox",
+              "info": "this is a test Note information"
+            },
+            "checkbox3": {
+              "name": "Checkbox 3",
+              "type": "boolean",
+              "format": "checkbox",
+              "info": "this is a test Note information"
+            }
+          },
+          "required": [
+            "checkbox1",
+            "checkbox2",
+            "checkbox3"
+          ],
+          "additionalProperties": false
+        },
+        "groupWithMultipleLevels": {
+          "name": "Group with multiple levels",
+          "type": "object",
+          "properties": {
+            "level2Group": {
+              "name": "Level 2 Group",
+              "type": "object",
+              "properties": {
+                "level3GroupWithCheckboxes": {
+                  "name": "Level 3 Group With Checkboxes",
+                  "type": "object",
+                  "properties": {
+                    "checkbox1": {
+                      "name": "Checkbox 1",
+                      "type": "boolean",
+                      "format": "checkbox",
+                      "info": "this is a test Note information"
+                    },
+                    "checkbox2": {
+                      "name": "Checkbox 2",
+                      "type": "boolean",
+                      "format": "checkbox",
+                      "info": "this is a test Note information"
+                    }
+                  },
+                  "required": [
+                    "checkbox1",
+                    "checkbox2"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "level3GroupWithCheckboxes"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "level2Group"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "groupWithTextInputs",
+        "groupWithCheckboxes",
+        "groupWithMultipleLevels"
+      ],
+      "additionalProperties": false
+    },
+    "checkBoxesWithNesting": {
+      "name": "Checkboxes With Nesting",
+      "type": "object",
+      "properties": {
+        "checkboxLevel1ExposesMoreDetails": {
+          "name": "Checkbox 1 level 1 exposes more detail",
+          "type": "object",
+          "format": "checkbox",
+          "properties": {
+            "checkboxLevel2ExposesMoreDetails": {
+              "name": "Checkbox 1 level 2 exposes more detail",
+              "type": "object",
+              "format": "checkbox",
+              "properties": {
+                "textInput1": {
+                  "name": "Text input 1",
+                  "type": "string",
+                  "info": "This is a test note information",
+                  "minLength": 4,
+                  "maxLength": 20
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "checkbox2Level1ExposesMoreDetails": {
+          "name": "Checkbox 2 level 1 exposes more detail",
+          "type": "object",
+          "format": "checkbox",
+          "properties": {
+            "checkbox2Level2ExposesMoreDetails": {
+              "name": "Checkbox 2 level 2 exposes more detail",
+              "type": "object",
+              "format": "checkbox",
+              "properties": {
+                "textInput1": {
+                  "name": "Text input 1",
+                  "type": "string",
+                  "info": "This is a test note information",
+                  "minLength": 4,
+                  "maxLength": 20
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "radioButtonsWithNesting": {
+      "name": "Radio Buttons With Nesting",
+      "type": "object",
+      "properties": {
+        "radioGroup1": {
+          "name": "Radio group label",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [{
+            "properties": {
+              "radio1": {
+                "name": "Radio with no detail",
+                "info": "This is a test note information",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "radio1"
+            ],
+            "additionalProperties": false
+          },
+            {
+              "properties": {
+                "radio2ExposesMoreDetail": {
+                  "name": "Radio exposes more detail",
+                  "type": "object",
+                  "properties": {
+                    "textInput1": {
+                      "name": "Text input 1",
+                      "type": "string",
+                      "info": "This is a test note information",
+                      "minLength": 4,
+                      "maxLength": 20,
+                      "default": "default value"
+                    }
+                  },
+                  "required": [
+                    "textInput1"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "radio2ExposesMoreDetail"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "radio3WithNestedDynamicValue": {
+                  "name": "Radio exposes more detail dynamic",
+                  "type": "object",
+                  "properties": {
+                    "textInput1": {
+                      "name": "Text input 1",
+                      "type": "string",
+                      "info": "This is a test note information",
+                      "minLength": 4,
+                      "maxLength": 40,
+                      "schemaGen": {
+                        "type": "default",
+                        "binding": "variable:local:nestedTextInputWithDynamicDefault"
+                      }
+                    }
+                  },
+                  "required": [
+                    "textInput1"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "radio3WithNestedDynamicValue"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "radio4WithNestedinformationalTable": {
+                  "name": "Radio exposes Informational table",
+                  "type": "object",
+                  "properties": {
+                    "table1": {
+                      "name": "Informational Table",
+                      "type": "array",
+                      "info": "This is a test note information",
+                      "format": "informational-table",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "packageName": {
+                            "type": "string",
+                            "name": "Package"
+                          },
+                          "productName": {
+                            "type": "string",
+                            "name": "Product"
+                          },
+                          "productId": {
+                            "type": "integer",
+                            "name": "Id"
+                          },
+                          "packageTitle": {
+                            "type": "string",
+                            "name": "Package Title"
+                          },
+                          "nodeDistance": {
+                            "type": "integer",
+                            "name": "Node Distance"
+                          },
+                          "nodeType": {
+                            "type": "string",
+                            "name": "Node Type"
+                          },
+                          "customDetails": {
+                            "type": "string",
+                            "name": "Custome Details"
+                          }
+                        },
+                        "additionalProperties": false
+                      },
+                      "schemaGen": {
+                        "type": "default",
+                        "binding": "variable:local:dynamicTableValues1"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "radio4WithNestedinformationalTable"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "radio5WithNestedSelectTable": {
+                  "name": "Radio exposes Select table",
+                  "type": "object",
+                  "properties": {
+                    "table2": {
+                      "name": "select Table",
+                      "type": "array",
+                      "format": "select-table",
+                      "info": "This is a test note information",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "packageName": {
+                            "type": "string",
+                            "name": "Package",
+                            "schemaGen": {
+                              "type": "enum",
+                              "binding": "variable:local:packageList"
+                            }
+                          },
+                          "productName": {
+                            "type": "string",
+                            "name": "Product"
+                          },
+                          "productId": {
+                            "type": "integer",
+                            "name": "Id"
+                          },
+                          "packageTitle": {
+                            "type": "string",
+                            "name": "Package Title"
+                          },
+                          "nodeDistance": {
+                            "type": "integer",
+                            "name": "Node Distance"
+                          },
+                          "nodeType": {
+                            "type": "string",
+                            "name": "Node Type"
+                          },
+                          "customDetails": {
+                            "type": "string",
+                            "name": "Custome Details"
+                          }
+                        },
+                        "required": [
+                          "packageName"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "schemaGen": {
+                        "type": "selectableItems",
+                        "binding": "variable:local:dynamicTableValues2"
+                      }
+                    }
+                  },
+                  "required": [
+                    "table2"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "radio5WithNestedSelectTable"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "radio6WithNestedCollectionInformationalTable": {
+                  "name": "Radio exposes collection of Informational table",
+                  "type": "object",
+                  "properties": {
+                    "table3": {
+                      "name": "Multi-Informational Table",
+                      "type": "object",
+                      "properties": {
+                        "viewDiscoveredNodes": {
+                          "name": "View Discovered nodes",
+                          "type": "object",
+                          "properties": {
+                            "discoveredNodes": {
+                              "name": "Discovered Nodes",
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "nodeName": {
+                                    "name": "Node name",
+                                    "type": "string",
+                                    "format": "informational"
+                                  },
+                                  "nodes": {
+                                    "name": "Packages",
+                                    "type": "array",
+                                    "format": "informational-table",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "packageName": {
+                                          "type": "string",
+                                          "name": "Package"
+                                        },
+                                        "productName": {
+                                          "type": "string",
+                                          "name": "Product"
+                                        },
+                                        "productId": {
+                                          "type": "integer",
+                                          "name": "Id"
+                                        },
+                                        "packageTitle": {
+                                          "type": "string",
+                                          "name": "Package Title"
+                                        },
+                                        "nodeDistance": {
+                                          "type": "integer",
+                                          "name": "Node Distance"
+                                        },
+                                        "nodeType": {
+                                          "type": "string",
+                                          "name": "Node Type"
+                                        },
+                                        "customDetails": {
+                                          "type": "string",
+                                          "name": "Custom Details"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "schemaGen": {
+                                "type": "default",
+                                "binding": "variable:local:dynamicArrayTable1"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "radio6WithNestedCollectionInformationalTable"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "radio7WithNestedCollectionSelectTable": {
+                  "name": "Radio exposes collection of Select table",
+                  "type": "object",
+                  "properties": {
+                    "table4": {
+                      "name": "Multi-Select Table",
+                      "type": "object",
+                      "properties": {
+                        "viewDiscoveredNodes": {
+                          "name": "View Discovered nodes",
+                          "type": "object",
+                          "properties": {
+                            "discoveredNodes": {
+                              "name": "Discovered Nodes",
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "nodeName": {
+                                    "name": "Node name",
+                                    "type": "string",
+                                    "format": "informational"
+                                  },
+                                  "nodes": {
+                                    "name": "Packages",
+                                    "type": "array",
+                                    "format": "select-table",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "packageName": {
+                                          "type": "string",
+                                          "name": "Package",
+                                          "schemaGen": {
+                                            "type": "enum",
+                                            "binding": "variable:local:packageList"
+                                          }
+                                        },
+                                        "productName": {
+                                          "type": "string",
+                                          "name": "Product"
+                                        },
+                                        "productId": {
+                                          "type": "integer",
+                                          "name": "Id"
+                                        },
+                                        "packageTitle": {
+                                          "type": "string",
+                                          "name": "Package Title"
+                                        },
+                                        "nodeDistance": {
+                                          "type": "integer",
+                                          "name": "Node Distance"
+                                        },
+                                        "nodeType": {
+                                          "type": "string",
+                                          "name": "Node Type"
+                                        },
+                                        "customDetails": {
+                                          "type": "string",
+                                          "name": "Custom Details"
+                                        }
+                                      },
+                                      "required": [
+                                        "packageName"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "nodeName",
+                                  "nodes"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "schemaGen": {
+                                "type": "default",
+                                "binding": "variable:local:dynamicArrayTable2"
+                              }
+                            }
+                          },
+                          "required": [
+                            "discoveredNodes"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "viewDiscoveredNodes"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "table4"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "radio7WithNestedCollectionSelectTable"
+              ],
+              "additionalProperties": false
+            }
+          ],
+          "default": "radio3WithNestedDynamicValue"
+        }
+      },
+      "required": [
+        "radioGroup1"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "usertaskSelection"
+  ]
+}

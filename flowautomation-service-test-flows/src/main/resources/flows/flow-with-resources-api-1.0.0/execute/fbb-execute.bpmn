@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_FXeIoKhnEeOC4LOKh_69JQ" targetNamespace="http://camunda.org/examples" exporter="Camunda Modeler" exporterVersion="4.12.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="flow-execute" name="FBB Execute Flow" isExecutable="true">
+    <bpmn2:startEvent id="StartEvent_1" name="Start">
+      <bpmn2:outgoing>SequenceFlow_0e79tdu</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:endEvent id="EndEvent_1" name="End">
+      <bpmn2:incoming>SequenceFlow_1g32y8p</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:scriptTask id="ScriptTask_177zdyq" name="Prepare script" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_1gq7afd</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1g32y8p</bpmn2:outgoing>
+      <bpmn2:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+import com.ericsson.oss.services.flowautomation.flowapi.FlowPackageResources
+
+def scriptContent = FlowPackageResources.get(execution, "resources/script.sh");
+
+Reporter.updateReportVariable(execution, "input", scriptContent)</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_1gq7afd" sourceRef="Task_179vu5n" targetRef="ScriptTask_177zdyq" />
+    <bpmn2:scriptTask id="Task_179vu5n" name="Retrive bundeled scripts" scriptFormat="groovy">
+      <bpmn2:incoming>SequenceFlow_0e79tdu</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1gq7afd</bpmn2:outgoing>
+      <bpmn2:script>import com.ericsson.oss.services.flowautomation.flowapi.FlowPackageResources
+import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def resources = FlowPackageResources.list(execution, "resources/")
+Reporter.updateReportSummary(execution, "scripts in resources:"+ resources)
+
+</bpmn2:script>
+    </bpmn2:scriptTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0e79tdu" sourceRef="StartEvent_1" targetRef="Task_179vu5n" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1g32y8p" sourceRef="ScriptTask_177zdyq" targetRef="EndEvent_1" />
+  </bpmn2:process>
+  <bpmn2:error id="Error_08isf0r" name="error.fa.scripting.bb.execution.failed" errorCode="error.fa.scripting.bb.execution.failed" />
+  <bpmn2:error id="Error_0tbzyhc" name="error.fa.scripting.bb.execution.timeout" errorCode="error.fa.scripting.bb.execution.timeout" />
+  <bpmn2:error id="Error_19b4vsx" name="error.fa.scripting.bb.access.denied" errorCode="error.fa.scripting.bb.access.denied" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="flow-execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="138" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_2" bpmnElement="EndEvent_1">
+        <dc:Bounds x="652" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="698" y="113" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_177zdyq_di" bpmnElement="ScriptTask_177zdyq">
+        <dc:Bounds x="490" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gq7afd_di" bpmnElement="SequenceFlow_1gq7afd">
+        <di:waypoint x="390" y="120" />
+        <di:waypoint x="490" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_19jd55f_di" bpmnElement="Task_179vu5n">
+        <dc:Bounds x="290" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0e79tdu_di" bpmnElement="SequenceFlow_0e79tdu">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="290" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1g32y8p_di" bpmnElement="SequenceFlow_1g32y8p">
+        <di:waypoint x="590" y="120" />
+        <di:waypoint x="652" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

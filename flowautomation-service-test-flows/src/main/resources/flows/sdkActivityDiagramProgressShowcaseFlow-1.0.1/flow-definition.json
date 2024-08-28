@@ -1,0 +1,12 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.sdkActivityDiagramProgressShowcaseFlow",
+    "flowName" : "Sdk Activity Diagram Progress Showcase",
+    "flowVersion" : "1.0.0",
+    "description" : "Sdk Activity Diagram Progress Showcase",
+    "setup" : {
+        "processId" : "sdkActivityDiagramProgressShowcase-setup"
+    },
+    "execute" : {
+        "processId" : "sdkActivityDiagramProgressShowcase-execute"
+    }
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "information": {
+      "name": "This flow allows going back in the setup phase.",
+      "type": "string",
+      "format": "informational"
+    },
+    "uploadFile": {
+      "name": "Upload File",
+      "type": "object",
+      "properties": {
+        "uploadedFile": {
+          "name": "File",
+          "type": "object",
+          "format": "file",
+          "properties": {
+            "fileName": {
+              "name": "File Name",
+              "type": "string"
+            }
+          },
+          "required": [
+            "fileName"
+          ]
+        }
+      },
+      "required": [
+        "uploadedFile"
+      ],
+      "additionalProperties": false
+    },
+    "dynamicData": {
+      "name": "Dynamic Data Selection",
+      "type": "object",
+      "properties": {
+        "data": {
+          "name": "Selection",
+          "type": "string",
+          "format": "select-list",
+          "schemaGen": {
+            "type": "enum",
+            "binding": "variable:local:data"
+          }
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "additionalProperties": false
+    },
+    "userInput": {
+      "name": "User Input",
+      "type": "object",
+      "properties": {
+        "textInput": {
+          "name": "Input text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "textInput"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "information",
+    "uploadFile",
+    "dynamicData",
+    "userInput"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="back-setup" name="Flow with Back Enabled" isExecutable="true">
+    <bpmn:startEvent id="Event_07gm26p" camunda:asyncAfter="true">
+      <bpmn:outgoing>SequenceFlow_1nwai8c</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Activity_0njx3kz" name="Show Generated Data" camunda:formKey="setup:dynamicData">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="data">${data}</camunda:inputParameter>
+          <camunda:outputParameter name="dynamicData">${dynamicData}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0hftfkt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0951bog</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1f1o6l0">
+      <bpmn:incoming>SequenceFlow_02a9tg7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_1ucrnb6" name="Populate flow input" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0951bog</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jvx20l</bpmn:outgoing>
+      <bpmn:script>flowInput.dynamicData = dynamicData</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0951bog" sourceRef="Activity_0njx3kz" targetRef="Activity_1ucrnb6" />
+    <bpmn:userTask id="Activity_1wgomps" name="User Input" camunda:formKey="setup:userInput">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="userInput">${userInput}</camunda:outputParameter>
+        </camunda:inputOutput>
+        <camunda:properties>
+          <camunda:property name="faBackTarget" value="data-generator" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jvx20l</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pgwiqt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_01bob9h" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0pgwiqt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jloy3c</bpmn:outgoing>
+      <bpmn:script>flowInput.userInput = userInput</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0pgwiqt" sourceRef="Activity_1wgomps" targetRef="Activity_01bob9h" />
+    <bpmn:sequenceFlow id="Flow_0jloy3c" sourceRef="Activity_01bob9h" targetRef="FAInternal-review-confirm-execute" />
+    <bpmn:sequenceFlow id="Flow_1jvx20l" sourceRef="Activity_1ucrnb6" targetRef="Activity_1wgomps" />
+    <bpmn:userTask id="FAInternal-review-confirm-execute" name="Review and Confirm Execute">
+      <bpmn:incoming>Flow_0jloy3c</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02a9tg7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_02a9tg7" sourceRef="FAInternal-review-confirm-execute" targetRef="Event_1f1o6l0" />
+    <bpmn:sequenceFlow id="SequenceFlow_0hftfkt" sourceRef="data-generator" targetRef="Activity_0njx3kz" />
+    <bpmn:scriptTask id="data-generator" name="Generate Data" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_04ric5e</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0hftfkt</bpmn:outgoing>
+      <bpmn:script>def data = execution.getVariable("data")
+
+if(data.isEmpty()) {
+    data.add("1")
+} else {
+    def last = data.last() as int
+    data.add((last+1).toString())
+}
+execution.setVariable("data",data)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Initialize" name="Initialize" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1nwai8c</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0rdffd2</bpmn:outgoing>
+      <bpmn:script>def data = []
+execution.setVariable("data",data)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="Task_00kff65" name="Information" camunda:formKey="setup:information">
+      <bpmn:incoming>SequenceFlow_0rdffd2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0r23bpp</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0r23bpp" sourceRef="Task_00kff65" targetRef="Task_1g4a3g6" />
+    <bpmn:sequenceFlow id="SequenceFlow_0rdffd2" sourceRef="Initialize" targetRef="Task_00kff65" />
+    <bpmn:sequenceFlow id="SequenceFlow_1nwai8c" sourceRef="Event_07gm26p" targetRef="Initialize" />
+    <bpmn:sequenceFlow id="SequenceFlow_1g2wrwy" sourceRef="Task_1g4a3g6" targetRef="Task_1bmfsz6" />
+    <bpmn:userTask id="Task_1g4a3g6" name="File Upload" camunda:formKey="setup:uploadFile">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="uploadFile">${uploadFile}
+</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0r23bpp</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1g2wrwy</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_04ric5e" sourceRef="Task_1bmfsz6" targetRef="data-generator" />
+    <bpmn:scriptTask id="Task_1bmfsz6" name="Validate File" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1g2wrwy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_04ric5e</bpmn:outgoing>
+      <bpmn:script>flowInput.uploadFile = uploadFile</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="back-setup">
+      <bpmndi:BPMNEdge id="Flow_0951bog_di" bpmnElement="Flow_0951bog">
+        <di:waypoint x="1180" y="120" />
+        <di:waypoint x="1260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pgwiqt_di" bpmnElement="Flow_0pgwiqt">
+        <di:waypoint x="1510" y="120" />
+        <di:waypoint x="1560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jloy3c_di" bpmnElement="Flow_0jloy3c">
+        <di:waypoint x="1660" y="120" />
+        <di:waypoint x="1720" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jvx20l_di" bpmnElement="Flow_1jvx20l">
+        <di:waypoint x="1360" y="120" />
+        <di:waypoint x="1410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_07gm26p_di" bpmnElement="Event_07gm26p">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0njx3kz_di" bpmnElement="Activity_0njx3kz">
+        <dc:Bounds x="1080" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ucrnb6_di" bpmnElement="Activity_1ucrnb6">
+        <dc:Bounds x="1260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wgomps_di" bpmnElement="Activity_1wgomps">
+        <dc:Bounds x="1410" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01bob9h_di" bpmnElement="Activity_01bob9h">
+        <dc:Bounds x="1560" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1f1o6l0_di" bpmnElement="Event_1f1o6l0">
+        <dc:Bounds x="1882" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1ph0jvq_di" bpmnElement="FAInternal-review-confirm-execute">
+        <dc:Bounds x="1720" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_02a9tg7_di" bpmnElement="SequenceFlow_02a9tg7">
+        <di:waypoint x="1820" y="120" />
+        <di:waypoint x="1882" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hftfkt_di" bpmnElement="SequenceFlow_0hftfkt">
+        <di:waypoint x="1000" y="120" />
+        <di:waypoint x="1080" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0ma45fi_di" bpmnElement="data-generator">
+        <dc:Bounds x="900" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1f5odtk_di" bpmnElement="Initialize">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_094sksi_di" bpmnElement="Task_00kff65">
+        <dc:Bounds x="430" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0r23bpp_di" bpmnElement="SequenceFlow_0r23bpp">
+        <di:waypoint x="530" y="120" />
+        <di:waypoint x="590" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rdffd2_di" bpmnElement="SequenceFlow_0rdffd2">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="430" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nwai8c_di" bpmnElement="SequenceFlow_1nwai8c">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1g2wrwy_di" bpmnElement="SequenceFlow_1g2wrwy">
+        <di:waypoint x="690" y="120" />
+        <di:waypoint x="730" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_09p7cie_di" bpmnElement="Task_1g4a3g6">
+        <dc:Bounds x="590" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04ric5e_di" bpmnElement="SequenceFlow_04ric5e">
+        <di:waypoint x="830" y="120" />
+        <di:waypoint x="900" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0uw6x2s_di" bpmnElement="Task_1bmfsz6">
+        <dc:Bounds x="730" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

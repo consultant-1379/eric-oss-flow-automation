@@ -1,0 +1,15 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.usertaskListTestFlow",
+    "flowName" : "Usertask List Test Flow",
+    "flowVersion" : "1.0.0",
+    "description" : "Usertask List Test Flow",
+    "setup" : {
+        "processId" : "setup-flow",
+        "userTask": {
+            "backEnabled": true
+        }
+    },
+    "execute" : {
+        "processId" : "execute-flow"
+    }
+}

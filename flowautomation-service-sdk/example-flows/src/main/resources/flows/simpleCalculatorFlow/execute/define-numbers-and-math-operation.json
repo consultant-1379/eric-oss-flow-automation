@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "name": "Define two numbers and math operation",
+  "type": "object",
+  "properties": {
+    "value1": {
+      "name": "Value 1",
+      "type": "integer",
+      "default": "1"
+    },
+    "value2": {
+      "name": "Value 2",
+      "type": "integer",
+      "default": "1"
+    },
+    "operation": {
+      "name": "Choose Math operation",
+      "type": "object",
+      "properties": {
+        "arithmetic": {
+          "name": "Arithmetical operations",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [
+            {
+              "properties": {
+                "sum": {
+                  "name": "+",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "sum"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "subtract": {
+                  "name": "-",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "subtract"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "multiply": {
+                  "name": "*",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "multiply"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "value1", "value2", "operation"
+  ],
+  "additionalProperties": false
+}

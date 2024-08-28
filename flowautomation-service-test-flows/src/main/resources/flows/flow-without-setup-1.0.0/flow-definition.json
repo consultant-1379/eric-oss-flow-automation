@@ -1,0 +1,9 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.without-setup",
+    "flowName" : "Hello World Flow without Setup phase",
+    "flowVersion" : "1.0.0",
+    "description" : "Hello World Flow without Setup phase",
+    "execute" : {
+        "processId" : "execute-flow"
+    }
+}

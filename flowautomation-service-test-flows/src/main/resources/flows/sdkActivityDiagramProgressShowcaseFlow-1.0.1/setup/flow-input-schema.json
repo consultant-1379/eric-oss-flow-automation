@@ -1,0 +1,92 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "SDK Activity Diagram Progress Showcase - flow input schema",
+    "type": "object",
+    "properties": {
+        "scenarioSelection": {
+            "name" : "Scenario Selection",
+            "type" : "object",
+            "properties": {
+                "loopingAndEventSubprocess": {
+                    "name": "Looping and event subprocess",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "parallelMultiInstanceCallActivity": {
+                    "name": "Parallel Multi-instance call activity",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "parallelMultiInstanceCallActivityMapName": {
+                    "name": "Parallel Multi-instance call activity map name",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "parallelMultiInstanceCallActivityMapNoName": {
+                    "name": "Parallel Multi-instance call activity map no name",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "parallelMultiInstanceEmbeddedSubprocess": {
+                    "name": "Parallel Multi-instance embedded subprocess",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "parallelMultiInstanceEmbeddedSubprocessNoSleep": {
+                    "name": "Parallel Multi-instance embedded subprocess no sleep",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "sequentialMultiInstanceCallActivity": {
+                    "name": "Sequential Multi-instance call activity",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "sequentialMultiInstanceCallActivityMapName": {
+                    "name": "Sequential Multi-instance call activity map name",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "sequentialMultiInstanceCallActivityMapNoName": {
+                    "name": "Sequential Multi-instance call activity map no name",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "sequentialMultiInstanceEmbeddedSubprocess": {
+                    "name": "Sequential Multi-instance embedded subprocess",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false 
+                },
+                "sequentialMultiInstanceEmbeddedSubprocessNoSleep": {
+                    "name": "Sequential Multi-instance embedded subprocess no sleep",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "compensation": {
+                    "name": "Compensation",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                }
+            },
+            "required": [ "loopingAndEventSubprocess", "parallelMultiInstanceCallActivity", 
+            			"parallelMultiInstanceCallActivityMapName", "parallelMultiInstanceCallActivityMapNoName", 
+            			"parallelMultiInstanceEmbeddedSubprocess", "parallelMultiInstanceEmbeddedSubprocessNoSleep","sequentialMultiInstanceCallActivity",
+"sequentialMultiInstanceCallActivityMapName","sequentialMultiInstanceCallActivityMapNoName","sequentialMultiInstanceEmbeddedSubprocess","sequentialMultiInstanceEmbeddedSubprocessNoSleep", "compensation" ],
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false,
+    "required": [ "scenarioSelection" ]
+}

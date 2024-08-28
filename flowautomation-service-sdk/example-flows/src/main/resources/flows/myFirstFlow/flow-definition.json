@@ -1,0 +1,15 @@
+{
+  "flowId": "com.ericsson.oss.ae.fa.flows.my-first-flow",
+  "flowName": "My First Flow",
+  "flowVersion": "1.0.0",
+  "description": "Description",
+  "setup": {
+    "processId": "setup",
+    "userTask": {
+      "backEnabled": true
+    }
+  },
+  "execute": {
+    "processId": "execute"
+  }
+}

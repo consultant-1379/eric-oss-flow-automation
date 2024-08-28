@@ -1,0 +1,30 @@
+{
+  "metadata" : {
+    "serviceHelmChartName" : "eric-oss-flow-automation",
+    "usedSchemaVersion" : "1.0",
+    "fileVersion" : "1.0.0",
+    "dateEdited" : "2022-11-14"
+  },
+  "internalPorts": [
+    {
+      "serviceInterfaceName": "Health check REST Service Port",
+      "protocol": "HTTP",
+      "ipAddressType": "static",
+      "port": 8080,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4"]
+    },
+    {
+      "serviceInterfaceName": "BRO REST API server",
+      "protocol": "HTTP",
+      "ipAddressType": "static",
+      "port": 8002,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4"]
+    }
+
+  ],
+  "externalPorts": [
+
+  ]
+}

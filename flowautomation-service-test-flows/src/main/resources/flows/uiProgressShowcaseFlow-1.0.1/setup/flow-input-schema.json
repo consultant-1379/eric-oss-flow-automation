@@ -1,0 +1,61 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "description": "UI Progress Showcase - flow input schema",
+    "type": "object",
+    "properties": {
+        "scenarioSelection": {
+            "name" : "Scenario Selection",
+            "type" : "object",
+            "properties": {
+                "loopingAndEventSubprocess": {
+                    "name": "Looping and event subprocess",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "multiInstanceCallActivity": {
+                    "name": "Multi-instance call activity",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "multiInstanceCallActivityMapName": {
+                    "name": "Multi-instance call activity map name",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "multiInstanceCallActivityMapNoName": {
+                    "name": "Multi-instance call activity map no name",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "multiInstanceEmbeddedSubprocess": {
+                    "name": "Multi-instance embedded subprocess",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "multiInstanceEmbeddedSubprocessNoSleep": {
+                    "name": "Multi-instance embedded subprocess no sleep",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                },
+                "compensation": {
+                    "name": "Compensation",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                }
+            },
+            "required": [ "loopingAndEventSubprocess", "multiInstanceCallActivity", 
+            			"multiInstanceCallActivityMapName", "multiInstanceCallActivityMapNoName", 
+            			"multiInstanceEmbeddedSubprocess", "multiInstanceEmbeddedSubprocessNoSleep", "compensation" ],
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false,
+    "required": [ "scenarioSelection" ]
+}

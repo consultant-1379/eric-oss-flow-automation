@@ -1,0 +1,5 @@
+{
+    "supportedNeTypes": [ "RBS", "ERBS" ],
+    "preparationPhase": true,
+    "scriptFiles": "[ \"script1\", \"script2\" ]"
+}

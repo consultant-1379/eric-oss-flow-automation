@@ -1,0 +1,9 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.flow-with-resources",
+  "flowName": "Flow with resources",
+  "flowVersion": "1.0.0",
+  "description": "Flow with resources API example",
+  "execute": {
+    "processId": "flow-execute"
+  }
+}

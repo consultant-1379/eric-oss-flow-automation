@@ -1,0 +1,9 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.rest-client",
+  "flowName": "Rest Client Flow without Setup phase",
+  "flowVersion": "2.1.1",
+  "description": "PRest Client Flow without Setup phase",
+  "execute": {
+    "processId": "execute-flow-1-1"
+  }
+}

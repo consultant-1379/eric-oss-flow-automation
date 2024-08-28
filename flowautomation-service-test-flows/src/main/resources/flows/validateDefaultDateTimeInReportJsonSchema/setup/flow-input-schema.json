@@ -1,0 +1,444 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Connectivity Simulator Flow Setup User Task Schema",
+  "type": "object",
+  "properties": {
+    "licenseCheck": {
+      "name": "License Check",
+      "type": "object",
+      "format": "informational",
+      "properties": {
+        "licenseMessage": {
+          "name": "License Check Successful.",
+          "type": "string",
+          "format": "message-info",
+          "info": "A full check of the application license has been performed successfully."
+        },
+        "licenseVersions": {
+          "name": "License Versions",
+          "type": "array",
+          "format": "informational-list",
+          "items": {
+            "type": "string",
+            "default" : [ "1.011110", "2.111110", "2.411110"]
+          }
+        },
+        "licensesLink": {
+          "name": "Available Licenses",
+          "type": "string",
+          "format": "informational-link",
+          "linkText": "Search full Licenses list",
+          "default": "https://www.google.com"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nodeSourceSelection": {
+      "name": "Choose Nodes Source",
+      "type": "object",
+      "properties": {
+        "radioGroup1": {
+          "name": "Nodes Source",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [
+            {
+              "properties": {
+                "scopingPanelCheck": {
+                  "name": "Select Nodes using Scoping Panel",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "scopingPanelCheck"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "fileInputCheck": {
+                  "name": "Upload File containing Nodes",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "fileInputCheck"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "required": [
+        "radioGroup1"
+      ],
+      "additionalProperties": false
+    },
+    "fileUploadTask": {
+      "name": "Upload Nodes List",
+      "type": "object",
+      "properties": {
+        "fileSelector": {
+          "name": "File",
+          "type": "object",
+          "format": "file",
+          "properties": {
+            "fileName": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "fileName"
+          ]
+        },
+        "fileInfo": {
+          "name": "File format info",
+          "type": "string",
+          "format": "message-info",
+          "info": "The nodes list file should be a .txt file containing a comma separated list of node names and types (i.e.: NodeName1=NodeType1,NodeName2=NodeType2,NodeName3=NodeType3)"
+        }
+      },
+      "required": [
+        "fileSelector"
+      ],
+      "additionalProperties": false
+    },
+    "selectedNodesTask": {
+      "name": "Selected Nodes",
+      "type": "object",
+      "properties": {
+        "selectedNodes": {
+          "name": "Node Details",
+          "type": "array",
+          "format": "table",
+          "readOnly": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "neName": {
+                "type": "string",
+                "name": "Node Name"
+              },
+              "neType": {
+                "type": "string",
+                "name": "NeType"
+              }
+            },
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:selectedNodes"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "relationChoice": {
+      "schemaGen": {
+        "type": "nameExtra",
+        "binding": "variable:local:nameExtra"
+      },
+      "name": "Select Relations",
+      "type": "object",
+      "properties": {
+        "relationsTable": {
+          "name": "Selected Relations",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "node1": {
+                "type": "string",
+                "name": "Node A"
+              },
+              "node2": {
+                "type": "string",
+                "name": "Node B"
+              }
+            },
+            "required": [
+              "node1",
+              "node2"
+            ],
+            "additionalProperties": false
+          },
+          "schemaGen": [{
+            "type": "default",
+            "binding": "variable:local:defaultRelationValues"
+          }, {
+            "type": "selectableItems",
+            "binding": "variable:local:relationValues"
+          }]
+        }
+      },
+      "required": [
+        "relationsTable"
+      ],
+      "additionalProperties": false
+    },
+    "upgradeConfiguration": {
+      "name": "Upgrade Configuration",
+      "type": "object",
+      "properties": {
+        "upgradeNodes": {
+          "name": "Upgrade Nodes",
+          "type": "object",
+          "format": "checkbox",
+          "properties": {
+            "upgradeSelection": {
+              "name": "Upgrade Selection",
+              "type": "object",
+              "format": "radio",
+              "oneOf": [
+                {
+                  "properties": {
+                    "editableScope": {
+                      "name": "Add/remove nodes to the previous selection",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "editableScope"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "properties": {
+                    "noEditableScope": {
+                      "name": "Upgrade only the nodes already selected",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "noEditableScope"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "lastUpgrades": {
+          "name": "Last Upgrades",
+          "type": "array",
+          "format": "list",
+          "readOnly": true,
+          "items": {
+            "type": "string",
+            "schemaGen": {
+              "type": "default",
+              "binding": "variable:local:lastUpgrades"
+            }
+          }
+        }
+      }
+    },
+    "nodeGroupConfigurationEditableScope": {
+      "type": "object",
+      "format": "nodeGroupPanel",
+      "formatOptions": {
+        "editableScope": true
+      },
+      "name": "Groups Configuration Editable Scope",
+      "properties": {
+        "groups": {
+          "name": "Groups",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "groupLabel": {
+                "name": "Group Label",
+                "type": "string"
+              },
+              "neNames": {
+                "name": "Nodes",
+                "type": "string"
+              }
+            },
+            "required": ["neNames"],
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:groupingData"
+          }
+        }
+      },
+      "required": ["groups"],
+      "additionalProperties": false
+    },
+    "nodeGroupConfigurationNoEditableScope": {
+      "type": "object",
+      "format": "nodeGroupPanel",
+      "name": "Groups Configuration No Editable Scope",
+      "properties": {
+        "groups": {
+          "name": "Groups",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "neNames": {
+                "name": "Nodes",
+                "type": "string"
+              }
+            },
+            "required": ["neNames"],
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:groupingData"
+          }
+        }
+      },
+      "required": ["groups"],
+      "additionalProperties": false
+    },
+    "additionalSettings": {
+      "name": "Additional Settings",
+      "type": "object",
+      "properties": {
+        "label": {
+          "name": "Additional Parameters:",
+          "type": "string",
+          "format": "informational"
+        },
+        "simName": {
+          "name": "Simulation Name",
+          "type": "string"
+        },
+        "simDateTime": {
+          "name": "Simulation Date/Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "intensity": {
+          "name": "Intensity of Scanning",
+          "type": "string",
+          "format": "select-list",
+          "enum": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "enumNames": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "default": "Low"
+        },
+        "speed": {
+          "name": "Speed of Scanning",
+          "type": "string",
+          "format": "select",
+          "enum": [
+            "Slow",
+            "Fast"
+          ],
+          "enumNames": [
+            "Slow",
+            "Fast"
+          ],
+          "default": "Fast"
+        },
+        "groupingCheckboxForScanningIterations": {
+          "name": "More than one iteration in scanning",
+          "type": "object",
+          "format": "checkbox",
+          "properties": {
+            "numberOfIterations": {
+              "name": "Number of Iterations",
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 5,
+              "default": 2
+            }
+          },
+          "additionalProperties": false
+        },
+        "groupingCheckboxForMaintenanceWindow": {
+          "name": "Maintenance Setup",
+          "type": "object",
+          "format": "checkbox",
+          "properties": {
+            "maintenanceWindows": {
+              "name": "Maintenance Windows",
+              "type": "array",
+              "format": "edit-table",
+              "formatOptions": {
+                "createRow": true,
+                "deleteRow": true
+              },
+              "minItems": 1,
+              "maxItems": 10,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "startDateTime": {
+                    "name": "Start Date/Time",
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "duration": {
+                    "type": "object",
+                    "name": "Duration",
+                    "properties": {
+                      "hours": {
+                        "name": "HH",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 5,
+                        "default": 0
+                      },
+                      "minutes": {
+                        "name": "MM",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 59,
+                        "default": 30
+                      }
+                    },
+                    "required": ["hours","minutes"],
+                    "additionalProperties": false
+                  },
+                  "maintenanceType": {
+                    "name": "Maintenance Type",
+                    "type": "string",
+                    "format": "select",
+                    "enum": ["0","1"],
+                    "enumNames": ["Hardware","Software"],
+                    "default": "1"
+                  }
+                },
+                "required": ["startDateTime","duration","maintenanceType"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "simName",
+        "simDateTime",
+        "intensity",
+        "speed"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "nodeSourceSelection",
+    "selectedNodesTask",
+    "relationChoice",
+    "additionalSettings"
+  ]
+}

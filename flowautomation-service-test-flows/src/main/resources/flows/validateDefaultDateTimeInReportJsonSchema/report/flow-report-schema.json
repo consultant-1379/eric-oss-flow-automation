@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Connectivity Simulator Flow Report Schema",
+  "description": "Connectivity Simulator Flow Report Schema",
+  "type": "object",
+  "properties": {
+    "nodesSelected": {
+      "name": "Nodes Selected",
+      "description": "Nodes Selected",
+      "type": "string",
+      "objectGen": {
+        "binding": "variable:report:nodesSelected"
+      }
+    },
+    "numberOfSimulations": {
+      "name": "Number of Simulations Executed",
+      "description": "Number of Simulations Executed",
+      "type": "string",
+      "objectGen": {
+        "binding": "variable:report:numberOfSimulations"
+      }
+    },
+    "networkTraffic": {
+      "name": "Network Traffic",
+      "description": "Network Traffic",
+      "type": "object",
+      "format": "progress",
+      "properties": {
+        "value": {
+          "type": "object",
+          "properties": {
+            "percent": {
+              "type": "integer"
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "notStarted",
+            "inProgress",
+            "success",
+            "error"
+          ]
+        }
+      },
+      "objectGen": {
+        "binding": "variable:report:networkTraffic"
+      },
+      "required": ["status"],
+      "additionalProperties": false
+    },
+    "simulationTable": {
+      "name": "",
+      "description": "Simulation Table",
+      "type": "array",
+      "objectGen": {
+        "indexBinding": "relationsSelected",
+        "indexName": "index",
+        "indexData": "{index}_summary"
+      },
+      "items": {
+        "name": "Last Connectivity Values",
+        "description": "Last Connectivity Values",
+        "type": "object",
+        "properties": {
+          "node1": {
+            "name": "Node A",
+            "description": "Node A",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:indexData:{index}.node1"
+            }
+          },
+          "node2": {
+            "name": "Node B",
+            "description": "Node B",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:indexData:{index}.node2"
+            }
+          },
+          "connectivity": {
+            "name": "Connectivity",
+            "description": "Connectivity",
+            "type": "number",
+            "default": 0,
+            "objectGen": {
+              "binding": "variable:indexData:{index}.connectivity"
+            }
+          },
+          "accuracy": {
+            "name": "Accuracy",
+            "description": "Accuracy",
+            "type": "object",
+            "format": "progress",
+            "properties": {
+              "value": {
+                "type": "object",
+                "properties": {
+                  "percent": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "notStarted",
+                  "inProgress",
+                  "success",
+                  "error"
+                ]
+              }
+            },
+            "objectGen": {
+              "binding": "variable:indexData:{index}.accuracy"
+            },
+            "required": ["status"],
+            "additionalProperties": false
+          },
+          "cmSyncStatus": {
+            "name": "Sync Status",
+            "description": "cmSyncStatus",
+            "type": "string",
+            "objectGen": {
+              "binding": "const:SYNCHRONIZED"
+            }
+          },
+          "simDateTime": {
+            "name": "Simulation Date/Time",
+            "description": "Simulation Date/Time",
+            "type": "string",
+            "format": "date-time",
+			"default": "2022-05-16T16:55:55Z",
+            "objectGen": {
+              "binding": "variable:indexData:simDateTime"
+            }
+          }
+        },
+        "required": ["node1","node2"]
+      }
+    }
+  },
+  "required": [
+    "nodesSelected"
+  ]
+}

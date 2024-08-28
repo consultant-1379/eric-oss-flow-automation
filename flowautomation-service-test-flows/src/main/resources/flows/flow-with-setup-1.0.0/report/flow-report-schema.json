@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Flow with setup",
+    "description": "Flow with setup",
+    "type": "object",
+    "properties": {
+        "testReportVariable": {
+            "name": "Test Report Variable",
+            "type": "integer",
+            "default": 0,
+            "objectGen": {
+                "binding": "variable:report:testReportVariable"
+            }
+        }
+    },
+    "required": ["testReportVariable"]
+}

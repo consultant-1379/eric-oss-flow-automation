@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "status": {
+      "enable": true,
+      "ignore": [
+        "500",
+        "503"
+      ]
+    }
+  }
+}

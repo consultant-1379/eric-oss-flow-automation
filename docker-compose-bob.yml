@@ -1,0 +1,85 @@
+#
+# COPYRIGHT Ericsson 2022
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+version: '3.8'
+services:
+  eric-oss-fa-postgres:
+    image: postgres:13.7-alpine
+    hostname: eric-oss-fa-postgres
+    container_name: eric-oss-flow-automation-postgres${CONTAINERVAR}
+    restart: always
+    user: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PORT=${POSTGRES_RANDOM_PORT}
+      - PGPORT=${POSTGRES_RANDOM_PORT}
+      - POSTGRES_DB=flowautomationdb
+      - POSTGRES_HOST=eric-oss-fa-postgres
+    ports:
+      - "${POSTGRES_RANDOM_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      interval: 3s
+      timeout: 1s
+      retries: 10
+
+  eric-oss-flow-automation-db:
+    container_name: eric-oss-flow-automation-db${CONTAINERVAR}
+    image: "${BOBDOCKERRUN}eric-oss-flow-automation-db${BOBTAGVERSION}"
+    environment:
+      - DATASOURCE_URL=jdbc:postgresql://eric-oss-fa-postgres:${POSTGRES_RANDOM_PORT}/flowautomationdb
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - SKIP_DB_CREATION=true
+      - PGPORT=${POSTGRES_RANDOM_PORT}
+    build:
+      context: .
+      dockerfile: ./flowautomation-service-db/Dockerfile
+
+  fa_jboss:
+    container_name: eric-oss-flow-automation-jboss${CONTAINERVAR}
+    environment:
+      - DATASOURCE_URL=jdbc:postgresql://eric-oss-fa-postgres:${POSTGRES_RANDOM_PORT}/flowautomationdb
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - JACOCO_AGENT_VERSION=0.8.7
+      - JAVA_OPTS=-javaagent:/opt/jacoco-agent.jar=output=tcpserver,destfile=jacoco-it.exec,address=*,port=6300
+      - USE_JBOSS_DEFAULT_LOGGING=true
+      - JBOSS_MODULEPATH=/opt/ericsson/jboss/modules:/jboss/modules:/jboss-runtime/modules
+    image: "${BOBDOCKERRUN}eric-oss-flow-automation${BOBTAGVERSION}"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: test
+      args:
+        - PORTHTTP=${REST_RANDOM_PORT}
+    ports:
+      - "${PORT1}:9999"
+      - "${PORT2}:9990"
+      - "${PORT3}:9090"
+      - "${REST_RANDOM_PORT}:8080"
+      - "${PORT5}:8787"
+      - "${PORT6}:4447"
+      - "${JACOCO_RANDOM_PORT}:6300"
+    depends_on:
+      - "eric-oss-flow-automation-db"
+      - "eric-oss-fa-postgres"
+    links:
+      - eric-oss-fa-postgres:postgresql01
+networks:
+  default:
+    name: eric-oss-flow-automation-network${CONTAINERVAR}

@@ -1,0 +1,12 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.using.flowapi.flowexecution",
+    "flowName" : "Hello World Flow which uses flowexecution API",
+    "flowVersion" : "1.0.0",
+    "description" : "Hello World Flow which uses flowexecution API",
+    "setup" : {
+        "processId" : "setup-flow"
+    },
+    "execute" : {
+        "processId" : "execute-flow"
+    }
+}

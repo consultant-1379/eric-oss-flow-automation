@@ -1,0 +1,15 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.sdkUserTaskWidgetsFlowExample",
+  "flowName": "SDK User Task Widgets Flow Example",
+  "flowVersion": "1.0.1",
+  "description": "The purpose of this flow is to show the behavior of every widget that can be added to a flow.",
+  "setup": {
+    "processId": "conn-sim-setup",
+    "userTask": {
+        "backEnabled": true
+    }
+  },
+  "execute": {
+    "processId": "conn-sim-execute"
+  }
+}

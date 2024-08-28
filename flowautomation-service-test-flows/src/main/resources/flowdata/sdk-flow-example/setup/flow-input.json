@@ -1,0 +1,8 @@
+{
+  "nodeSelection": {
+    "nodes": "RadioNode-1"
+  },
+  "softwarePackageSelection": {
+    "softwarePackages": "RadioNode-ISO-v1"
+  }
+}

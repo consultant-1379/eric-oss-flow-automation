@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1qi320b" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="FA-Incident-Handling" isExecutable="true">
+    <bpmn:startEvent id="incident-handling-start" name="Start">
+      <bpmn:outgoing>SequenceFlow_0kl9cyk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0kl9cyk" sourceRef="incident-handling-start" targetRef="Initialise" />
+    <bpmn:serviceTask id="Initialise" name="Incident Handler Initialise" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.incidenthandling.FlowAutomationIncidentHandlerConfigurationDelegate">
+      <bpmn:incoming>SequenceFlow_0kl9cyk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00k3gx9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_00k3gx9" sourceRef="Initialise" targetRef="incident-handling-interval-timer" />
+    <bpmn:intermediateCatchEvent id="incident-handling-interval-timer" name="Incident handling interval">
+      <bpmn:incoming>SequenceFlow_00k3gx9</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1goxqwz</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_12ay1ul</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1khng5g</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${incidentHandlingInterval}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1khng5g" sourceRef="incident-handling-interval-timer" targetRef="get-incidents" />
+    <bpmn:serviceTask id="get-incidents" name="Get Incidents" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.incidenthandling.FlowAutomationIncidentsRetrieveDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="incidents">${incidents}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1khng5g</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1b8fc9a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="handle-incident" name="Handle Incident" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.incidenthandling.FlowAutomationIncidentHandleDelegate">
+      <bpmn:incoming>SequenceFlow_1bd7j3e</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1goxqwz</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="incidents" camunda:elementVariable="incident" />
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1goxqwz" sourceRef="handle-incident" targetRef="incident-handling-interval-timer" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1aq47fc" name="Is any incident occurred?" default="SequenceFlow_1cpvv69">
+      <bpmn:incoming>SequenceFlow_1b8fc9a</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1bd7j3e</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1cpvv69</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1b8fc9a" sourceRef="get-incidents" targetRef="ExclusiveGateway_1aq47fc" />
+    <bpmn:sequenceFlow id="SequenceFlow_1bd7j3e" name="Incidents Found" sourceRef="ExclusiveGateway_1aq47fc" targetRef="handle-incident">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty incidents}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1cpvv69" name="No Incidents Found" sourceRef="ExclusiveGateway_1aq47fc" targetRef="Task_1l00vbo" />
+    <bpmn:scriptTask id="Task_1l00vbo" name="No Incidents Found" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1cpvv69</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_12ay1ul</bpmn:outgoing>
+      <bpmn:script>import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+Logger logger = LoggerFactory.getLogger("FA-INCIDENT-HANDLER")
+logger.debug("No Incidents Found")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_12ay1ul" sourceRef="Task_1l00vbo" targetRef="incident-handling-interval-timer" />
+  </bpmn:process>
+  <bpmn:message id="Message_0orilw6" name="DO_HOUSE_KEEPING_NOW" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="FA-Incident-Handling">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="incident-handling-start">
+        <dc:Bounds x="133" y="134" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="140" y="177" width="24" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kl9cyk_di" bpmnElement="SequenceFlow_0kl9cyk">
+        <di:waypoint x="169" y="152" />
+        <di:waypoint x="217" y="152" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="322" y="131" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0e6l23l_di" bpmnElement="Initialise">
+        <dc:Bounds x="217" y="112" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_00k3gx9_di" bpmnElement="SequenceFlow_00k3gx9">
+        <di:waypoint x="317" y="152" />
+        <di:waypoint x="365" y="152" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="341" y="131" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1fmv5kf_di" bpmnElement="incident-handling-interval-timer">
+        <dc:Bounds x="365" y="134" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="342" y="102" width="81" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1khng5g_di" bpmnElement="SequenceFlow_1khng5g">
+        <di:waypoint x="401" y="152" />
+        <di:waypoint x="444" y="153" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="422.5" y="131.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1f0y8ez_di" bpmnElement="get-incidents">
+        <dc:Bounds x="444" y="113" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0141xp1_di" bpmnElement="handle-incident">
+        <dc:Bounds x="884" y="112" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1goxqwz_di" bpmnElement="SequenceFlow_1goxqwz">
+        <di:waypoint x="934" y="192" />
+        <di:waypoint x="934" y="421" />
+        <di:waypoint x="383" y="421" />
+        <di:waypoint x="383" y="170" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="457" y="219" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1aq47fc_di" bpmnElement="ExclusiveGateway_1aq47fc" isMarkerVisible="true">
+        <dc:Bounds x="639" y="127" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="629" y="97" width="72" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1b8fc9a_di" bpmnElement="SequenceFlow_1b8fc9a">
+        <di:waypoint x="544" y="153" />
+        <di:waypoint x="640" y="153" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bd7j3e_di" bpmnElement="SequenceFlow_1bd7j3e">
+        <di:waypoint x="689" y="152" />
+        <di:waypoint x="884" y="152" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="748" y="134" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1cpvv69_di" bpmnElement="SequenceFlow_1cpvv69">
+        <di:waypoint x="664" y="177" />
+        <di:waypoint x="664" y="238" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="668" y="201" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0g77ppm_di" bpmnElement="Task_1l00vbo">
+        <dc:Bounds x="614" y="238" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_12ay1ul_di" bpmnElement="SequenceFlow_12ay1ul">
+        <di:waypoint x="614" y="278" />
+        <di:waypoint x="383" y="278" />
+        <di:waypoint x="383" y="170" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1qi320b" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="FA-House-Keeping-Delegate-Tester" name="Flow Automation House Keeping Delegate Tester" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>SequenceFlow_0kl9cyk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0kl9cyk" sourceRef="StartEvent_1" targetRef="Task_13ar26q" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ygf18r" sourceRef="Task_13ar26q" targetRef="Task_0ls5zs4" />
+    <bpmn:scriptTask id="Task_0365460" name="Reset House Keeping Status" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:script>execution.setVariable("PERFORM_HOUSE_KEEPING", false)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Task_13ar26q" name="Init" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeeperConfigurationDelegate">
+      <bpmn:incoming>SequenceFlow_0kl9cyk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ygf18r</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_0ls5zs4" name="Determine next HK time" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeepingSchedulerDelegate">
+      <bpmn:incoming>SequenceFlow_1ygf18r</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xapl6y</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="ServiceTask_0k2wuvz" name="Do Housekeeping for Internal Flows" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.InternalFlowsHouseKeeperDelegate">
+      <bpmn:incoming>Flow_1lbewrr</bpmn:incoming>
+      <bpmn:outgoing>Flow_04u9w4q</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="ScriptTask_0ovmwv4" name="Update Report" scriptFormat="groovy">
+      <bpmn:incoming>Flow_04u9w4q</bpmn:incoming>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution,"Flow Executed Successfully")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Task_0arvkle" name="Do Housekeeping" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeeperDelegate">
+      <bpmn:incoming>Flow_1xapl6y</bpmn:incoming>
+      <bpmn:outgoing>Flow_14vnj0j</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_0ux3vk2" name="Clean Up Stopped Instances From Runtime" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeepingRuntimeStoppedInstancesDelegate">
+      <bpmn:incoming>Flow_14vnj0j</bpmn:incoming>
+      <bpmn:outgoing>Flow_15lhg09</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_03uqk9r" name="Clean Up Stopped Instances From History" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeepingHistoricStoppedInstancesDelegate">
+      <bpmn:incoming>Flow_15lhg09</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lbewrr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1xapl6y" sourceRef="Task_0ls5zs4" targetRef="Task_0arvkle" />
+    <bpmn:sequenceFlow id="Flow_14vnj0j" sourceRef="Task_0arvkle" targetRef="Task_0ux3vk2" />
+    <bpmn:sequenceFlow id="Flow_15lhg09" sourceRef="Task_0ux3vk2" targetRef="Task_03uqk9r" />
+    <bpmn:sequenceFlow id="Flow_1lbewrr" sourceRef="Task_03uqk9r" targetRef="ServiceTask_0k2wuvz" />
+    <bpmn:sequenceFlow id="Flow_04u9w4q" sourceRef="ServiceTask_0k2wuvz" targetRef="ScriptTask_0ovmwv4" />
+  </bpmn:process>
+  <bpmn:message id="Message_0orilw6" name="DO_HOUSE_KEEPING_NOW" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="FA-House-Keeping">
+      <bpmndi:BPMNEdge id="SequenceFlow_1ygf18r_di" bpmnElement="SequenceFlow_1ygf18r">
+        <di:waypoint x="280" y="120" />
+        <di:waypoint x="380" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kl9cyk_di" bpmnElement="SequenceFlow_0kl9cyk">
+        <di:waypoint x="148" y="120" />
+        <di:waypoint x="180" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="184" y="313" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xapl6y_di" bpmnElement="Flow_1xapl6y">
+        <di:waypoint x="480" y="120" />
+        <di:waypoint x="560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14vnj0j_di" bpmnElement="Flow_14vnj0j">
+        <di:waypoint x="660" y="120" />
+        <di:waypoint x="750" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15lhg09_di" bpmnElement="Flow_15lhg09">
+        <di:waypoint x="850" y="120" />
+        <di:waypoint x="910" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lbewrr_di" bpmnElement="Flow_1lbewrr">
+        <di:waypoint x="1010" y="120" />
+        <di:waypoint x="1070" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04u9w4q_di" bpmnElement="Flow_04u9w4q">
+        <di:waypoint x="1170" y="120" />
+        <di:waypoint x="1220" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="112" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="119" y="145" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_15v0szl_di" bpmnElement="Task_0365460">
+        <dc:Bounds x="1850" y="387" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0e6l23l_di" bpmnElement="Task_13ar26q">
+        <dc:Bounds x="180" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_01cbi0y_di" bpmnElement="Task_03uqk9r">
+        <dc:Bounds x="910" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0ovmwv4_di" bpmnElement="ScriptTask_0ovmwv4">
+        <dc:Bounds x="1220" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0k2wuvz_di" bpmnElement="ServiceTask_0k2wuvz">
+        <dc:Bounds x="1070" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0h17as8_di" bpmnElement="Task_0ux3vk2">
+        <dc:Bounds x="750" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1t2xdlj_di" bpmnElement="Task_0ls5zs4">
+        <dc:Bounds x="380" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1xwejjt_di" bpmnElement="Task_0arvkle">
+        <dc:Bounds x="560" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

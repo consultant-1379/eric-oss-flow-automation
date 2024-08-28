@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="variableAndDataShowcase-execute" name="Variable and Data Showcase Execute" isExecutable="true">
+    <bpmn:startEvent id="Event_07gm26p" camunda:asyncAfter="true">
+      <bpmn:outgoing>Flow_02tw77j</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0m5knl2" sourceRef="Activity_079i9z6" targetRef="Activity_0dmrgqc" />
+    <bpmn:callActivity id="Activity_079i9z6" name="Showcase variables" calledElement="showcase-variables" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_02tw77j</bpmn:incoming>
+      <bpmn:outgoing>Flow_0m5knl2</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="Activity_0dmrgqc" name="Showcase input output mapping" calledElement="showcase-input-output-mapping" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0m5knl2</bpmn:incoming>
+      <bpmn:outgoing>Flow_011wi0i</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_011wi0i" sourceRef="Activity_0dmrgqc" targetRef="Activity_0jcfjei" />
+    <bpmn:callActivity id="Activity_0jcfjei" name="Showcase call activity variable passing" calledElement="showcase-call-activity-variable-passing" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_011wi0i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0x7j56z</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0x7j56z" sourceRef="Activity_0jcfjei" targetRef="Activity_1y6ahvg" />
+    <bpmn:callActivity id="Activity_1y6ahvg" name="Showcase scoping" calledElement="showcase-scoping" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0x7j56z</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ad5y4h</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_0ad5y4h" sourceRef="Activity_1y6ahvg" targetRef="Activity_1pmtmju" />
+    <bpmn:endEvent id="Event_0t559m1">
+      <bpmn:incoming>Flow_1pfd8k4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_02tw77j" sourceRef="Event_07gm26p" targetRef="Activity_079i9z6" />
+    <bpmn:sequenceFlow id="Flow_1pfd8k4" sourceRef="Activity_1pmtmju" targetRef="Event_0t559m1" />
+    <bpmn:callActivity id="Activity_1pmtmju" name="Showcase multi-instance" calledElement="showcase-multi-instance" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ad5y4h</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pfd8k4</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="variableAndDataShowcase-execute">
+      <bpmndi:BPMNEdge id="Flow_1pfd8k4_di" bpmnElement="Flow_1pfd8k4">
+        <di:waypoint x="890" y="100" />
+        <di:waypoint x="932" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02tw77j_di" bpmnElement="Flow_02tw77j">
+        <di:waypoint x="188" y="100" />
+        <di:waypoint x="230" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ad5y4h_di" bpmnElement="Flow_0ad5y4h">
+        <di:waypoint x="750" y="100" />
+        <di:waypoint x="790" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x7j56z_di" bpmnElement="Flow_0x7j56z">
+        <di:waypoint x="610" y="100" />
+        <di:waypoint x="650" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_011wi0i_di" bpmnElement="Flow_011wi0i">
+        <di:waypoint x="470" y="100" />
+        <di:waypoint x="510" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0m5knl2_di" bpmnElement="Flow_0m5knl2">
+        <di:waypoint x="330" y="100" />
+        <di:waypoint x="370" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_07gm26p_di" bpmnElement="Event_07gm26p">
+        <dc:Bounds x="152" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0g6xuph_di" bpmnElement="Activity_079i9z6">
+        <dc:Bounds x="230" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0eo0ebp_di" bpmnElement="Activity_0dmrgqc">
+        <dc:Bounds x="370" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_035mfzg_di" bpmnElement="Activity_0jcfjei">
+        <dc:Bounds x="510" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0tg28ps_di" bpmnElement="Activity_1y6ahvg">
+        <dc:Bounds x="650" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1site21_di" bpmnElement="Activity_1pmtmju">
+        <dc:Bounds x="790" y="60" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0t559m1_di" bpmnElement="Event_0t559m1">
+        <dc:Bounds x="932" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

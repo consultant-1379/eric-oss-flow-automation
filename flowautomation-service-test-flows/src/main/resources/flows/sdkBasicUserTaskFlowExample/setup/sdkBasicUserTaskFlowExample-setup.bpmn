@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1hvm6lu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="sdkBasicUserTaskFlowExample-setup" name="SDK Basic User Task Flow Example - Setup Phase" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>SequenceFlow_177e3iy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Task_0tj1p1k" name="Prepare Input Data" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0i63zva</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1fa8v0a</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("textInputWithDynamicDefault","node1")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="userTaskInputValidationId" name="Input Validation" camunda:formKey="setup:inputValidation">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="textInputWithDynamicDefault">${textInputWithDynamicDefault}</camunda:inputParameter>
+          <camunda:outputParameter name="inputValidation">${inputValidation}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1fa8v0a</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0djbn28</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="StandaloneSchemaUserTaskId" name="User Task Using Standalone Schema In Setup Phase" camunda:formKey="setup:userTaskUsingStandaloneSchemaInSetupPhase.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="userTaskUsingStandaloneSchemaInSetupPhase">${userTaskUsingStandaloneSchemaInSetupPhase}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1pzjd91</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0grrfh4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0tzz0zq" default="SequenceFlow_0i63zva">
+      <bpmn:incoming>SequenceFlow_177e3iy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0i63zva</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_08eiuj6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_177e3iy" sourceRef="StartEvent_1" targetRef="ExclusiveGateway_0tzz0zq" />
+    <bpmn:sequenceFlow id="SequenceFlow_0i63zva" name="Input Not Supplied" sourceRef="ExclusiveGateway_0tzz0zq" targetRef="Task_0tj1p1k" />
+    <bpmn:sequenceFlow id="SequenceFlow_08eiuj6" name="Input Supplied" sourceRef="ExclusiveGateway_0tzz0zq" targetRef="Task_01ciwis">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty execution.getVariable('flowInput')}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Task_01ciwis" name="Validate Inputs" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_08eiuj6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1aoj19m</bpmn:outgoing>
+      <bpmn:script>import org.camunda.bpm.engine.delegate.BpmnError
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder
+
+inputValidation = flowInput.inputValidation
+nodeName = inputValidation.textInputWithDynamicDefault ?: ""
+
+
+if(!["node1", "node2", "node3"].contains(nodeName)){
+  errorMessage = "The value provided to the inputValidation.textInputWithDynamicDefault property is invalid. The legal values are: [node1, node2, node3]"
+
+  EventRecorder.error(execution, errorMessage, "Validate File Input")
+
+  throw new BpmnError("Failed to Validate File Input", errorMessage)
+}
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="ScriptTask_0yhh3ve" name="Prepare Selection for Dynamic Objects" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0grrfh4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ek0vj0</bpmn:outgoing>
+      <bpmn:script>def dynamicObjectsOptions = []
+
+def dynamicObject1 = [propertyName:"dynamicObject1", name : "Software Package", default : false]
+
+def dynamicObject2 = [propertyName:"dynamicObject2", name : "Network", default : false]
+
+dynamicObjectsOptions.add(dynamicObject1)
+dynamicObjectsOptions.add(dynamicObject2)
+
+execution.setVariable("dynamicObjectsOptions",dynamicObjectsOptions)
+
+flowInput.userTaskUsingStandaloneSchemaInSetupPhase = userTaskUsingStandaloneSchemaInSetupPhase</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="ScriptPrepareInputId" name="Prepare Input Data" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_189f0fi</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0n0l1co</bpmn:outgoing>
+      <bpmn:script>dataToBeDerived = inputValidation.textInputWithDefault
+
+String derivedData = dataToBeDerived + " + content added by the flow"
+execution.setVariable("derivedData", derivedData);
+
+String dateTime = "2022-01-04T11:22:33.000Z";
+execution.setVariable("derivedDateTimeInput", dateTime);
+
+def readOnlyEmailIds = [];
+readOnlyEmailIds.add("user1@ericsson.com");
+readOnlyEmailIds.add("user2@ericsson.com");
+execution.setVariable("readOnlyEmailConfig", readOnlyEmailIds);
+
+def readOnlyListBoxValues = [];
+readOnlyListBoxValues.add("Read Only List Value 1");
+readOnlyListBoxValues.add("Read Only List Value 2");
+readOnlyListBoxValues.add("Read Only List Value 3");
+readOnlyListBoxValues.add("Read Only List Value 4");
+execution.setVariable("readOnlyListBox", readOnlyListBoxValues);
+
+def derivedDataTableMap = []
+def size3 = 2
+for (i = 0; i &lt; size3; i++) {
+    derivedDataTableMap.add("packageName":"Package"+i, "productName":"Product"+i,"productId":i , "packageTitle": "Test package title"+i, "nodeDistance": i, "nodeType": "Node Type"+i, "customDetails": "Derived Data generated by the flow"+i)
+}
+
+execution.setVariable("readOnlyTable", derivedDataTableMap)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1fa8v0a" sourceRef="Task_0tj1p1k" targetRef="userTaskInputValidationId" />
+    <bpmn:endEvent id="EndEvent_0144sl9" name="End">
+      <bpmn:incoming>SequenceFlow_1aoj19m</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1e807lv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1aoj19m" sourceRef="Task_01ciwis" targetRef="EndEvent_0144sl9" />
+    <bpmn:scriptTask id="ValidateGroupingAndNestingUserTaskId" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_16fahsw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1e807lv</bpmn:outgoing>
+      <bpmn:script>flowInput.nestingAndGrouping = nestingAndGrouping</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="GroupingAndNestingUserTaskId" name="Grouping and Nesting" camunda:formKey="setup:nestingAndGrouping">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="nestingAndGrouping">${nestingAndGrouping}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k948g7</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_046spa2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16fahsw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="scriptSPrepareStandaloneSchemaId" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1e6s03g</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1pzjd91</bpmn:outgoing>
+      <bpmn:script>flowInput.readOnly = readOnly</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="userTaskReadOnlyId" name="Read-Only" camunda:formKey="setup:readOnly">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="derivedData">${derivedData}</camunda:inputParameter>
+          <camunda:inputParameter name="derivedDateTimeInput">${derivedDateTimeInput}</camunda:inputParameter>
+          <camunda:inputParameter name="readOnlyEmailConfig">${readOnlyEmailConfig}</camunda:inputParameter>
+          <camunda:inputParameter name="readOnlyListBox">${readOnlyListBox}</camunda:inputParameter>
+          <camunda:inputParameter name="readOnlyTable">${readOnlyTable}</camunda:inputParameter>
+          <camunda:outputParameter name="readOnly">${readOnly}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0n0l1co</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1e6s03g</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_0yur2mw" name="Validate Input" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0djbn28</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_189f0fi</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.usertask.UsertaskInputProcessingError
+
+input = inputValidation.textInputWithDynamicDefault ?: ""
+
+if(!["node1", "node2", "node3"].contains(input)){
+  throw new UsertaskInputProcessingError("error.fa.usertask.input.invalid", "The value provided to the Node Name field is invalid. The legal values are: [node1, node2, node3]")
+}
+
+flowInput.inputValidation = inputValidation</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0aeejjo" name="Prepare Dynamic Objects" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0x9lcji</bpmn:incoming>
+      <bpmn:outgoing>Flow_1epwel1</bpmn:outgoing>
+      <bpmn:script>def dynamicObjectsInput = []
+
+if(selectDynamicObjects.dynamicObject1){
+    def dynamicObject1 =[:]
+    dynamicObject1.id = "dynamicObject1"
+    dynamicObject1.name = "Software Package"
+
+    properties = []
+
+    softwarePackageName = [:]
+    softwarePackageName.textbox = "true"
+    softwarePackageName.propertyName = "softwarePackageName"
+    softwarePackageName.name = "Software Package Name"
+    properties.add(softwarePackageName);
+
+    softwarePackageVersion = [:]
+    softwarePackageVersion.propertyName = "softwarePackageVersion"
+    softwarePackageVersion.name = "Software Package Version"
+    softwarePackageVersion.textbox = "true"
+    properties.add(softwarePackageVersion);
+
+    dynamicObject1.properties = properties
+    dynamicObjectsInput.add(dynamicObject1)
+}
+
+if(selectDynamicObjects.dynamicObject2){
+    def dynamicObject2 =[:]
+    dynamicObject2.id = "dynamicObject2"
+    dynamicObject2.name = "Network"
+
+    properties = []
+
+    network = [:]
+    network.propertyName = "network"
+    network.name = "Network"
+    network.textbox = "true"
+    properties.add(network);
+
+    subnetwork = [:]
+    subnetwork.propertyName = "subnetwork"
+    subnetwork.name = "Subnetwork"
+    subnetwork.textbox = "true"
+    properties.add(subnetwork);
+
+    dynamicObject2.properties = properties
+    dynamicObjectsInput.add(dynamicObject2)
+}
+
+execution.setVariable("dynamicObjectsInput",dynamicObjectsInput)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="dynamicObjectsUserTaskId" name="Dynamic Objects" camunda:formKey="setup:dynamicObjects.ftl">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="dynamicObjectsInput">${dynamicObjectsInput}</camunda:inputParameter>
+          <camunda:outputParameter name="dynamicObjects">${dynamicObjects}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1epwel1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yusvs3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_089pp5g" name="Map to flow-input-schema" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1yusvs3</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_046spa2</bpmn:outgoing>
+      <bpmn:script>flowInput.softwarePackage = dynamicObjects.dynamicObject1
+flowInput.network = dynamicObjects.dynamicObject2</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1epwel1" sourceRef="Activity_0aeejjo" targetRef="dynamicObjectsUserTaskId" />
+    <bpmn:sequenceFlow id="Flow_1yusvs3" sourceRef="dynamicObjectsUserTaskId" targetRef="Activity_089pp5g" />
+    <bpmn:userTask id="Activity_1lcmsu7" name="Select Dynamic Objects" camunda:formKey="setup:selectDynamicObjects.ftl">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="dynamicObjectsOptions">${dynamicObjectsOptions}</camunda:inputParameter>
+          <camunda:outputParameter name="selectDynamicObjects">${selectDynamicObjects}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0ek0vj0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nrsd19</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1nrsd19" sourceRef="Activity_1lcmsu7" targetRef="Gateway_0b5ofq4" />
+    <bpmn:sequenceFlow id="Flow_0x9lcji" sourceRef="Gateway_0b5ofq4" targetRef="Activity_0aeejjo">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${selectDynamicObjects.dynamicObject1 || selectDynamicObjects.dynamicObject2}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1k948g7" sourceRef="Gateway_0b5ofq4" targetRef="GroupingAndNestingUserTaskId" />
+    <bpmn:exclusiveGateway id="Gateway_0b5ofq4" default="Flow_1k948g7">
+      <bpmn:incoming>Flow_1nrsd19</bpmn:incoming>
+      <bpmn:outgoing>Flow_0x9lcji</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1k948g7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0djbn28" sourceRef="userTaskInputValidationId" targetRef="Activity_0yur2mw" />
+    <bpmn:sequenceFlow id="SequenceFlow_189f0fi" sourceRef="Activity_0yur2mw" targetRef="ScriptPrepareInputId" />
+    <bpmn:sequenceFlow id="SequenceFlow_0n0l1co" sourceRef="ScriptPrepareInputId" targetRef="userTaskReadOnlyId" />
+    <bpmn:sequenceFlow id="SequenceFlow_0grrfh4" sourceRef="StandaloneSchemaUserTaskId" targetRef="ScriptTask_0yhh3ve" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ek0vj0" sourceRef="ScriptTask_0yhh3ve" targetRef="Activity_1lcmsu7" />
+    <bpmn:sequenceFlow id="SequenceFlow_1e6s03g" sourceRef="userTaskReadOnlyId" targetRef="scriptSPrepareStandaloneSchemaId" />
+    <bpmn:sequenceFlow id="SequenceFlow_1pzjd91" sourceRef="scriptSPrepareStandaloneSchemaId" targetRef="StandaloneSchemaUserTaskId" />
+    <bpmn:sequenceFlow id="SequenceFlow_16fahsw" sourceRef="GroupingAndNestingUserTaskId" targetRef="ValidateGroupingAndNestingUserTaskId" />
+    <bpmn:sequenceFlow id="SequenceFlow_046spa2" sourceRef="Activity_089pp5g" targetRef="GroupingAndNestingUserTaskId" />
+    <bpmn:sequenceFlow id="SequenceFlow_1e807lv" sourceRef="ValidateGroupingAndNestingUserTaskId" targetRef="EndEvent_0144sl9" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sdkBasicUserTaskFlowExample-setup">
+      <bpmndi:BPMNEdge id="SequenceFlow_1e807lv_di" bpmnElement="SequenceFlow_1e807lv">
+        <di:waypoint x="1340" y="580" />
+        <di:waypoint x="1420" y="580" />
+        <di:waypoint x="1420" y="368" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1pzjd91_di" bpmnElement="SequenceFlow_1pzjd91">
+        <di:waypoint x="1134" y="460" />
+        <di:waypoint x="1134" y="490" />
+        <di:waypoint x="280" y="490" />
+        <di:waypoint x="280" y="580" />
+        <di:waypoint x="334" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1e6s03g_di" bpmnElement="SequenceFlow_1e6s03g">
+        <di:waypoint x="1044" y="420" />
+        <di:waypoint x="1084" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ek0vj0_di" bpmnElement="SequenceFlow_0ek0vj0">
+        <di:waypoint x="584" y="580" />
+        <di:waypoint x="644" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0grrfh4_di" bpmnElement="SequenceFlow_0grrfh4">
+        <di:waypoint x="434" y="580" />
+        <di:waypoint x="484" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0n0l1co_di" bpmnElement="SequenceFlow_0n0l1co">
+        <di:waypoint x="884" y="420" />
+        <di:waypoint x="944" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_189f0fi_di" bpmnElement="SequenceFlow_189f0fi">
+        <di:waypoint x="734" y="420" />
+        <di:waypoint x="784" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0djbn28_di" bpmnElement="SequenceFlow_0djbn28">
+        <di:waypoint x="584" y="420" />
+        <di:waypoint x="634" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nrsd19_di" bpmnElement="Flow_1nrsd19">
+        <di:waypoint x="744" y="580" />
+        <di:waypoint x="805" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1aoj19m_di" bpmnElement="SequenceFlow_1aoj19m">
+        <di:waypoint x="884" y="120" />
+        <di:waypoint x="1420" y="120" />
+        <di:waypoint x="1420" y="332" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fa8v0a_di" bpmnElement="SequenceFlow_1fa8v0a">
+        <di:waypoint x="434" y="420" />
+        <di:waypoint x="484" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_08eiuj6_di" bpmnElement="SequenceFlow_08eiuj6">
+        <di:waypoint x="284" y="215" />
+        <di:waypoint x="284" y="120" />
+        <di:waypoint x="784" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="405" y="103" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0i63zva_di" bpmnElement="SequenceFlow_0i63zva">
+        <di:waypoint x="284" y="265" />
+        <di:waypoint x="284" y="420" />
+        <di:waypoint x="334" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="231" y="361" width="46" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_177e3iy_di" bpmnElement="SequenceFlow_177e3iy">
+        <di:waypoint x="192" y="240" />
+        <di:waypoint x="259" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0x9lcji_di" bpmnElement="Flow_0x9lcji">
+        <di:waypoint x="830" y="605" />
+        <di:waypoint x="830" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k948g7_di" bpmnElement="Flow_1k948g7">
+        <di:waypoint x="855" y="580" />
+        <di:waypoint x="1084" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1epwel1_di" bpmnElement="Flow_1epwel1">
+        <di:waypoint x="880" y="760" />
+        <di:waypoint x="938" y="760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yusvs3_di" bpmnElement="Flow_1yusvs3">
+        <di:waypoint x="1038" y="760" />
+        <di:waypoint x="1084" y="760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_046spa2_di" bpmnElement="SequenceFlow_046spa2">
+        <di:waypoint x="1134" y="720" />
+        <di:waypoint x="1134" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_16fahsw_di" bpmnElement="SequenceFlow_16fahsw">
+        <di:waypoint x="1184" y="580" />
+        <di:waypoint x="1240" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="156" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="265" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_05rrg07_di" bpmnElement="Task_0tj1p1k">
+        <dc:Bounds x="334" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0g9zhen_di" bpmnElement="userTaskInputValidationId">
+        <dc:Bounds x="484" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0q5g14a_di" bpmnElement="StandaloneSchemaUserTaskId">
+        <dc:Bounds x="334" y="540" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0tzz0zq_di" bpmnElement="ExclusiveGateway_0tzz0zq" isMarkerVisible="true">
+        <dc:Bounds x="259" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0yhh3ve_di" bpmnElement="ScriptTask_0yhh3ve">
+        <dc:Bounds x="484" y="540" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fd233x_di" bpmnElement="ScriptPrepareInputId">
+        <dc:Bounds x="784" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_19ai9vg_di" bpmnElement="scriptSPrepareStandaloneSchemaId">
+        <dc:Bounds x="1084" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_15lxpuz_di" bpmnElement="userTaskReadOnlyId">
+        <dc:Bounds x="944" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ip9cjt_di" bpmnElement="Activity_0yur2mw">
+        <dc:Bounds x="634" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lcmsu7_di" bpmnElement="Activity_1lcmsu7">
+        <dc:Bounds x="644" y="540" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_04kh3do_di" bpmnElement="Gateway_0b5ofq4" isMarkerVisible="true">
+        <dc:Bounds x="805" y="555" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0aeejjo_di" bpmnElement="Activity_0aeejjo">
+        <dc:Bounds x="780" y="720" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ptkz11_di" bpmnElement="dynamicObjectsUserTaskId">
+        <dc:Bounds x="938" y="720" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_089pp5g_di" bpmnElement="Activity_089pp5g">
+        <dc:Bounds x="1084" y="720" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dxuu3d_di" bpmnElement="GroupingAndNestingUserTaskId">
+        <dc:Bounds x="1084" y="540" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1d558dc_di" bpmnElement="ValidateGroupingAndNestingUserTaskId">
+        <dc:Bounds x="1240" y="540" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0144sl9_di" bpmnElement="EndEvent_0144sl9">
+        <dc:Bounds x="1402" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1372" y="343" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_13cyyfp_di" bpmnElement="Task_01ciwis">
+        <dc:Bounds x="784" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

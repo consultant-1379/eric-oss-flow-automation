@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "flowSetupData": {
+      "name": "Flow Setup Data",
+      "type": "object",
+      "properties": {
+        "foo": {
+          "name": "Foo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "foo"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "flowSetupData"
+  ]
+}

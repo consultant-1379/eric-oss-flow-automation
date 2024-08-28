@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0hs8z3u" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.14.0">
+  <bpmn:process id="showcase-looping-and-event-subprocess" name="Showcase looping and event subprocess" isExecutable="true">
+    <bpmn:startEvent id="start">
+      <bpmn:outgoing>SequenceFlow_0nr3q7i</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="end">
+      <bpmn:incoming>flow-check-finished-yes</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0nr3q7i" sourceRef="start" targetRef="get-number-of-loops" />
+    <bpmn:sequenceFlow id="SequenceFlow_1nix8yk" sourceRef="get-number-of-loops" targetRef="init" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jwzmf6" sourceRef="init" targetRef="ask-what-to-throw" />
+    <bpmn:sequenceFlow id="SequenceFlow_0gjtynz" sourceRef="ask-what-to-throw" targetRef="subprocess-throws-error-if-requested" />
+    <bpmn:sequenceFlow id="SequenceFlow_1mf9iy4" sourceRef="subprocess-throws-error-if-requested" targetRef="increment-counter" />
+    <bpmn:sequenceFlow id="SequenceFlow_1dtp2wk" sourceRef="increment-counter" targetRef="ExclusiveGateway_1i2ka2c" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1i2ka2c" name="done ?" default="flow-check-finished-no">
+      <bpmn:incoming>SequenceFlow_1dtp2wk</bpmn:incoming>
+      <bpmn:outgoing>flow-check-finished-yes</bpmn:outgoing>
+      <bpmn:outgoing>flow-check-finished-no</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="flow-check-finished-yes" name="Yes" sourceRef="ExclusiveGateway_1i2ka2c" targetRef="end">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${counter &gt; getNumberOfLoops.numLoops}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow-check-finished-no" name="No" sourceRef="ExclusiveGateway_1i2ka2c" targetRef="ask-what-to-throw" />
+    <bpmn:userTask id="get-number-of-loops" name="Get number of loops" camunda:asyncAfter="true" camunda:formKey="execute:get-number-of-loops.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="getNumberOfLoops">${getNumberOfLoops}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0nr3q7i</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1nix8yk</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="init" name="Init" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1nix8yk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jwzmf6</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+println "################# number of loops: " + getNumberOfLoops.numLoops
+
+execution.setVariable("counter", 0);
+
+Reporter.updateReportSummary(execution, 'All is well')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="ask-what-to-throw" name="Ask what to throw" camunda:asyncAfter="true" camunda:formKey="execute:ask-what-to-throw.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="askWhatToThrow">${askWhatToThrow}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0jwzmf6</bpmn:incoming>
+      <bpmn:incoming>flow-check-finished-no</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0gjtynz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:callActivity id="subprocess-throws-error-if-requested" name="Subprocess throws error if requested" calledElement="subprocess-throws-error-if-requested">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in sourceExpression="${askWhatToThrow.throwWhat}" target="throwWhat" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0gjtynz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1mf9iy4</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:scriptTask id="increment-counter" name="Increment counter" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1mf9iy4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1dtp2wk</bpmn:outgoing>
+      <bpmn:script>counter = counter + 1;
+execution.setVariable("counter", counter);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="handle-thrown-errors" name="Handle thrown errors" triggeredByEvent="true">
+      <bpmn:sequenceFlow id="SequenceFlow_0p85593" sourceRef="handle-errors-start" targetRef="log" />
+      <bpmn:endEvent id="handle-errors-end">
+        <bpmn:incoming>SequenceFlow_1sjlzjb</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1sjlzjb" sourceRef="log" targetRef="handle-errors-end" />
+      <bpmn:startEvent id="handle-errors-start">
+        <bpmn:outgoing>SequenceFlow_0p85593</bpmn:outgoing>
+        <bpmn:errorEventDefinition />
+      </bpmn:startEvent>
+      <bpmn:scriptTask id="log" name="Log" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_0p85593</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1sjlzjb</bpmn:outgoing>
+        <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+println "################# error caught"
+
+Reporter.updateReportSummary(execution, 'Error caught')
+</bpmn:script>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="showcase-looping-and-event-subprocess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0wcr8a6_di" bpmnElement="end">
+        <dc:Bounds x="1101" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1119" y="142" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0nr3q7i_di" bpmnElement="SequenceFlow_0nr3q7i">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="251" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="230" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nix8yk_di" bpmnElement="SequenceFlow_1nix8yk">
+        <di:waypoint x="351" y="120" />
+        <di:waypoint x="395" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="373" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jwzmf6_di" bpmnElement="SequenceFlow_0jwzmf6">
+        <di:waypoint x="495" y="120" />
+        <di:waypoint x="540" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="517.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gjtynz_di" bpmnElement="SequenceFlow_0gjtynz">
+        <di:waypoint x="640" y="120" />
+        <di:waypoint x="686" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="663" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1mf9iy4_di" bpmnElement="SequenceFlow_1mf9iy4">
+        <di:waypoint x="786" y="120" />
+        <di:waypoint x="833" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="809.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dtp2wk_di" bpmnElement="SequenceFlow_1dtp2wk">
+        <di:waypoint x="933" y="120" />
+        <di:waypoint x="984" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="958.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1i2ka2c_di" bpmnElement="ExclusiveGateway_1i2ka2c" isMarkerVisible="true">
+        <dc:Bounds x="984" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="992" y="72" width="33" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1uy2bse_di" bpmnElement="flow-check-finished-yes">
+        <di:waypoint x="1034" y="120" />
+        <di:waypoint x="1101" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1058" y="99" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ikxly1_di" bpmnElement="flow-check-finished-no">
+        <di:waypoint x="1009" y="145" />
+        <di:waypoint x="1009" y="237" />
+        <di:waypoint x="590" y="237" />
+        <di:waypoint x="590" y="160" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1019" y="148" width="14" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1p3in94_di" bpmnElement="get-number-of-loops">
+        <dc:Bounds x="251" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_14f5a8l_di" bpmnElement="init">
+        <dc:Bounds x="395" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_11gps8v_di" bpmnElement="ask-what-to-throw">
+        <dc:Bounds x="540" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1njajp8_di" bpmnElement="subprocess-throws-error-if-requested">
+        <dc:Bounds x="686" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1fkdm0a_di" bpmnElement="increment-counter">
+        <dc:Bounds x="833" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_1l2e01k_di" bpmnElement="handle-thrown-errors" isExpanded="true">
+        <dc:Bounds x="445" y="297" width="372" height="141" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0p85593_di" bpmnElement="SequenceFlow_0p85593">
+        <di:waypoint x="524" y="368" />
+        <di:waypoint x="574" y="368" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="549" y="347" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1tv85un_di" bpmnElement="handle-errors-end">
+        <dc:Bounds x="724" y="350" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="742" y="390" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1sjlzjb_di" bpmnElement="SequenceFlow_1sjlzjb">
+        <di:waypoint x="674" y="368" />
+        <di:waypoint x="724" y="368" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="699" y="347" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1ov2s4d_di" bpmnElement="handle-errors-start">
+        <dc:Bounds x="488" y="350" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="506" y="390" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_068zziv_di" bpmnElement="log">
+        <dc:Bounds x="574" y="328" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

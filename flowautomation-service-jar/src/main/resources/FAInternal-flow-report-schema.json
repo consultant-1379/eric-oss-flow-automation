@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Flow report schema header",
+  "description": "Flow report schema header",
+  "type": "object",
+  "required": [
+    "header",
+    "body"
+  ],
+  "properties": {
+    "header": {
+      "type": "object",
+      "properties": {
+        "reportTime": {
+          "name": "Report Time",
+          "description": "Time the report was produced",
+          "type": "string",
+          "format": "date-time"
+        },
+        "flowId": {
+          "name": "Flow ID",
+          "description": "Identifier for the flow",
+          "type": "string"
+        },
+        "flowVersion": {
+          "name": "Flow Version",
+          "description": "Version of the flow",
+          "type": "string"
+        },
+        "flowName": {
+          "name": "Flow Name",
+          "description": "Name of the flow",
+          "type": "string"
+        },
+        "flowExecutionName": {
+          "name": "Flow Execution Name",
+          "description": "Name of the flow execution",
+          "type": "string"
+        },
+        "startedBy": {
+          "name": "Started By",
+          "description": "Name of user who started the flow execution",
+          "type": "string"
+        },
+        "startTime": {
+          "name": "Start Time",
+          "description": "Time the flow execution was started",
+          "type": "string",
+          "format": "date-time"
+        },
+        "endTime": {
+          "name": "End Time",
+          "description": "Time the flow execution ended",
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "name": "Status",
+          "description": "Status of the flow execution",
+          "type": "string",
+          "enum": [
+            "STARTED",
+            "SETTING_UP",
+            "CONFIRM_EXECUTE",
+            "EXECUTING",
+            "COMPLETED",
+            "CANCELLED",
+            "INCIDENT",
+            "SUSPENDED",
+            "STOP",
+            "STOPPING",
+            "STOPPED",
+            "FAILED",
+            "FAILED_SETUP",
+            "FAILED_EXECUTE"
+          ],
+          "enumNames": [
+            "Started",
+            "Setting Up",
+            "Confirm Execute",
+            "Executing",
+            "Completed",
+            "Cancelled",
+            "Incident",
+            "Suspended",
+            "Stop",
+            "Stopping",
+            "Stopped",
+            "Failed",
+            "Setup Failed",
+            "Execute Failed"
+          ]
+        }
+      },
+      "required": [
+        "reportTime",
+        "flowId",
+        "flowVersion",
+        "flowName",
+        "flowExecutionName",
+        "startedBy",
+        "startTime",
+        "status"
+      ]
+    },
+    "body": {
+      "type": "object"
+    }
+  }
+}

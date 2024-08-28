@@ -1,0 +1,57 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "File Handling flow report schema body",
+    "description": "File Handling flow report schema body",
+    "type": "object",
+    "properties": {
+        "uploadedFileName": {
+            "name": "Uploaded File Name",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:uploadedFileName"
+            }
+        },
+        "uploadedFileContent": {
+            "name": "Uploaded File Content",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:uploadedFileContent"
+            }
+        },
+        "copiedFileName": {
+            "name": "Copied File Name",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:copiedFileName"
+            }
+        },
+        "copiedFileContent": {
+            "name": "Copied File Content",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:copiedFileContent"
+            }
+        },
+        "createdFileName": {
+            "name": "Created File Name",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:createdFileName"
+            }
+        },
+        "createdFileContent": {
+            "name": "Created File Content",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+                "binding": "variable:report:createdFileContent"
+            }
+        }
+    },
+    "required": [ "uploadedFileName", "uploadedFileContent", "copiedFileName", "copiedFileContent", "createdFileName", "createdFileContent" ]
+}

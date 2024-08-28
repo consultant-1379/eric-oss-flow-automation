@@ -1,0 +1,12 @@
+{
+  "flowId" : "com.ericsson.oss.fa.flows.errorHandling",
+  "flowName" : "Error Handling",
+  "flowVersion" : "1.0.1",
+  "description" : "Error handling flow",
+  "setup" : {
+    "processId" : "errorHandling-setup"
+  },
+  "execute" : {
+    "processId" : "errorHandling-execute"
+  }
+}

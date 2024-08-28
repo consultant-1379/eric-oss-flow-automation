@@ -1,0 +1,186 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Connectivity Simulator Flow Setup User Task Schema",
+  "type": "object",
+  "properties": {
+    "licenseCheck": {
+      "name": "License Check",
+      "type": "object",
+      "format": "informational",
+      "properties": {
+        "licenseMessage": {
+          "name": "License Check Successful.",
+          "type": "string",
+          "format": "message-info",
+          "info": "A full check of the application license has been performed successfully."
+        },
+        "licensesLink": {
+          "name": "Available Licenses",
+          "type": "string",
+          "format": "informational-link",
+          "linkText": "Search full Licenses list",
+          "default": "https://www.google.com"
+        }
+      },
+      "additionalProperties": false
+    },
+    "networkElementConfiguration": {
+      "name": "Select Nodes",
+      "type": "object",
+      "properties": {
+        "neNames": {
+          "name": "Selected Nodes count",
+          "description": "Selected Nodes count",
+          "type": "string"
+        },
+        "collectionNames": {
+          "name": "Selected Collections count",
+          "description": "Selected Collections count",
+          "type": "string"
+        },
+        "savedSearchNames": {
+          "name": "Selected Savedsearch count",
+          "description": "Selected Savedsearch count",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "neNames",
+        "collectionNames",
+        "savedSearchNames"
+      ]
+    },
+    "relationChoice": {
+      "name": "Select Relations",
+      "type": "object",
+      "properties": {
+        "selectedNodes": {
+          "name": "Selected Nodes",
+          "type": "array",
+          "format": "informational-list",
+          "items": {
+            "type": "string",
+            "schemaGen": {
+              "type": "default",
+              "binding": "variable:local:selectedNodesValues"
+            }
+          }
+        },
+        "relationsTable": {
+          "name": "Selected Relations",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 5,
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "node1": {
+                "type": "string",
+                "name": "Node A"
+              },
+              "node2": {
+                "type": "string",
+                "name": "Node B"
+              }
+            },
+            "required": [
+              "node1",
+              "node2"
+            ],
+            "additionalProperties": false
+          },
+          "schemaGen": [{
+            "type": "default",
+            "binding": "variable:local:defaultRelationValues"
+          }, {
+            "type": "selectableItems",
+            "binding": "variable:local:relationValues"
+          }]
+        }
+      },
+      "required": [
+        "relationsTable"
+      ],
+      "additionalProperties": false
+    },
+    "additionalSettings": {
+      "name": "Additional Settings",
+      "type": "object",
+      "properties": {
+        "label": {
+          "name": "Please, compile the additional parameters below:",
+          "type": "string",
+          "format": "informational"
+        },
+        "simName": {
+          "name": "Simulation Name",
+          "type": "string"
+        },
+        "simDateTime": {
+          "name": "Simulation Date/Time",
+          "type": "string",
+          "format": "date-time"
+        },
+        "intensity": {
+          "name": "Intensity of Scanning",
+          "type": "string",
+          "format": "select-list",
+          "enum": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "enumNames": [
+            "Low",
+            "Medium",
+            "High"
+          ],
+          "default": "Low"
+        },
+        "speed": {
+          "name": "Speed of Scanning",
+          "type": "string",
+          "format": "select",
+          "enum": [
+            "Slow",
+            "Fast"
+          ],
+          "enumNames": [
+            "Slow",
+            "Fast"
+          ],
+          "default": "Fast"
+        },
+        "groupingCheckbox1": {
+          "name": "More than one iteration in scanning",
+          "type": "object",
+          "format": "checkbox",
+          "properties": {
+            "numberOfIterations": {
+              "name": "Number of Iterations",
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 5,
+              "default": 2
+              }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "simName",
+        "simDateTime",
+        "intensity",
+        "speed"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "networkElementConfiguration",
+    "relationChoice",
+    "additionalSettings"
+  ]
+}

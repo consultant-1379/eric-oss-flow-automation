@@ -1,0 +1,12 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.usertaskShowcase",
+  "flowName": "Usertask Showcase",
+  "flowVersion": "1.0.1",
+  "description": "Usertask Showcase",
+  "setup": {
+    "processId": "usertaskShowcase-setup"
+  },
+  "execute": {
+    "processId": "usertaskShowcase-execute"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.sdk-flow-example",
+  "flowName": "SDK Flow Example",
+  "flowVersion": "1.0.0",
+  "description": "SDK Flow Example",
+  "setup": {
+    "processId": "sdk-flow-example-setup"
+  },
+  "execute": {
+    "processId": "sdk-flow-example-execute"
+  }
+}

@@ -1,0 +1,174 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "licenseCheck": {
+          "name": "License Check",
+          "type": "object",
+          "format": "informational",
+          "properties": {
+            "licenseMessage": {
+              "name": "License Check Successful.",
+              "type": "string",
+              "format": "message-info",
+              "info": "A full check of the application license has been performed successfully."
+            },
+            "licensesList": {
+              "name": "Licenses",
+              "type": "array",
+              "format": "informational-list",
+              "items": {
+                "type": "string",
+                "default" : [ "License 1", "License 2", "License 3", "License 4", "License 5" ]
+              }
+            },
+            "licensesLink": {
+              "name": "Available Licenses",
+              "type": "string",
+              "format": "informational-link",
+              "linkText": "Search full Licenses list",
+              "default": "https://www.google.com"
+            }
+          },
+          "additionalProperties": false
+        },
+        "settings": {
+            "name": "Get Settings",
+            "type": "object",
+            "properties": {
+                "singleUsertasks" : {
+                    "name": "Single Usertasks",
+                    "type": "object",
+                    "format": "checkbox",
+                    "properties": {
+                        "initialDelaySeconds": {
+                            "name": "Initial Delay (seconds)",
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 120,
+                            "default": 0
+                        },
+                        "numberOfUsertasks": {
+                            "name": "Number Of Usertasks",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5,
+                            "default": 2
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [ "initialDelaySeconds", "numberOfUsertasks" ]
+                },
+                "sameNameSingleUsertasks" : {
+                    "name": "Same Name Single Usertasks",
+                    "type": "object",
+                    "format": "checkbox",
+                    "properties": {
+                        "initialDelaySeconds": {
+                            "name": "Initial Delay (seconds)",
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 120,
+                            "default": 0
+                        },
+                        "numberOfUsertasks": {
+                            "name": "Number Of Usertasks",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5,
+                            "default": 2
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [ "initialDelaySeconds", "numberOfUsertasks" ]
+                },
+                "singleNameExtraUsertasks" : {
+                    "name": "Single NameExtra Usertasks",
+                    "type": "object",
+                    "format": "checkbox",
+                    "properties": {
+                        "initialDelaySeconds": {
+                            "name": "Initial Delay (seconds)",
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 120,
+                            "default": 0
+                        },
+                        "numberOfUsertasks": {
+                            "name": "Number Of Usertasks",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 5,
+                            "default": 2
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [ "initialDelaySeconds", "numberOfUsertasks" ]
+                },
+                "multiInstanceUsertasks" : {
+                    "name": "Multi Instance Usertasks",
+                    "type": "object",
+                    "format": "checkbox",
+                    "properties": {
+                        "initialDelaySeconds": {
+                            "name": "Initial Delay (seconds)",
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 120,
+                            "default": 0
+                        },
+                        "numberOfMultiInstanceUsertasks": {
+                            "name": "Number Of Multi Instance Usertasks",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 4,
+                            "default": 2
+                        },
+                        "numberOfUsertasksPerMulti": {
+                            "name": "Number Of Usertasks Per Multi",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 20,
+                            "default": 2
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [ "initialDelaySeconds", "numberOfMultiInstanceUsertasks", "numberOfUsertasksPerMulti" ]
+                },
+                "multiInstanceNameExtraUsertasks" : {
+                    "name": "Multi Instance NameExtra Usertasks",
+                    "type": "object",
+                    "format": "checkbox",
+                    "properties": {
+                        "initialDelaySeconds": {
+                            "name": "Initial Delay (seconds)",
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 120,
+                            "default": 0
+                        },
+                        "numberOfMultiInstanceUsertasks": {
+                            "name": "Number Of Multi Instance Usertasks",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 4,
+                            "default": 2
+                        },
+                        "numberOfUsertasksPerMulti": {
+                            "name": "Number Of Usertasks Per Multi",
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 20,
+                            "default": 2
+                        }
+                    },
+                    "additionalProperties": false,
+                    "required": [ "initialDelaySeconds", "numberOfMultiInstanceUsertasks", "numberOfUsertasksPerMulti" ]
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "required": [ "settings" ],
+    "additionalProperties": false
+}

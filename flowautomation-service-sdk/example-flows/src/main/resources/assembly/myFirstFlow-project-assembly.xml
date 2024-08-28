@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2023
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    <id>simpleCalculatorFlow</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>
+                ${flows.path}/myFirstFlow
+            </directory>
+            <outputDirectory>myFirstFlow/flow/src/main/resources/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>
+                ${flowdata.path}/myFirstFlow
+            </directory>
+            <outputDirectory>myFirstFlow/testsuite/src/main/resources/flowdata/myFirstFlow</outputDirectory>
+        </fileSet>
+    </fileSets>
+    <files>
+        <file>
+            <source>
+                ${template.files.path}/assembly.xml
+            </source>
+            <outputDirectory>myFirstFlow/flow/src/main</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ${template.files.path}/generatedProject-flow-pom.xml
+            </source>
+            <outputDirectory>myFirstFlow/flow</outputDirectory>
+            <filtered>true</filtered>
+            <destName>pom.xml</destName>
+        </file>
+        <file>
+            <source>
+                ${template.files.path}/generatedProject-root-pom.xml
+            </source>
+            <outputDirectory>myFirstFlow</outputDirectory>
+            <filtered>true</filtered>
+            <destName>pom.xml</destName>
+        </file>
+        <file>
+            <source>
+                ${template.files.path}/generatedProject-testsuite-pom.xml
+            </source>
+            <outputDirectory>myFirstFlow/testsuite</outputDirectory>
+            <filtered>true</filtered>
+            <destName>pom.xml</destName>
+        </file>
+        <file>
+            <source>
+                ${test.jse.path}/myFirstFlow/FlowTest.java
+            </source>
+            <outputDirectory>myFirstFlow/testsuite/src/test/java/com/ericsson/oss/services/flowautomation/flows/test/myFirstFlow</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ${test.jse.path}/myFirstFlow/ConcatMessagesScriptTest.groovy
+            </source>
+            <outputDirectory>myFirstFlow/flow/src/test/java/com/ericsson/oss/services/flowautomation/flows/test/myFirstFlow</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ${test.jse.path}/myFirstFlow/ValidateInputDataScriptTest.groovy
+            </source>
+            <outputDirectory>myFirstFlow/flow/src/test/java/com/ericsson/oss/services/flowautomation/flows/test/myFirstFlow</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ${test.resources.path}/logback.xml
+            </source>
+            <outputDirectory>myFirstFlow/testsuite/src/test/resources</outputDirectory>
+        </file>
+        <file>
+            <source>
+                ${test.resources.path}/logback.xml
+            </source>
+            <outputDirectory>myFirstFlow/flow/src/test/resources</outputDirectory>
+        </file>
+    </files>
+</assembly>

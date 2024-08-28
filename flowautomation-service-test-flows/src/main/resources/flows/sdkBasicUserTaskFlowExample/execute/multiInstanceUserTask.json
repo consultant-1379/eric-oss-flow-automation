@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "description": "Muili Instance User Task",
+  "properties": {
+    "muiliInstanceUserTask": {
+      "name": "Review Script Failure",
+      "type": "object",
+      "schemaGen":{
+          "type": "nameExtra",
+          "binding": "variable:local:nameExtra"
+      },
+      "properties": {
+        "note": {
+          "name": "Note: Script File Selected, Script Configuration, Failure Message details will be shown here.",
+          "description": "Note",
+          "type": "string",
+          "format": "informational"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

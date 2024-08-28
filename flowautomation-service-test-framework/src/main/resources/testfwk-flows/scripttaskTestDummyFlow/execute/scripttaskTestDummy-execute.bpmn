@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2021
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="scripttaskTestDummy-execute" name="Script task test dummy execute" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="&#10;&#10;">
+      <bpmn:outgoing>SequenceFlow_03flnl4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1ut696k">
+      <bpmn:incoming>Flow_1ax924g</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_03flnl4" sourceRef="StartEvent_1" targetRef="Activity_0uovnc8" />
+    <bpmn:sequenceFlow id="Flow_1ax924g" sourceRef="Activity_0uovnc8" targetRef="EndEvent_1ut696k" />
+    <bpmn:userTask id="Activity_0uovnc8" name="Wait">
+      <bpmn:incoming>SequenceFlow_03flnl4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ax924g</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="scripttaskTestDummy-execute">
+      <bpmndi:BPMNEdge id="SequenceFlow_03flnl4_di" bpmnElement="SequenceFlow_03flnl4">
+        <di:waypoint x="195" y="99" />
+        <di:waypoint x="240" y="99" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="320.5" y="178" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ax924g_di" bpmnElement="Flow_1ax924g">
+        <di:waypoint x="340" y="99" />
+        <di:waypoint x="392" y="99" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="159" y="81" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="117" width="25" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ut696k_di" bpmnElement="EndEvent_1ut696k">
+        <dc:Bounds x="392" y="81" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="616" y="121" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01xlzja_di" bpmnElement="Activity_0uovnc8">
+        <dc:Bounds x="240" y="59" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

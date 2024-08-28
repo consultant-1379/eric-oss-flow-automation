@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "SDK Flow Example",
+  "type": "object",
+  "properties": {
+    "nodeSelection": {
+      "name": "Nodes Selection",
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "name": "Radio Nodes",
+          "type": "string",
+          "format": "select-list",
+          "schemaGen": {
+            "type": "enum",
+            "binding": "variable:local:nodesList"
+          }
+        }
+      },
+      "required": [
+        "nodes"
+      ],
+      "additionalProperties": false
+    },
+    "softwarePackageSelection": {
+      "name": "Software Package Selection",
+      "type": "object",
+      "properties": {
+        "softwarePackages": {
+          "name": "Software Packages",
+          "type": "string",
+          "format": "select-list",
+          "schemaGen": {
+            "type": "enum",
+            "binding": "variable:local:softwarePackagesList"
+          }
+        }
+      },
+      "required": [
+        "softwarePackages"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "nodeSelection",
+    "softwarePackageSelection"
+  ]
+}

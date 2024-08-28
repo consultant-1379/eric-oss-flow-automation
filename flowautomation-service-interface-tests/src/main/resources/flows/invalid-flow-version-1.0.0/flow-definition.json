@@ -1,0 +1,10 @@
+{
+    "flowId": "com.ericsson.oss.fa.flows.interfacetest.testInvalidFlowSyntax",
+    "flowName": "Dummy flow to test flow parsing",
+    "flowVersion": "3>0.0",
+    "description": "Hello World Flow with Setup phase",
+    "execute": {
+        "processId": "execute-flow"
+    }
+}
+

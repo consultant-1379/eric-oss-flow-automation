@@ -1,0 +1,9 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.flow-that-fails-execution",
+    "flowName" : "Flow that fails execution",
+    "flowVersion" : "1.0.0",
+    "description" : "Verify that failed flow executions are not suspended",
+    "execute" : {
+        "processId" : "execute-flow"
+    }
+}

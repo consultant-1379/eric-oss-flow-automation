@@ -1,0 +1,77 @@
+# Compiled source #
+*.class
+*/bin/*
+.bob
+
+# Eclipse files
+.project
+.classpath
+.settings
+
+
+
+# Packages
+*.jar
+
+
+
+# Maven build files
+target
+reports
+
+
+
+# ARQ tests
+arq-perf
+
+
+
+# PMD
+.pmd
+
+
+
+#Generated files
+*.ser
+.bob
+build/*
+flowautomation-service-rest-api/src/main/resources/v1/*.zip
+
+# Merge files
+*.orig
+
+
+
+# IntelliJ IDEA files
+*.iml
+.idea
+.idea/*
+
+
+
+# image folder
+test-output
+
+
+
+# SonarQube files
+.scannerwork/*
+
+# OpenAPI generator files
+.openapi-generator*
+
+# Others
+.cdt/
+tmp/
+node_modules/
+sampleApp/
+*.tar.gz
+*.tgz
+*.html
+Chart.lock
+eric-oss-flow-automation-ui.war
+*/swagger-coverage-output/*
+/src/main/swagger-coverage-output/
+
+# WSL specific
+$HOME/

@@ -1,0 +1,9 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.restore-tester",
+    "flowName" : "Restore Tester",
+    "flowVersion" : "1.0.0",
+    "description" : "Restore Tester",
+    "execute" : {
+        "processId" : "execute-flow"
+    }
+}

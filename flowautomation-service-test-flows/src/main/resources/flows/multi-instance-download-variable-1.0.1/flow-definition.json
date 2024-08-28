@@ -1,0 +1,12 @@
+{
+	"flowId" : "com.ericsson.oss.fa.flows.multiInstance.download-variables",
+	"flowName" : "Download Report variable flow",
+	"flowVersion" : "1.0.5",
+	"description" : "Multi-Instance Flow with links to download variable",
+	"setup" : {
+		"processId" : "milc-setup"
+	},
+	"execute" : {
+		"processId" : "milc-execute"
+	}
+}

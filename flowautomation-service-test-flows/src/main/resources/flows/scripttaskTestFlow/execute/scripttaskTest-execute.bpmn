@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="scripttaskTest-execute" name="Script task test execute" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="&#10;&#10;">
+      <bpmn:outgoing>SequenceFlow_03flnl4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1ut696k">
+      <bpmn:incoming>Flow_11t6u6f</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_03flnl4" sourceRef="StartEvent_1" targetRef="Activity_0mv30je" />
+    <bpmn:sequenceFlow id="Flow_0mkdah6" sourceRef="Activity_0ubueq2" targetRef="Activity_1lzf2iw" />
+    <bpmn:scriptTask id="Activity_0ubueq2" name="Change variable" scriptFormat="groovy" camunda:resource="deployment://execute/changeVariable.groovy">
+      <bpmn:incoming>Flow_0nl33fo</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mkdah6</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1lzf2iw" name="Throw error" scriptFormat="groovy" camunda:resource="deployment://execute/throwError.groovy">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="doThrowError">false</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mkdah6</bpmn:incoming>
+      <bpmn:outgoing>Flow_121rotl</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:boundaryEvent id="Event_1dx5ksl" attachedToRef="Activity_1lzf2iw">
+      <bpmn:outgoing>Flow_1xdnx1k</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_05xfak5" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_1da1d3j">
+      <bpmn:incoming>Flow_1xdnx1k</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1xdnx1k" sourceRef="Event_1dx5ksl" targetRef="Event_1da1d3j" />
+    <bpmn:sequenceFlow id="Flow_121rotl" sourceRef="Activity_1lzf2iw" targetRef="Activity_0z2h306" />
+    <bpmn:sequenceFlow id="Flow_0nl33fo" sourceRef="Activity_0mv30je" targetRef="Activity_0ubueq2" />
+    <bpmn:scriptTask id="Activity_0mv30je" name="Create variable" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_03flnl4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nl33fo</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("myvar", "value1")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_09ls82m" sourceRef="Activity_0z2h306" targetRef="Activity_0qrpiz1" />
+    <bpmn:sequenceFlow id="Flow_11t6u6f" sourceRef="Activity_0qrpiz1" targetRef="EndEvent_1ut696k" />
+    <bpmn:scriptTask id="Activity_0z2h306" name="Update summary report" scriptFormat="groovy" camunda:resource="deployment://execute/updateSummaryReport.groovy">
+      <bpmn:incoming>Flow_121rotl</bpmn:incoming>
+      <bpmn:outgoing>Flow_09ls82m</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0qrpiz1" name="Log event" scriptFormat="groovy" camunda:resource="deployment://execute/logEvent.groovy">
+      <bpmn:incoming>Flow_09ls82m</bpmn:incoming>
+      <bpmn:outgoing>Flow_11t6u6f</bpmn:outgoing>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="scripttaskTest-execute">
+      <bpmndi:BPMNEdge id="SequenceFlow_03flnl4_di" bpmnElement="SequenceFlow_03flnl4">
+        <di:waypoint x="195" y="99" />
+        <di:waypoint x="230" y="99" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="320.5" y="178" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_121rotl_di" bpmnElement="Flow_121rotl">
+        <di:waypoint x="610" y="99" />
+        <di:waypoint x="650" y="99" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mkdah6_di" bpmnElement="Flow_0mkdah6">
+        <di:waypoint x="470" y="99" />
+        <di:waypoint x="510" y="99" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xdnx1k_di" bpmnElement="Flow_1xdnx1k">
+        <di:waypoint x="570" y="157" />
+        <di:waypoint x="570" y="190" />
+        <di:waypoint x="652" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nl33fo_di" bpmnElement="Flow_0nl33fo">
+        <di:waypoint x="330" y="99" />
+        <di:waypoint x="370" y="99" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09ls82m_di" bpmnElement="Flow_09ls82m">
+        <di:waypoint x="750" y="99" />
+        <di:waypoint x="790" y="99" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11t6u6f_di" bpmnElement="Flow_11t6u6f">
+        <di:waypoint x="890" y="99" />
+        <di:waypoint x="932" y="99" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="159" y="81" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="165" y="117" width="25" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gqnx7c_di" bpmnElement="Activity_0ubueq2">
+        <dc:Bounds x="370" y="59" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vqtbea_di" bpmnElement="Activity_1lzf2iw">
+        <dc:Bounds x="510" y="59" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1da1d3j_di" bpmnElement="Event_1da1d3j">
+        <dc:Bounds x="652" y="172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13sc9u4_di" bpmnElement="Activity_0mv30je">
+        <dc:Bounds x="230" y="59" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ut696k_di" bpmnElement="EndEvent_1ut696k">
+        <dc:Bounds x="932" y="81" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="616" y="121" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1q5y0d6_di" bpmnElement="Activity_0z2h306">
+        <dc:Bounds x="650" y="59" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0iv2cux_di" bpmnElement="Activity_0qrpiz1">
+        <dc:Bounds x="790" y="59" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wvax97_di" bpmnElement="Event_1dx5ksl">
+        <dc:Bounds x="552" y="121" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

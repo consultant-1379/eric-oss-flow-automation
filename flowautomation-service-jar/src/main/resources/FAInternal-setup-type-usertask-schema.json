@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Choose Setup usertask schema",
+  "description": "Choose Setup usertask schema",
+  "$id": "choose-setup-usertask-schema",
+  "name": "Setup Type",
+  "action": "Continue",
+  "actions": [
+    "Continue"
+  ],
+  "type": "object",
+  "properties": {
+    "setupType": {
+      "name": "Choose the setup type that best suits your needs",
+      "type": "object",
+      "format": "radio",
+      "oneOf": [
+        {
+          "properties": {
+            "interactive": {
+              "type": "boolean",
+              "name": "Interactive",
+              "description": "Input parameters through user tasks"
+            }
+          },
+          "required": [
+            "interactive"
+          ]
+        },
+        {
+          "properties": {
+            "fileInput": {
+              "type": "object",
+              "name": "File Input",
+              "format": "file",
+              "description": "Input parameters using a file",
+              "properties": {
+                "fileName": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "fileName"
+              ]
+            }
+          },
+          "required": [
+            "fileInput"
+          ]
+        }
+      ],
+      "default": "interactive"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "setupType"
+  ]
+}

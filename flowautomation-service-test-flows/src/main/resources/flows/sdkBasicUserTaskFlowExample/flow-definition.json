@@ -1,0 +1,15 @@
+{
+  "flowId" : "com.ericsson.oss.fa.flows.sdkBasicUserTaskFlowExample",
+  "flowName" : "SDK Basic User Task Flow Example",
+  "flowVersion" : "1.0.1",
+  "description" : "SDK Basic User Task Flow Example",
+  "setup" : {
+    "processId" : "sdkBasicUserTaskFlowExample-setup",
+    "userTask": {
+      "backEnabled": true
+    }
+  },
+  "execute" : {
+    "processId" : "sdkBasicUserTaskFlowExample-execute"
+  }
+}

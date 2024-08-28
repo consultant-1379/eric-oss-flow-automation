@@ -1,0 +1,9 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.interfacetest.testBaseFlow",
+    "flowName" : "Base package for import scenarios",
+    "flowVersion" : "1.0.0",
+    "description" : "Base flow for import scenario",
+    "execute" : {
+        "processId" : "fa_execute"
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "description": "User task to show cli command response",
+  "properties": {
+    "commandResponseUserTask": {
+      "name": "User task to show cli command response",
+      "type": "object",
+      "properties": {
+        "information": {
+          "name": "User task to show cli command response",
+          "type": "string",
+          "format": "informational",
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:result"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

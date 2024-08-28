@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0dwpk1s" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="showcase-variables" name="Showcase variables" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_037ra6n</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_037ra6n" sourceRef="StartEvent_1" targetRef="Activity_1u7sbg3" />
+    <bpmn:sequenceFlow id="Flow_0ig0k61" sourceRef="Activity_1u7sbg3" targetRef="Activity_03hxczu" />
+    <bpmn:exclusiveGateway id="Gateway_1h4o6ci" name="Remove variables ?" default="Flow_1hbmgcd">
+      <bpmn:incoming>Flow_1001ff4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0272qim</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1hbmgcd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_18q9dyf" sourceRef="Activity_1mb2pif" targetRef="Activity_1i9fljh" />
+    <bpmn:sequenceFlow id="Flow_0272qim" name="Access variables in expression" sourceRef="Gateway_1h4o6ci" targetRef="Activity_0mmi3cp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${removeVariables == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_0mmi3cp" name="Remove variables" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0272qim</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mtcvfm</bpmn:outgoing>
+      <bpmn:script>execution.removeVariable("booleanVar")
+execution.removeVariable("bytesVar")
+execution.removeVariable("shortVar")
+execution.removeVariable("intVar")
+execution.removeVariable("longVar")
+execution.removeVariable("doubleVar")
+execution.removeVariable("dateVar")
+execution.removeVariable("stringVar")
+execution.removeVariable("mapVar")
+execution.removeVariable("listVar")
+execution.removeVariable("fileVar")
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0mtcvfm" sourceRef="Activity_0mmi3cp" targetRef="Activity_1bjms9r" />
+    <bpmn:scriptTask id="Activity_07p5xv4" name="Create transient variable" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0uxtbdr</bpmn:incoming>
+      <bpmn:incoming>Flow_1hbmgcd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ihxpgw</bpmn:outgoing>
+      <bpmn:script>import org.camunda.bpm.engine.variable.Variables
+
+def transientStringValue = Variables.stringValue("some value", true)
+execution.setVariable("transientStringValue", transientStringValue)
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1ihxpgw" sourceRef="Activity_07p5xv4" targetRef="Activity_1ogkqhs" />
+    <bpmn:scriptTask id="Activity_1ogkqhs" name="Access transient variable" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1ihxpgw</bpmn:incoming>
+      <bpmn:outgoing>Flow_17xjfj3</bpmn:outgoing>
+      <bpmn:script>def transientStringValue = execution.getVariableTyped("transientStringValue")
+assert transientStringValue.getValue() == "some value"</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1ot6v7f" name="Check transient variable does not exist" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0xhoc34</bpmn:incoming>
+      <bpmn:outgoing>Flow_13dc403</bpmn:outgoing>
+      <bpmn:script>assert execution.getVariableTyped("transientStringValue") == null</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:intermediateThrowEvent id="Event_1omwg6s" name="Commit Transaction (Async Before)" camunda:asyncBefore="true">
+      <bpmn:incoming>Flow_17xjfj3</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xhoc34</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_17xjfj3" sourceRef="Activity_1ogkqhs" targetRef="Event_1omwg6s" />
+    <bpmn:sequenceFlow id="Flow_0xhoc34" sourceRef="Event_1omwg6s" targetRef="Activity_1ot6v7f" />
+    <bpmn:endEvent id="Event_1gln70c">
+      <bpmn:incoming>Flow_13dc403</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_13dc403" sourceRef="Activity_1ot6v7f" targetRef="Event_1gln70c" />
+    <bpmn:sequenceFlow id="Flow_0uxtbdr" sourceRef="Activity_1bjms9r" targetRef="Activity_07p5xv4" />
+    <bpmn:scriptTask id="Activity_1bjms9r" name="Check variables do not exist" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0mtcvfm</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uxtbdr</bpmn:outgoing>
+      <bpmn:script>assert execution.getVariable("booleanVar") == null
+assert execution.getVariable("bytesVar") == null
+assert execution.getVariable("shortVar") == null
+assert execution.getVariable("intVar") == null
+assert execution.getVariable("longVar") == null
+assert execution.getVariable("doubleVar") == null
+assert execution.getVariable("dateVar") == null
+assert execution.getVariable("stringVar") == null
+assert execution.getVariable("mapVar") == null
+assert execution.getVariable("listVar") == null
+assert execution.getVariable("fileVar") == null</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1hbmgcd" sourceRef="Gateway_1h4o6ci" targetRef="Activity_07p5xv4" />
+    <bpmn:scriptTask id="Activity_1u7sbg3" name="Create all variable types" scriptFormat="groovy">
+      <bpmn:incoming>Flow_037ra6n</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ig0k61</bpmn:outgoing>
+      <bpmn:script>import org.camunda.bpm.engine.variable.Variables
+
+execution.setVariable("booleanVar", true)
+execution.setVariable("bytesVar", (byte[])[1,2,3,4,5])
+execution.setVariable("shortVar", (short)42)
+execution.setVariable("intVar", (int)442)
+execution.setVariable("longVar", (long)4442)
+execution.setVariable("doubleVar", (double)4.2)
+execution.setVariable("dateVar", new Date())
+execution.setVariable("stringVar", "foo")
+execution.setVariable("mapVar", [key1: "val1", key2: "val2"])
+execution.setVariable("listVar", [5,6,7,8])
+execution.setVariable("fileVar", Variables.fileValue("myfile.txt").file("hello".bytes))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_1mb2pif" name="Modify variables" scriptFormat="groovy">
+      <bpmn:incoming>Flow_10bf8ry</bpmn:incoming>
+      <bpmn:outgoing>Flow_18q9dyf</bpmn:outgoing>
+      <bpmn:script>import org.camunda.bpm.engine.variable.Variables
+
+execution.setVariable("booleanVar", !booleanVar)
+
+bytesVar[0] = (byte)42
+execution.setVariable("bytesVar", bytesVar)
+
+execution.setVariable("shortVar", shortVar+1)
+execution.setVariable("intVar", intVar+1)
+execution.setVariable("longVar", longVar+1)
+execution.setVariable("doubleVar", doubleVar+1)
+
+dateVar.setYear(0)
+execution.setVariable("dateVar", dateVar)
+
+execution.setVariable("stringVar", stringVar+"bar")
+
+mapVar.put("key3", "val3")
+execution.setVariable("mapVar", mapVar)
+
+listVar[0] = 43
+execution.setVariable("listVar", listVar)
+
+def fileVar = execution.getVariableTyped("fileVar")
+def newFileVar = Variables.fileValue(fileVar.getFilename()).file("goodbye".bytes)
+execution.setVariable("fileVar", newFileVar)
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1001ff4" sourceRef="Activity_1i9fljh" targetRef="Gateway_1h4o6ci" />
+    <bpmn:scriptTask id="Activity_1i9fljh" name="Check variables modified" scriptFormat="groovy">
+      <bpmn:incoming>Flow_18q9dyf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1001ff4</bpmn:outgoing>
+      <bpmn:script>assert booleanVar == false
+assert bytesVar == (byte[])[42,2,3,4,5]
+assert shortVar == 43
+assert intVar == 443
+assert longVar == 4443
+assert doubleVar == 5.2
+assert dateVar.getYear() == 0
+assert stringVar == "foobar"
+assert mapVar.size() == 3
+assert listVar[0] == 43
+
+def fileVar = execution.getVariableTyped("fileVar")
+assert fileVar.getValue().text == "goodbye"
+
+execution.setVariable("removeVariables", true)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_03hxczu" name="Access variables" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0ig0k61</bpmn:incoming>
+      <bpmn:outgoing>Flow_10bf8ry</bpmn:outgoing>
+      <bpmn:script>assert booleanVar == true
+assert bytesVar == (byte[])[1,2,3,4,5]
+assert shortVar == 42
+assert intVar == 442
+assert longVar == 4442
+assert doubleVar == 4.2
+assert dateVar.getYear() != 0
+assert stringVar == "foo"
+assert mapVar.size() == 2
+assert listVar[0] == 5
+
+def fileVar = execution.getVariableTyped("fileVar")
+assert fileVar.getValue().text == "hello"
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_10bf8ry" sourceRef="Activity_03hxczu" targetRef="Activity_1mb2pif" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="showcase-variables">
+      <bpmndi:BPMNEdge id="Flow_037ra6n_di" bpmnElement="Flow_037ra6n">
+        <di:waypoint x="215" y="97" />
+        <di:waypoint x="270" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ig0k61_di" bpmnElement="Flow_0ig0k61">
+        <di:waypoint x="370" y="97" />
+        <di:waypoint x="420" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ihxpgw_di" bpmnElement="Flow_1ihxpgw">
+        <di:waypoint x="530" y="280" />
+        <di:waypoint x="580" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17xjfj3_di" bpmnElement="Flow_17xjfj3">
+        <di:waypoint x="680" y="280" />
+        <di:waypoint x="772" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xhoc34_di" bpmnElement="Flow_0xhoc34">
+        <di:waypoint x="808" y="280" />
+        <di:waypoint x="890" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uxtbdr_di" bpmnElement="Flow_0uxtbdr">
+        <di:waypoint x="1210" y="137" />
+        <di:waypoint x="1210" y="190" />
+        <di:waypoint x="480" y="190" />
+        <di:waypoint x="480" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hbmgcd_di" bpmnElement="Flow_1hbmgcd">
+        <di:waypoint x="890" y="122" />
+        <di:waypoint x="890" y="190" />
+        <di:waypoint x="480" y="190" />
+        <di:waypoint x="480" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13dc403_di" bpmnElement="Flow_13dc403">
+        <di:waypoint x="990" y="280" />
+        <di:waypoint x="1062" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10bf8ry_di" bpmnElement="Flow_10bf8ry">
+        <di:waypoint x="520" y="97" />
+        <di:waypoint x="560" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1001ff4_di" bpmnElement="Flow_1001ff4">
+        <di:waypoint x="810" y="97" />
+        <di:waypoint x="865" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0272qim_di" bpmnElement="Flow_0272qim">
+        <di:waypoint x="915" y="97" />
+        <di:waypoint x="1020" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="928" y="66" width="83" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18q9dyf_di" bpmnElement="Flow_18q9dyf">
+        <di:waypoint x="660" y="97" />
+        <di:waypoint x="710" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mtcvfm_di" bpmnElement="Flow_0mtcvfm">
+        <di:waypoint x="1120" y="97" />
+        <di:waypoint x="1160" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="79" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0c93o6c_di" bpmnElement="Activity_07p5xv4">
+        <dc:Bounds x="430" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18v8x2a_di" bpmnElement="Activity_1ogkqhs">
+        <dc:Bounds x="580" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gln70c_di" bpmnElement="Event_1gln70c">
+        <dc:Bounds x="1062" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1itqwfe_di" bpmnElement="Activity_1ot6v7f">
+        <dc:Bounds x="890" y="240" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0i2tgw8_di" bpmnElement="Activity_1u7sbg3">
+        <dc:Bounds x="270" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1omwg6s_di" bpmnElement="Event_1omwg6s">
+        <dc:Bounds x="772" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="753" y="220" width="74" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03hxczu_di" bpmnElement="Activity_03hxczu">
+        <dc:Bounds x="420" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1h4o6ci_di" bpmnElement="Gateway_1h4o6ci" isMarkerVisible="true">
+        <dc:Bounds x="865" y="72" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="835" y="46" width="89" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_164n2ov_di" bpmnElement="Activity_0mmi3cp">
+        <dc:Bounds x="1020" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18is943_di" bpmnElement="Activity_1bjms9r">
+        <dc:Bounds x="1160" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0atdqzt_di" bpmnElement="Activity_1mb2pif">
+        <dc:Bounds x="560" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0on3bpz_di" bpmnElement="Activity_1i9fljh">
+        <dc:Bounds x="710" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

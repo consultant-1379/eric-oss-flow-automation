@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="errorHandling-setup" isExecutable="true">
+    <bpmn:startEvent id="setup-start">
+      <bpmn:outgoing>SequenceFlow_0sl2qnd</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="setup-end">
+      <bpmn:incoming>SequenceFlow_0yc685a</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1jhyohy</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0rr3zk9</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1ll1y58</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_17twspv" default="SequenceFlow_0g6ru5y">
+      <bpmn:incoming>SequenceFlow_0sl2qnd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0yc685a</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0g6ru5y</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0sl2qnd" sourceRef="setup-start" targetRef="ExclusiveGateway_17twspv" />
+    <bpmn:sequenceFlow id="SequenceFlow_0yc685a" name="input supplied" sourceRef="ExclusiveGateway_17twspv" targetRef="setup-end">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty execution.getVariable('flowInput')}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0g6ru5y" name="input not supplied" sourceRef="ExclusiveGateway_17twspv" targetRef="configuration" />
+    <bpmn:scriptTask id="validate-input" name="Validate Input" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0z2zibe</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ej2cw0</bpmn:outgoing>
+      <bpmn:script>flowInput.configuration = configuration</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0ej2cw0" sourceRef="validate-input" targetRef="ExclusiveGateway_1x2gng4" />
+    <bpmn:sequenceFlow id="SequenceFlow_0z2zibe" sourceRef="configuration" targetRef="validate-input" />
+    <bpmn:userTask id="configuration" name="Configuration" camunda:formKey="setup:configuration">
+      <bpmn:incoming>SequenceFlow_0g6ru5y</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0z2zibe</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1x2gng4" name="required behaviour ?" default="SequenceFlow_1jhyohy">
+      <bpmn:incoming>SequenceFlow_0ej2cw0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1jhyohy</bpmn:outgoing>
+      <bpmn:outgoing>flow-throw-error</bpmn:outgoing>
+      <bpmn:outgoing>flow-create-incident</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1jhyohy" sourceRef="ExclusiveGateway_1x2gng4" targetRef="setup-end" />
+    <bpmn:sequenceFlow id="flow-throw-error" name="throw error" sourceRef="ExclusiveGateway_1x2gng4" targetRef="throw-error">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty flowInput.configuration.requiredBehaviour.setupError &amp;&amp; flowInput.configuration.requiredBehaviour.setupError == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="flow-create-incident" name="incident" sourceRef="ExclusiveGateway_1x2gng4" targetRef="create-incident">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty flowInput.configuration.requiredBehaviour.setupIncident &amp;&amp; flowInput.configuration.requiredBehaviour.setupIncident == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="create-incident" name="Create incident" scriptFormat="groovy">
+      <bpmn:incoming>flow-create-incident</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0rr3zk9</bpmn:outgoing>
+      <bpmn:script>println "################# Setup creating incident by throwing runtime exception"
+throw new RuntimeException("setup-Incident-generating exception")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0rr3zk9" sourceRef="create-incident" targetRef="setup-end" />
+    <bpmn:scriptTask id="throw-error" name="Throw error" scriptFormat="groovy">
+      <bpmn:incoming>flow-throw-error</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ll1y58</bpmn:outgoing>
+      <bpmn:script>import org.camunda.bpm.engine.delegate.BpmnError
+println "################# Setup throwing error"
+throw new BpmnError("SetupError")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1ll1y58" sourceRef="throw-error" targetRef="setup-end" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="errorHandling-setup">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="setup-start">
+        <dc:Bounds x="158" y="183" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="131" y="219" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0gx8usv_di" bpmnElement="setup-end">
+        <dc:Bounds x="991" y="183" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1037" y="195" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_17twspv_di" bpmnElement="ExclusiveGateway_17twspv" isMarkerVisible="true">
+        <dc:Bounds x="253" y="176" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="313" y="195" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sl2qnd_di" bpmnElement="SequenceFlow_0sl2qnd">
+        <di:waypoint x="194" y="201" />
+        <di:waypoint x="253" y="201" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="179" y="180" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0yc685a_di" bpmnElement="SequenceFlow_0yc685a">
+        <di:waypoint x="278" y="176" />
+        <di:waypoint x="278" y="92" />
+        <di:waypoint x="1009" y="92" />
+        <di:waypoint x="1009" y="183" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="338" y="72" width="66" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0g6ru5y_di" bpmnElement="SequenceFlow_0g6ru5y">
+        <di:waypoint x="278" y="226" />
+        <di:waypoint x="278" y="313" />
+        <di:waypoint x="391" y="313" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="286" y="290" width="84" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_10tmfg3_di" bpmnElement="validate-input">
+        <dc:Bounds x="538" y="273" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ej2cw0_di" bpmnElement="SequenceFlow_0ej2cw0">
+        <di:waypoint x="638" y="313" />
+        <di:waypoint x="701" y="313" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="624.5" y="292" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0z2zibe_di" bpmnElement="SequenceFlow_0z2zibe">
+        <di:waypoint x="491" y="313" />
+        <di:waypoint x="538" y="313" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="514.5" y="292" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1yn1r4g_di" bpmnElement="configuration">
+        <dc:Bounds x="391" y="273" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1x2gng4_di" bpmnElement="ExclusiveGateway_1x2gng4" isMarkerVisible="true">
+        <dc:Bounds x="701" y="288" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="656.5" y="261" width="57" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jhyohy_di" bpmnElement="SequenceFlow_1jhyohy">
+        <di:waypoint x="726" y="288" />
+        <di:waypoint x="726" y="201" />
+        <di:waypoint x="991" y="201" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="741" y="238.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1n8ilfk_di" bpmnElement="flow-throw-error">
+        <di:waypoint x="726" y="338" />
+        <di:waypoint x="726" y="460" />
+        <di:waypoint x="819" y="460" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="734" y="437" width="56" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_01cvjfn_di" bpmnElement="flow-create-incident">
+        <di:waypoint x="751" y="313" />
+        <di:waypoint x="819" y="313" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="758" y="293" width="38" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1swarta_di" bpmnElement="create-incident">
+        <dc:Bounds x="819" y="273" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rr3zk9_di" bpmnElement="SequenceFlow_0rr3zk9">
+        <di:waypoint x="919" y="313" />
+        <di:waypoint x="1009" y="313" />
+        <di:waypoint x="1009" y="219" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="964" y="292" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0y99w1c_di" bpmnElement="throw-error">
+        <dc:Bounds x="819" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ll1y58_di" bpmnElement="SequenceFlow_1ll1y58">
+        <di:waypoint x="919" y="460" />
+        <di:waypoint x="1009" y="460" />
+        <di:waypoint x="1009" y="219" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="964" y="439" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

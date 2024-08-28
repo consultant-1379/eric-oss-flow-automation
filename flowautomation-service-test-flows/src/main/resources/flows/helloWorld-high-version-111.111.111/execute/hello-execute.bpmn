@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.3.0">
+  <bpmn:process id="hello-execute-high-version" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0yv9gah</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0yv9gah" sourceRef="StartEvent_1" targetRef="print-message" />
+    <bpmn:endEvent id="EndEvent_0gx8usv">
+      <bpmn:incoming>SequenceFlow_0sfyj62</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0sfyj62" sourceRef="print-message" targetRef="EndEvent_0gx8usv" />
+    <bpmn:scriptTask id="print-message" name="Print Message" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0yv9gah</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0sfyj62</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Executed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="incident-error-handler" name="Incident error handler" triggeredByEvent="true">
+      <bpmn:sequenceFlow id="SequenceFlow_1i0a2xf" sourceRef="incident-error-start" targetRef="log-incident-error" />
+      <bpmn:startEvent id="incident-error-start" camunda:asyncAfter="true">
+        <bpmn:outgoing>SequenceFlow_1i0a2xf</bpmn:outgoing>
+        <bpmn:errorEventDefinition errorRef="Error_0af2ylk" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="incident-error-end">
+        <bpmn:incoming>SequenceFlow_1xw77to</bpmn:incoming>
+        <bpmn:errorEventDefinition errorRef="Error_0ip2un6" />
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="log-incident-error" name="Log incident error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1i0a2xf</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1xw77to</bpmn:outgoing>
+        <bpmn:script>println "############## Incident error"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1xw77to" sourceRef="log-incident-error" targetRef="incident-error-end" />
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmn:error id="Error_0ip2un6" name="incidentError" errorCode="incidentError" />
+  <bpmn:error id="Error_0af2ylk" name="incidentErrorInternal" errorCode="incidentErrorInternal" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="hello-execute-high-version">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0gx8usv_di" bpmnElement="EndEvent_0gx8usv">
+        <dc:Bounds x="409" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="427" y="142" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0y3sm4i_di" bpmnElement="print-message">
+        <dc:Bounds x="259" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0yv9gah_di" bpmnElement="SequenceFlow_0yv9gah">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="259" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="234" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sfyj62_di" bpmnElement="SequenceFlow_0sfyj62">
+        <di:waypoint x="359" y="120" />
+        <di:waypoint x="409" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="384" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

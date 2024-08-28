@@ -1,0 +1,134 @@
+#
+# COPYRIGHT Ericsson 2022
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+openapi: "3.0.2"
+info:
+  x-api-id: a44c03f8-00be-4e78-a74c-1fd466277293
+  x-audience: internal
+  description: |
+    Flow Automation is a feature deployed on the Automation Platform that is part of
+    the Ericsson Intelligent Automation Platform (EIAP).
+  version: "0.0.1"
+  title: "Flow Automation"
+  license:
+    name: "COPYRIGHT Ericsson 2022"
+    url: "https://www.ericsson.com/en/legal"
+  termsOfService: "https://www.ericsson.com/en/legal"
+  contact:
+    email: "Team Indigo PDLAMINDIG@pdl.internal.ericsson.com, Team Saga PDLTEAMSAG@pdl.internal.ericsson.com"
+tags:
+  - name: Internal
+    description: Endpoints related to internal processes
+servers:
+  - url: /flow-automation/
+paths:
+  /internal/v1/pre-restore-actions:
+    post:
+      tags:
+        - Internal
+      summary: Carry out pre-restore tasks
+      operationId: preRestoreActions
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /internal/v1/post-restore-actions:
+    post:
+      tags:
+        - Internal
+      summary: Carry out post-restore tasks
+      operationId: postRestoreActions
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+
+components:
+  responses:
+    NoContent:
+      description: >
+        NoContent. The request has succeeded, but that the client doesn't need to navigate away from its current page.
+    Conflict:
+      description: >
+        Conflict. The request could not be processed because of conflict in the request,
+        such as the requested resource is not in the expected state,
+        or the result of processing the request would create a conflict within the resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+    InternalServerError:
+      description: >
+        Internal Server Error. If there is an application error not related to
+        the client's input that cannot be easily mapped to any other HTTP
+        response code ("catch all error"), the API producer shall respond
+        with this response code.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+
+    ServiceUnavailable:
+      description: >
+        Service Unavailable. A runtime exception indicating that the requested resource cannot be served.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+
+  schemas:
+    ProblemDetails:
+      required:
+        - status
+        - reasonPhrase
+        - errors
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 200
+          maximum: 503
+          description: |
+            The HTTP status code for this occurrence of the problem.
+        reasonPhrase:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetails'
+
+    ErrorDetails:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Flow Automation error code.
+        errorMessage:
+          type: string
+          description: Message describing the error.
+

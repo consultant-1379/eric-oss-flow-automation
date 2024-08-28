@@ -1,0 +1,12 @@
+{
+	"flowId" : "com.ericsson.oss.fa.flows.multiInstanceLoadControl",
+	"flowName" : "Multi-Instance Load Control",
+	"flowVersion" : "1.0.1",
+	"description" : "Multi-Instance Load Control flow",
+	"setup" : {
+		"processId" : "milc-setup"
+	},
+	"execute" : {
+		"processId" : "milc-execute"
+	}
+}

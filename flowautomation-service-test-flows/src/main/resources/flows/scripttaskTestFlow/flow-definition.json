@@ -1,0 +1,12 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.scripttaskTestFlow",
+    "flowName" : "Script task test flow",
+    "flowVersion" : "1.0.1",
+    "description" : "Script task test flow",
+    "setup": {
+        "processId": "scripttaskTest-setup"
+    },
+    "execute" : {
+        "processId" : "scripttaskTest-execute"
+    }
+}

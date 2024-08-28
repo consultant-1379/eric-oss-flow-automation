@@ -1,0 +1,15 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.validateDefaultDateTimeInReportJsonSchema",
+  "flowName": "Validate Default Date Time In Report Json Schema",
+  "flowVersion": "1.0.0",
+  "description": "Report JSON schema validation example",
+  "setup": {
+    "processId": "conn-sim-setup",
+    "userTask": {
+        "backEnabled": true
+    }
+  },
+  "execute": {
+    "processId": "conn-sim-execute"
+  }
+}

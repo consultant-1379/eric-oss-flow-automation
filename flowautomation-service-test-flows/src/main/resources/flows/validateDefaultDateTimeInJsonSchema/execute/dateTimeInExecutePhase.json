@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Dynamic user task name and grouping schema",
+  "description": "Dynamic user task name and grouping schema",
+  "$id": "dynamic-userTask-name-grouping-schema",
+  "type": "object",
+  "properties": {
+    "dateTimeInExecutePhase": {
+      "name": "Date-Time in the Execute Phase",
+      "type": "object",
+      "schemaGen":{
+        "type": "nameExtra",
+        "binding": "variable:local:nameExtra"
+      },
+      "properties": {
+        "executeDateTimePicker": {
+          "name": "Date-Time Picker",
+          "type": "string",
+          "format": "date-time",
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:executeDateTimeInput"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

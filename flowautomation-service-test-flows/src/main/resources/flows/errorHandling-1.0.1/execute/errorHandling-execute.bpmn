@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="errorHandling-execute" isExecutable="true">
+    <bpmn:startEvent id="execute-start" camunda:asyncBefore="true">
+      <bpmn:outgoing>SequenceFlow_0lfsc28</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0lfsc28" sourceRef="execute-start" targetRef="ExclusiveGateway_1h52sdt" />
+    <bpmn:callActivity id="call-level1-non-parallel" name="Call level1" calledElement="errorHandling-level1" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="flowInput" target="flowInput" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_17rhqf4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1u0jdn5</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="execute-end">
+      <bpmn:incoming>SequenceFlow_1u0jdn5</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_036ujo7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1u0jdn5" sourceRef="call-level1-non-parallel" targetRef="execute-end" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1h52sdt" default="SequenceFlow_17rhqf4">
+      <bpmn:incoming>SequenceFlow_0lfsc28</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_17rhqf4</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_06thltz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_17rhqf4" sourceRef="ExclusiveGateway_1h52sdt" targetRef="call-level1-non-parallel" />
+    <bpmn:sequenceFlow id="SequenceFlow_06thltz" sourceRef="ExclusiveGateway_1h52sdt" targetRef="ExclusiveGateway_1cdozic">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty flowInput.configuration.parallelPaths &amp;&amp; flowInput.configuration.parallelPaths == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:parallelGateway id="ExclusiveGateway_1cdozic">
+      <bpmn:incoming>SequenceFlow_06thltz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1vvq0bk</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0d1jyl8</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1vvq0bk" sourceRef="ExclusiveGateway_1cdozic" targetRef="call-level1-parallel-1" />
+    <bpmn:sequenceFlow id="SequenceFlow_0d1jyl8" sourceRef="ExclusiveGateway_1cdozic" targetRef="call-level1-parallel-2" />
+    <bpmn:sequenceFlow id="SequenceFlow_1w88z0h" sourceRef="call-level1-parallel-1" targetRef="ExclusiveGateway_037ei6s" />
+    <bpmn:parallelGateway id="ExclusiveGateway_037ei6s" camunda:asyncBefore="true">
+      <bpmn:incoming>SequenceFlow_1w88z0h</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1o7ej59</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_036ujo7</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1o7ej59" sourceRef="call-level1-parallel-2" targetRef="ExclusiveGateway_037ei6s" />
+    <bpmn:sequenceFlow id="SequenceFlow_036ujo7" sourceRef="ExclusiveGateway_037ei6s" targetRef="execute-end" />
+    <bpmn:callActivity id="call-level1-parallel-1" name="Call level1" camunda:asyncBefore="true" calledElement="errorHandling-level1" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="flowInput" target="flowInput" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1vvq0bk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1w88z0h</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="call-level1-parallel-2" name="Call level1" camunda:asyncBefore="true" calledElement="errorHandling-level1" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="flowInput" target="flowInput" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0d1jyl8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1o7ej59</bpmn:outgoing>
+    </bpmn:callActivity>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="errorHandling-execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="execute-start">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0lfsc28_di" bpmnElement="SequenceFlow_0lfsc28">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="257" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="233" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0vy3eg5_di" bpmnElement="call-level1-non-parallel">
+        <dc:Bounds x="442" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0y49538_di" bpmnElement="execute-end">
+        <dc:Bounds x="724" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="742" y="142" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1u0jdn5_di" bpmnElement="SequenceFlow_1u0jdn5">
+        <di:waypoint x="542" y="120" />
+        <di:waypoint x="724" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="633" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1h52sdt_di" bpmnElement="ExclusiveGateway_1h52sdt" isMarkerVisible="true">
+        <dc:Bounds x="257" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="282" y="73" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_17rhqf4_di" bpmnElement="SequenceFlow_17rhqf4">
+        <di:waypoint x="307" y="120" />
+        <di:waypoint x="442" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="374.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06thltz_di" bpmnElement="SequenceFlow_06thltz">
+        <di:waypoint x="282" y="145" />
+        <di:waypoint x="282" y="326" />
+        <di:waypoint x="358" y="326" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="297" y="229.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_1uc0mf1_di" bpmnElement="ExclusiveGateway_1cdozic">
+        <dc:Bounds x="358" y="301" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="418" y="320" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vvq0bk_di" bpmnElement="SequenceFlow_1vvq0bk">
+        <di:waypoint x="383" y="301" />
+        <di:waypoint x="383" y="263" />
+        <di:waypoint x="442" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="398" y="276" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0d1jyl8_di" bpmnElement="SequenceFlow_0d1jyl8">
+        <di:waypoint x="383" y="351" />
+        <di:waypoint x="383" y="388" />
+        <di:waypoint x="442" y="388" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="398" y="363.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1w88z0h_di" bpmnElement="SequenceFlow_1w88z0h">
+        <di:waypoint x="542" y="263" />
+        <di:waypoint x="592" y="263" />
+        <di:waypoint x="592" y="301" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="567" y="242" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_075cwxs_di" bpmnElement="ExclusiveGateway_037ei6s">
+        <dc:Bounds x="567" y="301" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="557" y="320" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1o7ej59_di" bpmnElement="SequenceFlow_1o7ej59">
+        <di:waypoint x="542" y="388" />
+        <di:waypoint x="592" y="388" />
+        <di:waypoint x="592" y="351" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="567" y="367" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_036ujo7_di" bpmnElement="SequenceFlow_036ujo7">
+        <di:waypoint x="617" y="326" />
+        <di:waypoint x="664" y="326" />
+        <di:waypoint x="664" y="120" />
+        <di:waypoint x="724" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="679" y="217" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1fvr24i_di" bpmnElement="call-level1-parallel-1">
+        <dc:Bounds x="442" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_11ako6b_di" bpmnElement="call-level1-parallel-2">
+        <dc:Bounds x="442" y="348" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

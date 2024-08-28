@@ -1,0 +1,12 @@
+{
+    "flowId": "com.ericsson.oss.fa.flows.helloWorld",
+    "flowName": "Hello World Changed Name",
+    "flowVersion": "1.0.2",
+    "description": "Hello world flow With Flow Name changed and different version",
+    "setup": {
+        "processId": "hello-setup"
+    },
+    "execute": {
+        "processId": "hello-execute"
+    }
+}

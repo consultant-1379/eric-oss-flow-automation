@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0dwpk1s" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="showcase-output-variables-on-error-event" name="Showcase output variables on error event" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1fgcuog</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1c91037">
+      <bpmn:incoming>Flow_1fgcuog</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1fgcuog" sourceRef="StartEvent_1" targetRef="Event_1c91037" />
+    <bpmn:textAnnotation id="TextAnnotation_0adg3lm">
+      <bpmn:text>* see Camunda docs for approach</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0rtl2i5" sourceRef="StartEvent_1" targetRef="TextAnnotation_0adg3lm" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="showcase-output-variables-on-error-event">
+      <bpmndi:BPMNShape id="TextAnnotation_0adg3lm_di" bpmnElement="TextAnnotation_0adg3lm">
+        <dc:Bounds x="210" y="170" width="201" height="31" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1fgcuog_di" bpmnElement="Flow_1fgcuog">
+        <di:waypoint x="215" y="97" />
+        <di:waypoint x="272" y="97" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="79" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1c91037_di" bpmnElement="Event_1c91037">
+        <dc:Bounds x="272" y="79" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0rtl2i5_di" bpmnElement="Association_0rtl2i5">
+        <di:waypoint x="207" y="111" />
+        <di:waypoint x="249" y="170" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

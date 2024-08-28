@@ -1,0 +1,218 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "User task schema validation example",
+  "type": "object",
+  "properties": {
+    "dateTimePicker": {
+      "name": "Date and Time Picker",
+      "type": "object",
+      "schemaGen": {
+        "type": "nameExtra",
+        "binding": "variable:local:nameExtra"
+      },
+      "properties": {
+        "readOnlyDateTime": {
+          "name": "Read-Only Date Time Picker",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:readOnlyDateTimeInput"
+          }
+        },
+        "dateTimePickerWidget": {
+          "name": "Date-Time Picker",
+          "type": "string",
+          "format": "date-time",
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:dateTimeInput"
+          }
+        }
+      }
+    },
+    "nestedDateTime": {
+      "name": "Nested Date-Time",
+      "type": "object",
+      "properties": {
+        "checkboxNestingDateTime": {
+          "name": "Checkbox nesting a Popup Date-Time Picker",
+          "type": "object",
+          "format": "checkbox",
+          "properties": {
+            "nestedDateTimePicker": {
+              "name": "Date-Time nested to a Checkbox",
+              "type": "string",
+              "format": "date-time",
+              "schemaGen": {
+                "type": "default",
+                "binding": "variable:local:checkboxDateTimeInput"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "nestingWithRadio": {
+          "name": "Select option",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [
+            {
+              "properties": {
+                "simpleRadioButton": {
+                  "name": "Simple Radio Button",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "simpleRadioButton"
+              ]
+            },
+            {
+              "properties": {
+                "radioButtonNestingMultipleWidgets": {
+                  "name": "Radio Button nesting a Popup Date-Time Picker",
+                  "type": "object",
+                  "properties": {
+                    "nestedDateTimePicker": {
+                      "name": "Date-Time nested to a Radio Button",
+                      "type": "string",
+                      "format": "date-time",
+                      "schemaGen": {
+                        "type": "default",
+                        "binding": "variable:local:radioDateTimeInput"
+                      }
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "radioButtonNestingMultipleWidgets"
+              ]
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "dateTimeInTables": {
+      "name": "Date-Time in Tables",
+      "type": "object",
+      "properties": {
+        "dateTimeInSelectionTable": {
+          "name": "Selection Table with Date-Time",
+          "type": "array",
+          "format": "select-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dateTimeColumn": {
+                "type": "string",
+                "format": "date-time",
+                "name": "dateTimeColumn"
+              }
+            },
+            "required": [
+              "dateTimeColumn"
+            ],
+            "additionalProperties": false
+          },
+          "schemaGen": [
+            {
+              "type": "default",
+              "binding": "variable:local:selectedNodes"
+            },
+            {
+              "type": "selectableItems",
+              "binding": "variable:local:selectionTableData"
+            }
+          ]
+        },
+        "dateTimeInInformationalTable": {
+          "name": "Informational Table with Date-Time",
+          "type": "array",
+          "format": "informational-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dateTimeColumn": {
+                "type": "string",
+                "format": "date-time",
+                "name": "dateTimeColumn"
+              }
+            },
+            "required": [
+              "dateTimeColumn"
+            ],
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:informationalTableData"
+          }
+        },
+        "dateTimeInReadOnlyTable": {
+          "name": "Read-Only Table with Date-Time",
+          "type": "array",
+          "format": "table",
+          "readOnly": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "dateTimeColumn": {
+                "type": "string",
+                "format": "date-time",
+                "name": "dateTimeColumn"
+              }
+            },
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:readOnlyTableData"
+          }
+        },
+        "dateTimeInEditableTable": {
+          "name": "Editable Table with Date-Time",
+          "type": "array",
+          "format": "edit-table",
+          "formatOptions": {
+            "createRow": true,
+            "deleteRow": true
+          },
+          "items": {
+            "type": "object",
+            "properties": {
+              "dateTimeColumn": {
+                "name": "Editable Table Date-Time Column",
+                "type": "string",
+                "format": "date-time",
+                "schemaGen": {
+                  "type": "default",
+                  "binding": "variable:local:dateTimePlaceholder"
+                }
+              }
+            },
+            "required": [
+              "dateTimeColumn"
+            ],
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:editTableData"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "dateTimePicker",
+    "nestedDateTime",
+    "dateTimeInTables"
+  ]
+}

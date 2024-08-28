@@ -1,0 +1,126 @@
+{
+  "usertaskSelection": {
+    "information": false,
+    "textInputs": false,
+    "textInputsWithInformation": false,
+    "dateTimeInput": false,
+    "checkBoxes": false,
+    "radioButtons": false,
+    "selectBoxes": false,
+    "listBoxes": false,
+    "tables": false,
+    "groupingAndNesting": false,
+    "checkBoxesWithNesting": false,
+    "radioButtonsWithNesting": false
+  },
+  "textInputs": {
+    "textInputNoLengthRestrictions": "text input with no restrictions",
+    "shortTextInput": "short",
+    "mediumTextInput": "medium length text input",
+    "longTextInput": "long text input long text input long text input long text input",
+    "regexpValidatedTextInput": "lowercase text",
+    "optionalTextInput": "optional text input",
+    "textInputWithDefault": "text input with default",
+    "textInputWithDynamicDefault": "text input with dynamic default"
+  },
+  "textInputsWithInformation": {
+    "textInput": "text input"
+  },
+  "checkBoxes": {
+    "checkboxShortLabel": false,
+    "checkboxLongLabel": true
+  },
+  "radioButtons": {
+    "radioGroup1": {
+      "radioShortLabel": true
+    }
+  },
+  "selectBoxes": {
+    "selectbox1": "MEDIUM",
+    "selectbox2": "Value 2"
+  },
+  "listBoxes": {
+    "listbox1": "MEDIUM",
+    "listbox2": "Value 2"
+  },
+  "tables": {
+    "table2": [
+      {
+        "productId": 3,
+        "productName": "Product3",
+        "packageName": "Package3",
+        "packageTitle": "Test package title3",
+        "nodeDistance": 9,
+        "nodeType": "Node Type3",
+        "customDetails": "My custom Details as to be shown for this field3"
+      }
+    ],
+    "table4": {
+      "viewDiscoveredNodes": {
+        "discoveredNodes": [
+          {
+            "nodeName": "Node0",
+            "nodes": [
+              {
+                "productId": 2,
+                "productName": "Product2",
+                "packageName": "Package2",
+                "packageTitle": "Test package title2",
+                "nodeDistance": 2,
+                "nodeType": "Node Type2",
+                "customDetails": "My custom Details as to be shown for this field2"
+              }
+            ]
+          },
+          {
+            "nodeName": "Node1",
+            "nodes": [
+              {
+                "productId": 4,
+                "productName": "Product4",
+                "packageName": "Package4",
+                "packageTitle": "Test package title4",
+                "nodeDistance": 11,
+                "nodeType": "Node Type4",
+                "customDetails": "My custom Details as to be shown for this field4"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "groupingAndNesting": {
+    "groupWithTextInputs": {
+      "textInput1": "text input 1",
+      "textInput2": "text input 2"
+    },
+    "groupWithCheckboxes": {
+      "checkbox1": false,
+      "checkbox2": true,
+      "checkbox3": false
+    },
+    "groupWithMultipleLevels": {
+      "level2Group": {
+        "level3GroupWithCheckboxes": {
+          "checkbox1": false,
+          "checkbox2": true
+        }
+      }
+    }
+  },
+  "checkBoxesWithNesting": {
+    "checkboxLevel1ExposesMoreDetails": {
+      "checkboxLevel2ExposesMoreDetails": {
+        "textInput1": "text input"
+      }
+    }
+  },
+  "radioButtonsWithNesting": {
+    "radioGroup1": {
+      "radio2ExposesMoreDetail": {
+        "textInput1": "text input"
+      }
+    }
+  }
+}

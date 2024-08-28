@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="back-execute" name="SDK Basic Flow Example Execute" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start&#10;&#10;">
+      <bpmn:outgoing>SequenceFlow_0gs1hy9</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1ut696k" name="End">
+      <bpmn:incoming>Flow_0d5v2j6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_1gc2u3j" name="Update Summary Report" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0gs1hy9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0d5v2j6</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution,"Flow Executed Successfully")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0d5v2j6" sourceRef="Activity_1gc2u3j" targetRef="EndEvent_1ut696k" />
+    <bpmn:sequenceFlow id="SequenceFlow_0gs1hy9" sourceRef="StartEvent_1" targetRef="Activity_1gc2u3j" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="back-execute">
+      <bpmndi:BPMNEdge id="Flow_0d5v2j6_di" bpmnElement="Flow_0d5v2j6">
+        <di:waypoint x="420" y="119" />
+        <di:waypoint x="552" y="119" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="159" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="166" y="138" width="24" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gc2u3j_di" bpmnElement="Activity_1gc2u3j">
+        <dc:Bounds x="320" y="79" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ut696k_di" bpmnElement="EndEvent_1ut696k">
+        <dc:Bounds x="552" y="101" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="561" y="141" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gs1hy9_di" bpmnElement="SequenceFlow_0gs1hy9">
+        <di:waypoint x="195" y="120" />
+        <di:waypoint x="320" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

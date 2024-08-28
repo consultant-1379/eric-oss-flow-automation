@@ -1,0 +1,12 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.invalid.flow.report.schema",
+    "flowName" : "Invalid Flow report schema",
+    "flowVersion" : "1.0.0",
+    "description" : "Invalid Flow report schema",
+    "setup" : {
+        "processId" : "setup-flow"
+    },
+    "execute" : {
+        "processId" : "execute-flow"
+    }
+}

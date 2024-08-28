@@ -1,0 +1,356 @@
+
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "inputValidation": {
+      "name": "Input Validation",
+      "type": "object",
+      "properties": {
+        "textInputWithDefault": {
+          "name": "Text input with default value",
+          "description": "Minimum length is 4 and Maximum length is 40",
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 40,
+          "default": "placeholder"
+        },
+        "textInputWithDynamicDefault": {
+          "name": "Node Name",
+          "description": "The legal values are: [node1, node2, node3]",
+          "type": "string",
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:textInputWithDynamicDefault"
+          }
+        },
+        "selectBox": {
+          "name": "Select box",
+          "description": "Only one item can be selected",
+          "type": "string",
+          "format": "select",
+          "info": "This is a select box information",
+          "enum": [
+            "SHORT",
+            "MEDIUM",
+            "LONG"
+          ],
+          "enumNames": [
+            "Short contents",
+            "Medium contents",
+            "Long contents"
+          ],
+          "default": "SHORT"
+        }
+      },
+      "required": [
+        "textInputWithDefault",
+        "textInputWithDynamicDefault",
+        "selectBox"
+      ],
+      "additionalProperties": false
+    },
+    "readOnly": {
+      "name": "Read-Only",
+      "type": "object",
+      "properties": {
+        "derivedData": {
+          "name": "Derived Flow Input Data",
+          "type": "string",
+          "readOnly": true,
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:derivedData"
+          }
+        },
+        "shortInformation": {
+          "name": "Short Information",
+          "type": "string",
+          "readOnly": true,
+          "default": "This is short information"
+        },
+        "derivedDateTimeInput": {
+          "name": "Derived Date Time",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true,
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:derivedDateTimeInput"
+          }
+        },
+        "readOnlyEmailConfig": {
+          "name": "Send email notifications to (comma separated email addresses):",
+          "type": "array",
+          "format": "email",
+          "info": "This is a test note information",
+          "readOnly": true,
+          "items": {
+            "type": "string",
+            "format": "email",
+            "schemaGen": {
+              "type": "default",
+              "binding": "variable:local:readOnlyEmailConfig"
+            }
+          }
+        },
+        "readOnlyListBox": {
+          "name": "Read Only List",
+          "type": "array",
+          "format": "list",
+          "info": "This is a test note information",
+          "readOnly": true,
+          "items": {
+            "type": "string",
+            "schemaGen": {
+              "type": "default",
+              "binding": "variable:local:readOnlyListBox"
+            }
+          }
+        },
+        "readOnlyTable": {
+          "name": "Read Only Table",
+          "type": "array",
+          "format": "table",
+          "info": "This is a test note information",
+          "readOnly": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "packageName": {
+                "type": "string",
+                "name": "Package"
+              },
+              "productName": {
+                "type": "string",
+                "name": "Product"
+              },
+              "productId": {
+                "type": "integer",
+                "name": "Id"
+              },
+              "packageTitle": {
+                "type": "string",
+                "name": "Package Title"
+              },
+              "nodeDistance": {
+                "type": "integer",
+                "name": "Node Distance"
+              },
+              "nodeType": {
+                "type": "string",
+                "name": "Node Type"
+              },
+              "customDetails": {
+                "type": "string",
+                "name": "Custom Details"
+              }
+            },
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:readOnlyTable"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "softwarePackage": {
+      "name": "Software Package",
+      "type": "object",
+      "properties": {
+        "softwarePackageName": {
+          "name": "Software Package Name",
+          "type": "string"
+        },
+        "softwarePackageVersion": {
+          "name": "Software Package Version",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "network": {
+      "name": "Network",
+      "type": "object",
+      "properties": {
+        "network": {
+          "name": "Network",
+          "type": "string"
+        },
+        "subnetwork": {
+          "name": "Subnetwork",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "nestingAndGrouping": {
+      "name": "Grouping and Nesting",
+      "type": "object",
+      "properties": {
+        "nesting": {
+          "name": "Nesting",
+          "type": "object",
+          "properties": {
+            "level1TextInputs": {
+              "name": "First level of nesting for text inputs",
+              "type": "object",
+              "properties": {
+                "level2Group1": {
+                  "name": "Text Inputs Group 1",
+                  "type": "object",
+                  "properties": {
+                    "textInput1": {
+                      "name": "Text Input 1",
+                      "type": "string"
+                    },
+                    "textInput2": {
+                      "name": "Text Input 2",
+                      "type": "string"
+                    }
+                  }
+                },
+                "level2Group2": {
+                  "name": "Text Inputs Group 2",
+                  "type": "object",
+                  "properties": {
+                    "textInput1": {
+                      "name": "Text Input 1",
+                      "type": "string"
+                    },
+                    "textInput2": {
+                      "name": "Text Input 2",
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "level2Checkboxes": {
+              "name": "First level of nesting for checkboxes",
+              "type": "object",
+              "properties": {
+                "level2Group1": {
+                  "name": "Checkboxes Group 1",
+                  "type": "object",
+                  "properties": {
+                    "checkbox1": {
+                      "name": "Checkbox 1",
+                      "type": "boolean",
+                      "format": "checkbox"
+                    },
+                    "checkbox2": {
+                      "name": "Checkbox 2",
+                      "type": "boolean",
+                      "format": "checkbox"
+                    }
+                  }
+                },
+                "level2Group2": {
+                  "name": "Checkboxes Group 2",
+                  "type": "object",
+                  "properties": {
+                    "checkbox1": {
+                      "name": "Checkbox 1",
+                      "type": "boolean",
+                      "format": "checkbox"
+                    },
+                    "checkbox2": {
+                      "name": "Checkbox 2",
+                      "type": "boolean",
+                      "format": "checkbox"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "nestingWithCheckbox": {
+          "name": "Nesting with checkbox",
+          "type": "object",
+          "properties": {
+            "selectOption": {
+              "name": "Select Option:",
+              "type": "object",
+              "properties": {
+                "option1": {
+                  "name": "Option 1",
+                  "type": "boolean",
+                  "format": "checkbox"
+                },
+                "option2": {
+                  "name": "Option 2",
+                  "type": "boolean",
+                  "format": "checkbox"
+                },
+                "other": {
+                  "name": "Other",
+                  "type": "object",
+                  "format": "checkbox",
+                  "properties": {
+                    "nestedTextInput": {
+                      "name": "Description",
+                      "type": "string"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "nestingWithRadio": {
+          "name": "Nesting with radio button",
+          "type": "object",
+          "properties": {
+            "radioButton": {
+              "name": "Select option:",
+              "type": "object",
+              "format": "radio",
+              "oneOf": [
+                {
+                  "properties": {
+                    "optionWithoutNesting": {
+                      "name": "Option without nesting",
+                      "type": "boolean"
+                    }
+                  },
+                  "required": ["optionWithoutNesting"]
+                },
+                {
+                  "properties": {
+                    "optionWithNesting": {
+                      "name": "Option with nesting",
+                      "type": "object",
+                      "properties": {
+                        "nestedTextInput": {
+                          "name": "Nested Text Input",
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["optionWithNesting"]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "inputValidation",
+    "readOnly",
+    "nestingAndGrouping"
+  ],
+  "additionalProperties": false
+}
+
+

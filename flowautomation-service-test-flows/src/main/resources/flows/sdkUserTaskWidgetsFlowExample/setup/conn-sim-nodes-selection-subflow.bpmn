@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0mqj27b" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="conn-sim-nodes-selection-subflow" name="Nodes Selection" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1rqttzg">
+      <bpmn:outgoing>SequenceFlow_1ny9ahk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="UserTask_07x43m2" name="Select Nodes" camunda:formKey="setup:networkElementConfiguration">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="networkElementConfiguration">${networkElementConfiguration}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mtjj0z</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1awonzo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1nboq3i</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="ScriptTask_0jw50rp" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1ny9ahk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1awonzo</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Nodes Selection In Progress")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="ScriptTask_1yduo08" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0uexzk0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qis453</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Nodes Selection Completed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1ny9ahk" sourceRef="StartEvent_1rqttzg" targetRef="ScriptTask_0jw50rp" />
+    <bpmn:sequenceFlow id="SequenceFlow_1nboq3i" sourceRef="UserTask_07x43m2" targetRef="Activity_0o8ehdh" />
+    <bpmn:sequenceFlow id="SequenceFlow_1awonzo" sourceRef="ScriptTask_0jw50rp" targetRef="UserTask_07x43m2" />
+    <bpmn:endEvent id="EndEvent_1ca9t51">
+      <bpmn:incoming>Flow_0qis453</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0qis453" sourceRef="ScriptTask_1yduo08" targetRef="EndEvent_1ca9t51" />
+    <bpmn:scriptTask id="Activity_0o8ehdh" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1nboq3i</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uexzk0</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.usertask.UsertaskInputProcessingError
+
+if (networkElementConfiguration.neNames == null || networkElementConfiguration.neNames.trim().isEmpty()) {
+  throw new UsertaskInputProcessingError("error.fa.usertask.input.invalid", "Select at least 2 nodes to proceed.");
+}
+
+List&lt;String&gt; neNames = Arrays.asList(networkElementConfiguration.neNames.split("\\s*,\\s*"))
+
+if (neNames.size() &lt; 2) {
+  throw new UsertaskInputProcessingError("error.fa.usertask.input.invalid", "Select at least 2 nodes to proceed.");
+}
+
+if (neNames.size() &gt; 10) {
+  throw new UsertaskInputProcessingError("error.fa.usertask.input.invalid", "Select not more than 10 nodes to proceed.");
+}
+
+flowInput.networkElementConfiguration = networkElementConfiguration</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0uexzk0" sourceRef="Activity_0o8ehdh" targetRef="ScriptTask_1yduo08" />
+    <bpmn:boundaryEvent id="Event_1v9t3vr" attachedToRef="Activity_0o8ehdh">
+      <bpmn:outgoing>Flow_0mtjj0z</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0h38p08" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0mtjj0z" sourceRef="Event_1v9t3vr" targetRef="UserTask_07x43m2" />
+  </bpmn:process>
+  <bpmn:error id="Error_09nprec" name="UserTaskValidationError" errorCode="com.ericsson.oss.services.flowautomation.flowapi.usertask.UsertaskInputProcessingError" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="conn-sim-nodes-selection-subflow">
+      <bpmndi:BPMNEdge id="Flow_0uexzk0_di" bpmnElement="Flow_0uexzk0">
+        <di:waypoint x="664" y="121" />
+        <di:waypoint x="724" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qis453_di" bpmnElement="Flow_0qis453">
+        <di:waypoint x="824" y="121" />
+        <di:waypoint x="886" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1awonzo_di" bpmnElement="SequenceFlow_1awonzo">
+        <di:waypoint x="344" y="121" />
+        <di:waypoint x="404" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nboq3i_di" bpmnElement="SequenceFlow_1nboq3i">
+        <di:waypoint x="504" y="121" />
+        <di:waypoint x="564" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ny9ahk_di" bpmnElement="SequenceFlow_1ny9ahk">
+        <di:waypoint x="192" y="121" />
+        <di:waypoint x="244" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mtjj0z_di" bpmnElement="Flow_0mtjj0z">
+        <di:waypoint x="644" y="179" />
+        <di:waypoint x="644" y="241" />
+        <di:waypoint x="454" y="241" />
+        <di:waypoint x="454" y="161" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1rqttzg_di" bpmnElement="StartEvent_1rqttzg">
+        <dc:Bounds x="156" y="103" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_07x43m2_di" bpmnElement="UserTask_07x43m2">
+        <dc:Bounds x="404" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0jw50rp_di" bpmnElement="ScriptTask_0jw50rp">
+        <dc:Bounds x="244" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1yduo08_di" bpmnElement="ScriptTask_1yduo08">
+        <dc:Bounds x="724" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ca9t51_di" bpmnElement="EndEvent_1ca9t51">
+        <dc:Bounds x="886" y="103" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0o8ehdh_di" bpmnElement="Activity_0o8ehdh">
+        <dc:Bounds x="564" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1rjv8sg_di" bpmnElement="Event_1v9t3vr">
+        <dc:Bounds x="626" y="143" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1c3t0a2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+  <bpmn:process id="parallel-multi-instance-embedded-subprocess" name="Parallel multi-instance embedded subprocess" isExecutable="true">
+    <bpmn:startEvent id="start">
+      <bpmn:outgoing>SequenceFlow_083m03u</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="end">
+      <bpmn:incoming>SequenceFlow_13w0xik</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_083m03u" sourceRef="start" targetRef="get-number-of-instances" />
+    <bpmn:subProcess id="multi-instance-embedded-subprocess" name="Multi-instance embedded subprocess">
+      <bpmn:incoming>SequenceFlow_089tdbd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0euixrw</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="instances" camunda:elementVariable="instance" />
+      <bpmn:startEvent id="StartEvent_0aogl7q">
+        <bpmn:outgoing>start-subprocess</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="start-subprocess" sourceRef="StartEvent_0aogl7q" targetRef="init-subprocess" />
+      <bpmn:endEvent id="end-subprocess">
+        <bpmn:incoming>SequenceFlow_0eygble</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_18z0e5c" sourceRef="init-subprocess" targetRef="sleep10s" />
+      <bpmn:scriptTask id="init-subprocess" name="Init subprocess" scriptFormat="groovy">
+        <bpmn:incoming>start-subprocess</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_18z0e5c</bpmn:outgoing>
+        <bpmn:script>println "################# " + instance + " sleeping for 10s"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_0eygble" sourceRef="sleep10s" targetRef="end-subprocess" />
+      <bpmn:intermediateCatchEvent id="sleep10s" name="Sleep 10s">
+        <bpmn:incoming>SequenceFlow_18z0e5c</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0eygble</bpmn:outgoing>
+        <bpmn:timerEventDefinition>
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10S</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_0euixrw" sourceRef="multi-instance-embedded-subprocess" targetRef="update-report" />
+    <bpmn:sequenceFlow id="SequenceFlow_089tdbd" sourceRef="init" targetRef="multi-instance-embedded-subprocess" />
+    <bpmn:scriptTask id="init" name="Init" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1a3s5z2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_089tdbd</bpmn:outgoing>
+      <bpmn:script>def instances = []
+
+for (i = 0; i &lt; getNumberOfInstances.numInstances; i++) {
+  instances.add('instance' + i)
+}
+
+execution.setVariable("instances", instances)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1a3s5z2" sourceRef="get-number-of-instances" targetRef="init" />
+    <bpmn:userTask id="get-number-of-instances" name="Get number of instances" camunda:formKey="execute:get-number-instances.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="getNumberOfInstances">${getNumberOfInstances}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_083m03u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1a3s5z2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_13w0xik" sourceRef="update-report" targetRef="end" />
+    <bpmn:scriptTask id="update-report" name="Update report" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0euixrw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13w0xik</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, 'Parallel multi-instance embedded subprocess done')</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="parallel-multi-instance-embedded-subprocess">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="135" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="108" y="158" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1r8upib_di" bpmnElement="end">
+        <dc:Bounds x="1129" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1102" y="162" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_083m03u_di" bpmnElement="SequenceFlow_083m03u">
+        <di:waypoint x="171" y="140" />
+        <di:waypoint x="222" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="151.5" y="119" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1vf1abn_di" bpmnElement="multi-instance-embedded-subprocess" isExpanded="true">
+        <dc:Bounds x="522" y="40" width="410" height="202" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0euixrw_di" bpmnElement="SequenceFlow_0euixrw">
+        <di:waypoint x="932" y="140" />
+        <di:waypoint x="978" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="955" y="119" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_089tdbd_di" bpmnElement="SequenceFlow_089tdbd">
+        <di:waypoint x="475" y="140" />
+        <di:waypoint x="522" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="498.5" y="119" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_07jormw_di" bpmnElement="init">
+        <dc:Bounds x="375" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1a3s5z2_di" bpmnElement="SequenceFlow_1a3s5z2">
+        <di:waypoint x="322" y="140" />
+        <di:waypoint x="375" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="348.5" y="119" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0o9l3gr_di" bpmnElement="get-number-of-instances">
+        <dc:Bounds x="222" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0aogl7q_di" bpmnElement="StartEvent_0aogl7q">
+        <dc:Bounds x="561" y="120" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="579" y="160" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jh4s4g_di" bpmnElement="start-subprocess">
+        <di:waypoint x="597" y="138" />
+        <di:waypoint x="636" y="138" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="616.5" y="117" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0dy52d3_di" bpmnElement="end-subprocess">
+        <dc:Bounds x="855" y="120" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="873" y="160" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_18z0e5c_di" bpmnElement="SequenceFlow_18z0e5c">
+        <di:waypoint x="736" y="138" />
+        <di:waypoint x="776" y="138" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="756" y="117" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0ce3m7f_di" bpmnElement="init-subprocess">
+        <dc:Bounds x="636" y="98" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_13w0xik_di" bpmnElement="SequenceFlow_13w0xik">
+        <di:waypoint x="1078" y="140" />
+        <di:waypoint x="1129" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1103.5" y="119" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_07lroh5_di" bpmnElement="update-report">
+        <dc:Bounds x="978" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0eygble_di" bpmnElement="SequenceFlow_0eygble">
+        <di:waypoint x="812" y="138" />
+        <di:waypoint x="855" y="138" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="833.5" y="117" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1t9h7po_di" bpmnElement="sleep10s">
+        <dc:Bounds x="776" y="120" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="770" y="160" width="48" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

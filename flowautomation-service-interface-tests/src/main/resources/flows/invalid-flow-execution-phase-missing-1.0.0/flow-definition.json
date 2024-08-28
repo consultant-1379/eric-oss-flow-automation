@@ -1,0 +1,9 @@
+{
+    "flowId" : "invalid-flow-execution-phase-missing-1.0.0",
+    "flowName" : "Invalid flow execution phase missing",
+    "flowVersion" : "1.0.0",
+    "description" : "Base flow for import scenario",
+    "execute" : {
+        "processId" : "fa-execute"
+    }
+}

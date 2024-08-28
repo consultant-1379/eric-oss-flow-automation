@@ -1,0 +1,21 @@
+documents:
+  - name: 'Service User Guide'
+    filepath: ./build/doc/Service_User_Guide.zip
+    default: true
+  - name: "Application Developers Guide"
+    filepath: ./build/doc/Application_Developers_Guide.zip
+  - name: 'API Documentation'
+    filepath: ./build/doc/API_Documentation.zip
+  - name: "Product Revision Information (PRI)"
+    filepath: ./build/doc/Product_Release_Information.zip
+  - name: "Software Vendor List (SVL)"
+    filepath: ./build/doc/Software_Vendor_List.zip
+  - name: "Test Specification"
+    filepath: ./build/doc/Test_Specification.zip
+  - name: "Test Report"
+    filepath: ./build/doc/Test_Report.zip
+  - name: "Security Risk and Privacy Impact Assessment"
+    filepath: ./build/doc/Security_Risk_and_Privacy_Impact_Assessment.zip
+  - name: "Secure Coding Report"
+    external-link: https://erilink.ericsson.se/eridoc/erl/objectId/09004cffcc757d97?docno=1/0360-APR201544Uen&action=approved&format=pdf
+    restricted: true

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0zoqv90" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="sdkBasicUserTaskFlowExample-execute" name="Review Script Failure - ${exitCode}" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>SequenceFlow_0as2fhg</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_0df0zoc" name="Simple User Task" camunda:formKey="execute:simpleUserTask.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="parameter1">${parameter1}</camunda:inputParameter>
+          <camunda:inputParameter name="parameter2">${parameter2}</camunda:inputParameter>
+          <camunda:outputParameter name="simpleUserTask">${simpleUserTask}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_14h36qe</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15xb823</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_14h36qe" sourceRef="Task_1gz6qke" targetRef="Task_0df0zoc" />
+    <bpmn:sequenceFlow id="SequenceFlow_15xb823" sourceRef="Task_0df0zoc" targetRef="Task_17jrnwy" />
+    <bpmn:scriptTask id="Task_1gz6qke" name="Prepare Input Data" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0c3s1nm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_14h36qe</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder
+import org.apache.commons.lang3.ObjectUtils
+
+execution.setVariable("parameter1","test")
+execution.setVariable("parameter2","TEST")
+
+EventRecorder.info(execution, ObjectUtils.toString(basicUserTask))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_17jrnwy" name="Validate User Task Output" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_15xb823</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1tmnec6</bpmn:outgoing>
+      <bpmn:script>// validation needed for this user task output
+import com.ericsson.oss.services.flowautomation.flowapi.usertask.UsertaskInputProcessingError
+if(!simpleUserTask.parameter1.equalsIgnoreCase(simpleUserTask.parameter2)){
+throw new UsertaskInputProcessingError("error.fa.usertask.input.invalid", "Provided values don't match");
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0as2fhg" sourceRef="StartEvent_1" targetRef="Task_02vvh4b" />
+    <bpmn:sequenceFlow id="SequenceFlow_0c3s1nm" sourceRef="Task_02vvh4b" targetRef="Task_1gz6qke" />
+    <bpmn:userTask id="Task_02vvh4b" name="Basic User Task" camunda:formKey="execute:basicUserTask.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="basicUserTask">${basicUserTask}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0as2fhg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0c3s1nm</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="EndEvent_053pjku">
+      <bpmn:incoming>SequenceFlow_0vwav8t</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="UserTask_1kllmxx" name="Names of the Nodes" camunda:formKey="execute:nodeSelectionUserTask.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="nodeNames">${namesOfNodes}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1tmnec6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0nprfhv</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="ScriptTask_04hscln" name="Check Nodes" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0nprfhv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0zxjpdx</bpmn:outgoing>
+      <bpmn:script>def nameList = [nodeNames.firstNode, nodeNames.secondNode, nodeNames.thirdNode]
+
+execution.setVariable("names", nameList)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:subProcess id="SubProcess_0vor3at">
+      <bpmn:incoming>SequenceFlow_0zxjpdx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0vwav8t</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="names" camunda:elementVariable="nodename" />
+      <bpmn:startEvent id="StartEvent_0awidwk">
+        <bpmn:outgoing>SequenceFlow_0xc2r9e</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:userTask id="UserTask_0irzrah" name="Review Script Failure - ${exitCode}" camunda:formKey="execute:multiInstanceUserTask.json">
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="nameExtra">${nodename}</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_1bp6dg1</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1s77jhf</bpmn:outgoing>
+      </bpmn:userTask>
+      <bpmn:endEvent id="EndEvent_0xqdhaf">
+        <bpmn:incoming>SequenceFlow_1s77jhf</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="ScriptTask_0uq65zq" name="Prepare Data" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_0xc2r9e</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1bp6dg1</bpmn:outgoing>
+        <bpmn:script>// SBB Response logic goes here.
+
+def sbbExitCode = "Exit Code 2"
+
+def flag = execution.getVariable("flag")
+
+if(flag == null || flag.isEmpty()){
+  sbbExitCode = "Exit Code 1"
+  execution.setVariable("flag", "TRUE")
+}
+
+execution.setVariable("exitCode", sbbExitCode)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1bp6dg1" sourceRef="ScriptTask_0uq65zq" targetRef="UserTask_0irzrah" />
+      <bpmn:sequenceFlow id="SequenceFlow_1s77jhf" sourceRef="UserTask_0irzrah" targetRef="EndEvent_0xqdhaf" />
+      <bpmn:sequenceFlow id="SequenceFlow_0xc2r9e" sourceRef="StartEvent_0awidwk" targetRef="ScriptTask_0uq65zq" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_0nprfhv" sourceRef="UserTask_1kllmxx" targetRef="ScriptTask_04hscln" />
+    <bpmn:sequenceFlow id="SequenceFlow_1tmnec6" sourceRef="Task_17jrnwy" targetRef="UserTask_1kllmxx" />
+    <bpmn:sequenceFlow id="SequenceFlow_0zxjpdx" sourceRef="ScriptTask_04hscln" targetRef="SubProcess_0vor3at" />
+    <bpmn:sequenceFlow id="SequenceFlow_0vwav8t" sourceRef="SubProcess_0vor3at" targetRef="EndEvent_053pjku" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sdkBasicUserTaskFlowExample-execute">
+      <bpmndi:BPMNEdge id="SequenceFlow_0c3s1nm_di" bpmnElement="SequenceFlow_0c3s1nm">
+        <di:waypoint x="370" y="120" />
+        <di:waypoint x="460" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0as2fhg_di" bpmnElement="SequenceFlow_0as2fhg">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="270" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_15xb823_di" bpmnElement="SequenceFlow_15xb823">
+        <di:waypoint x="750" y="120" />
+        <di:waypoint x="840" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_14h36qe_di" bpmnElement="SequenceFlow_14h36qe">
+        <di:waypoint x="560" y="120" />
+        <di:waypoint x="650" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="145" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1j4yoko_di" bpmnElement="Task_0df0zoc">
+        <dc:Bounds x="650" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_187t32e_di" bpmnElement="Task_1gz6qke">
+        <dc:Bounds x="460" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1n5hbad_di" bpmnElement="Task_17jrnwy">
+        <dc:Bounds x="840" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_16j5oek_di" bpmnElement="Task_02vvh4b">
+        <dc:Bounds x="270" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_053pjku_di" bpmnElement="EndEvent_053pjku">
+        <dc:Bounds x="802" y="512" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1kllmxx_di" bpmnElement="UserTask_1kllmxx">
+        <dc:Bounds x="270" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_04hscln_di" bpmnElement="ScriptTask_04hscln">
+        <dc:Bounds x="460" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_0vor3at_di" bpmnElement="SubProcess_0vor3at" isExpanded="true">
+        <dc:Bounds x="142" y="430" width="578" height="190" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0nprfhv_di" bpmnElement="SequenceFlow_0nprfhv">
+        <di:waypoint x="370" y="290" />
+        <di:waypoint x="460" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_0awidwk_di" bpmnElement="StartEvent_0awidwk">
+        <dc:Bounds x="162" y="512" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0irzrah_di" bpmnElement="UserTask_0irzrah">
+        <dc:Bounds x="470" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0xqdhaf_di" bpmnElement="EndEvent_0xqdhaf">
+        <dc:Bounds x="652" y="512" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0uq65zq_di" bpmnElement="ScriptTask_0uq65zq">
+        <dc:Bounds x="280" y="490" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bp6dg1_di" bpmnElement="SequenceFlow_1bp6dg1">
+        <di:waypoint x="380" y="530" />
+        <di:waypoint x="470" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1s77jhf_di" bpmnElement="SequenceFlow_1s77jhf">
+        <di:waypoint x="570" y="530" />
+        <di:waypoint x="652" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xc2r9e_di" bpmnElement="SequenceFlow_0xc2r9e">
+        <di:waypoint x="198" y="530" />
+        <di:waypoint x="280" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tmnec6_di" bpmnElement="SequenceFlow_1tmnec6">
+        <di:waypoint x="890" y="160" />
+        <di:waypoint x="890" y="200" />
+        <di:waypoint x="320" y="200" />
+        <di:waypoint x="320" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zxjpdx_di" bpmnElement="SequenceFlow_0zxjpdx">
+        <di:waypoint x="510" y="330" />
+        <di:waypoint x="510" y="375" />
+        <di:waypoint x="314" y="375" />
+        <di:waypoint x="314" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0vwav8t_di" bpmnElement="SequenceFlow_0vwav8t">
+        <di:waypoint x="720" y="530" />
+        <di:waypoint x="802" y="530" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

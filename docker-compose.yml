@@ -1,0 +1,81 @@
+#
+# COPYRIGHT Ericsson 2021
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+version: '3.8'
+services:
+  eric-oss-fa-postgres:
+    image: postgres:13.7-alpine
+    hostname: eric-oss-fa-postgres
+    container_name: eric-oss-flow-automation-postgres
+    restart: always
+    user: postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=eric-oss-fa-postgres
+      - POSTGRES_DB=flowautomationdb
+      - POSTGRES_PORT=5432
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      interval: 3s
+      timeout: 1s
+      retries: 10
+
+  eric-oss-flow-automation-db:
+    container_name: eric-oss-flow-automation-db
+    image: "eric-oss-flow-automation-db"
+    environment:
+      - DATASOURCE_URL=jdbc:postgresql://eric-oss-fa-postgres:5432/flowautomationdb
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - SKIP_DB_CREATION=true
+    build:
+      context: .
+      dockerfile: ./flowautomation-service-db/Dockerfile
+
+  fa_jboss:
+    container_name: eric-oss-flow-automation-jboss
+    environment:
+      - DATASOURCE_URL=jdbc:postgresql://eric-oss-fa-postgres:5432/flowautomationdb
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - USE_JBOSS_DEFAULT_LOGGING=true
+      - JBOSS_MODULEPATH=/opt/ericsson/jboss/modules:/jboss/modules:/jboss-runtime/modules
+    image: "eric-oss-flow-automation-dev"
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: test
+    env_file:
+      - flowautomation-service-jboss/src/test/resources/jboss/jboss.env
+    ports:
+      - "9999:9999"
+      - "9990:9990"
+      - "9090:9090"
+      - "8080:8080"
+      - "8787:8787"
+      - "4447:4447"
+      - "6300:6300"
+    depends_on:
+      - "eric-oss-flow-automation-db"
+      - "eric-oss-fa-postgres"
+    links:
+      - eric-oss-fa-postgres:postgresql01
+networks:
+  default:
+    name: eric-oss-flow-automation-network

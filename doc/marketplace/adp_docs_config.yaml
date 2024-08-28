@@ -1,0 +1,38 @@
+documents:
+  # document name
+  - name: Service_User_Guide
+    # file names of files to be packaged in the document
+    files:
+      - Service_User_Guide/Service_User_Guide.md
+      - Service_User_Guide/fa_architecture.png
+      - Service_User_Guide/fa_deployment_view.png
+
+  - name: Application_Developers_Guide
+    files:
+      - Application_Developers_Guide/Application_Developers_Guide.md
+
+  - name: Product_Release_Information
+    files:
+      - Product_Release_Information/Product_Release_Information.md
+
+  - name: Software_Vendor_List
+    files:
+      - Software_Vendor_List/Software_Vendor_List.md
+
+  - name: Test_Report
+    files:
+      - Test_Report/Test_Report.md
+
+  - name: Test_Specification
+    files:
+      - Test_Specification/Test_Specification.md
+
+  - name: API_Documentation
+    files:
+      - API_Documentation/index.html
+
+  - name: Security_Risk_and_Privacy_Impact_Assessment
+    files:
+      - RA_PIA/RA_PIA.md
+      - RA_PIA/riskMatrix.PNG
+      - RA_PIA/RAnPIADiagram.png

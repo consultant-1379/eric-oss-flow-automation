@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2021
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.ericsson.oss.ae</groupId>
+        <artifactId>eric-oss-flow-automation</artifactId>
+        <version>1.68.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>flowautomation-service-jboss</artifactId>
+    <packaging>pom</packaging>
+    <name>flowautomation-service-jboss</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-engine-rest</artifactId>
+            <version>${version.camunda}</version>
+            <classifier>wildfly</classifier>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.bpm.webapp</groupId>
+            <artifactId>camunda-webapp-ee-jboss</artifactId>
+            <version>${version.camunda}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-fa-ui-war</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/fa-ui-war</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.ericsson.oss.ae</groupId>
+                                    <artifactId>eric-oss-flow-automation-ui</artifactId>
+                                    <version>latest</version>
+                                    <type>war</type>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-custom-artifact</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifact>
+                                    <groupId>org.jboss.as</groupId>
+                                    <artifactId>jboss-as-dist</artifactId>
+                                    <version>${version.jboss}</version>
+                                    <type>zip</type>
+                                </artifact>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/camunda-wars</outputDirectory>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.camunda.bpm</groupId>
+                                    <artifactId>camunda-engine-rest</artifactId>
+                                    <version>${version.camunda}</version>
+                                    <classifier>wildfly</classifier>
+                                    <type>war</type>
+                                    <includes>**/*.war</includes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.camunda.bpm.webapp</groupId>
+                                    <artifactId>camunda-webapp-ee-jboss</artifactId>
+                                    <version>${version.camunda}</version>
+                                    <type>war</type>
+                                    <includes>**/*.war</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.camunda.bpm.wildfly</groupId>
+                                    <artifactId>camunda-wildfly-modules</artifactId>
+                                    <version>${version.camunda}</version>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}/camunda-modules</outputDirectory>
+                                    <includes>**/*.jar, **/*.xml</includes>
+                                    <excludes>META-INF/**</excludes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

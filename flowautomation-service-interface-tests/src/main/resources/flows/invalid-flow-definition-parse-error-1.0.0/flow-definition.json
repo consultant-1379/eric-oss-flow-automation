@@ -1,0 +1,10 @@
+{thisflowdefinitionisinvalidandcannotbeparsed;
+    "flowId": "com.ericsson.oss.fa.flows.interfacetest.testFlowDefinitionParseError" ,
+    "flowName": "Dummy flow to test flow parsing",
+    "flowVersion": "1.0.0",
+    "description": "Hello World Flow with Setup phase",
+    "execute": {
+        "processId": "execute-flow"
+    }
+}
+

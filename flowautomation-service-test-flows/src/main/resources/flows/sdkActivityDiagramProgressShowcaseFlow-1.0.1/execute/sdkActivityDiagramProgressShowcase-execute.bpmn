@@ -1,0 +1,603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+  <bpmn:process id="sdkActivityDiagramProgressShowcase-execute" name="Sdk Activity Diagram Progress Showcase Execute" isExecutable="true">
+    <bpmn:startEvent id="start" name="Start&#10;&#10;">
+      <bpmn:outgoing>SequenceFlow_09xi8tk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="end" name="End">
+      <bpmn:incoming>SequenceFlow_1hyw9fn</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_09xi8tk" sourceRef="start" targetRef="ExclusiveGateway_0bsha79" />
+    <bpmn:sequenceFlow id="SequenceFlow_170vlab" sourceRef="showcase-looping-and-event-subprocess" targetRef="ExclusiveGateway_00t4ne4" />
+    <bpmn:sequenceFlow id="SequenceFlow_0tac017" sourceRef="showcase-parallel-multi-instance-call-activity" targetRef="ExclusiveGateway_05ly5zb" />
+    <bpmn:sequenceFlow id="SequenceFlow_00smyo0" sourceRef="showcase-parallel-multi-instance-embedded-subprocess" targetRef="ExclusiveGateway_1ovgyg9" />
+    <bpmn:sequenceFlow id="SequenceFlow_0nymeig" sourceRef="showcase-compensation" targetRef="ExclusiveGateway_1ywuvjp" />
+    <bpmn:callActivity id="showcase-looping-and-event-subprocess" name="Showcase looping and event subprocess" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="showcase-looping-and-event-subprocess" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0i8y2kj</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_170vlab</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="showcase-parallel-multi-instance-call-activity" name="Parallel multi-instance call activity" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="parallel-multi-instance-call-activity" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0krnyo6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0tac017</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="showcase-parallel-multi-instance-embedded-subprocess" name="Parallel multi-instance embedded subprocess" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="parallel-multi-instance-embedded-subprocess" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0kbax0y</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00smyo0</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="showcase-compensation" name="Showcase compensation" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="showcase-compensation" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_179v9tu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0nymeig</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0bsha79" default="SequenceFlow_0200tom">
+      <bpmn:incoming>SequenceFlow_09xi8tk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0i8y2kj</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0200tom</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0i8y2kj" sourceRef="ExclusiveGateway_0bsha79" targetRef="showcase-looping-and-event-subprocess">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.loopingAndEventSubprocess == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_00t4ne4" default="SequenceFlow_00k5vo5">
+      <bpmn:incoming>SequenceFlow_170vlab</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0200tom</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0krnyo6</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_00k5vo5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0krnyo6" sourceRef="ExclusiveGateway_00t4ne4" targetRef="showcase-parallel-multi-instance-call-activity">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.parallelMultiInstanceCallActivity == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1jjfuig" default="SequenceFlow_1osqaky">
+      <bpmn:incoming>SequenceFlow_1l0kqe7</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0g4upc5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kbax0y</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1osqaky</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0kbax0y" sourceRef="ExclusiveGateway_1jjfuig" targetRef="showcase-parallel-multi-instance-embedded-subprocess">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.parallelMultiInstanceEmbeddedSubprocess == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1tyzp65" default="SequenceFlow_0d3ppyn">
+      <bpmn:incoming>SequenceFlow_05yrlr7</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1bu5q5o</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_15e2agg</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0d3ppyn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_15e2agg" sourceRef="ExclusiveGateway_1tyzp65" targetRef="showcase-sequential-multi-instance-call-activity">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.sequentialMultiInstanceCallActivity == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0200tom" sourceRef="ExclusiveGateway_0bsha79" targetRef="ExclusiveGateway_00t4ne4" />
+    <bpmn:sequenceFlow id="SequenceFlow_00k5vo5" sourceRef="ExclusiveGateway_00t4ne4" targetRef="ExclusiveGateway_05ly5zb" />
+    <bpmn:sequenceFlow id="SequenceFlow_1osqaky" sourceRef="ExclusiveGateway_1jjfuig" targetRef="ExclusiveGateway_1ovgyg9" />
+    <bpmn:sequenceFlow id="SequenceFlow_0d3ppyn" sourceRef="ExclusiveGateway_1tyzp65" targetRef="ExclusiveGateway_0cst3mv" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1ywuvjp">
+      <bpmn:incoming>SequenceFlow_0nymeig</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0zhdoec</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1hyw9fn</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1hyw9fn" sourceRef="ExclusiveGateway_1ywuvjp" targetRef="end" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_05ly5zb" default="SequenceFlow_1om0t0f">
+      <bpmn:incoming>SequenceFlow_00k5vo5</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0tac017</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_01hsjwc</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1om0t0f</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:callActivity id="showcase-parallel-multi-instance-call-activity-map-name" name="Parallel multi-instance call activity map name" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="parallel-multi-instance-call-activity-map-name" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_01hsjwc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1nbz5od</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_01hsjwc" sourceRef="ExclusiveGateway_05ly5zb" targetRef="showcase-parallel-multi-instance-call-activity-map-name">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.parallelMultiInstanceCallActivityMapName == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1nbz5od" sourceRef="showcase-parallel-multi-instance-call-activity-map-name" targetRef="ExclusiveGateway_0jz7bb6" />
+    <bpmn:sequenceFlow id="SequenceFlow_1om0t0f" sourceRef="ExclusiveGateway_05ly5zb" targetRef="ExclusiveGateway_0jz7bb6" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0jz7bb6" default="SequenceFlow_0g4upc5">
+      <bpmn:incoming>SequenceFlow_1nbz5od</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1om0t0f</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05sc8b0</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0g4upc5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_05sc8b0" sourceRef="ExclusiveGateway_0jz7bb6" targetRef="showcase-parallel-multi-instance-call-activity-map-noname">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.parallelMultiInstanceCallActivityMapNoName == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="showcase-parallel-multi-instance-call-activity-map-noname" name="Parallel multi-instance call activity map no name" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="parallel-multi-instance-call-activity-map-noname" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_05sc8b0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1l0kqe7</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1l0kqe7" sourceRef="showcase-parallel-multi-instance-call-activity-map-noname" targetRef="ExclusiveGateway_1jjfuig" />
+    <bpmn:sequenceFlow id="SequenceFlow_0g4upc5" sourceRef="ExclusiveGateway_0jz7bb6" targetRef="ExclusiveGateway_1jjfuig" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1ovgyg9" default="SequenceFlow_1bu5q5o">
+      <bpmn:incoming>SequenceFlow_00smyo0</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1osqaky</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ekujlv</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1bu5q5o</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0ekujlv" sourceRef="ExclusiveGateway_1ovgyg9" targetRef="showcase-parallel-multi-instance-embedded-subprocess-nosleep">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.parallelMultiInstanceEmbeddedSubprocessNoSleep == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="showcase-parallel-multi-instance-embedded-subprocess-nosleep" name="Parallel multi-instance embedded subprocess no sleep" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="parallel-multi-instance-embedded-subprocess-nosleep" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0ekujlv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05yrlr7</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_05yrlr7" sourceRef="showcase-parallel-multi-instance-embedded-subprocess-nosleep" targetRef="ExclusiveGateway_1tyzp65" />
+    <bpmn:sequenceFlow id="SequenceFlow_1bu5q5o" sourceRef="ExclusiveGateway_1ovgyg9" targetRef="ExclusiveGateway_1tyzp65" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0cst3mv" default="SequenceFlow_0ud9918">
+      <bpmn:incoming>SequenceFlow_0d3ppyn</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1a7jqbo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1jnmwcy</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0ud9918</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1a7jqbo" sourceRef="showcase-sequential-multi-instance-call-activity" targetRef="ExclusiveGateway_0cst3mv" />
+    <bpmn:callActivity id="showcase-sequential-multi-instance-call-activity" name="Sequential multi-instance call activity" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="sequential-multi-instance-call-activity" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_15e2agg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1a7jqbo</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1jnmwcy" sourceRef="ExclusiveGateway_0cst3mv" targetRef="showcase-sequential-multi-instance-call-activity-map-name">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.sequentialMultiInstanceCallActivityMapName == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="showcase-sequential-multi-instance-call-activity-map-name" name="Sequential multi-instance call activity map name" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="sequential-multi-instance-call-activity-map-name" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1jnmwcy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0rkssj3</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="showcase-sequential-multi-instance-call-activity-map-no-name" name="Sequential multi-instance call activity map no name" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="sequential-multi-instance-call-activity-map-noname" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0svzo6z</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1p4ervp</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="showcase-sequential-multi-instance-embedded-subprocess" name="Sequential multi-instance embedded subprocess" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="Sequential-multi-instance-embedded-subprocess" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0r2qnuz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00w5yba</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:callActivity id="showcase-sequential-multi-instance-embedded-subprocess-no-sleep" name="Sequential multi-instance embedded subprocess no sleep" camunda:asyncBefore="true" camunda:asyncAfter="true" calledElement="sequential-multi-instance-embedded-subprocess-nosleep" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0woalhu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0lds1b7</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_01fn7jr" default="SequenceFlow_1jgj7na">
+      <bpmn:incoming>SequenceFlow_0rkssj3</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0ud9918</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0svzo6z</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1jgj7na</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_17xb3u5" default="SequenceFlow_0sxz6ap">
+      <bpmn:incoming>SequenceFlow_1p4ervp</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1jgj7na</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0r2qnuz</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0sxz6ap</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1sf3e2j" default="SequenceFlow_193rahi">
+      <bpmn:incoming>SequenceFlow_00w5yba</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0sxz6ap</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0woalhu</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_193rahi</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0rkssj3" sourceRef="showcase-sequential-multi-instance-call-activity-map-name" targetRef="ExclusiveGateway_01fn7jr" />
+    <bpmn:sequenceFlow id="SequenceFlow_0svzo6z" sourceRef="ExclusiveGateway_01fn7jr" targetRef="showcase-sequential-multi-instance-call-activity-map-no-name">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.sequentialMultiInstanceCallActivityMapNoName == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1p4ervp" sourceRef="showcase-sequential-multi-instance-call-activity-map-no-name" targetRef="ExclusiveGateway_17xb3u5" />
+    <bpmn:sequenceFlow id="SequenceFlow_0r2qnuz" sourceRef="ExclusiveGateway_17xb3u5" targetRef="showcase-sequential-multi-instance-embedded-subprocess">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.sequentialMultiInstanceEmbeddedSubprocess == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_00w5yba" sourceRef="showcase-sequential-multi-instance-embedded-subprocess" targetRef="ExclusiveGateway_1sf3e2j" />
+    <bpmn:sequenceFlow id="SequenceFlow_0woalhu" sourceRef="ExclusiveGateway_1sf3e2j" targetRef="showcase-sequential-multi-instance-embedded-subprocess-no-sleep">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.sequentialMultiInstanceEmbeddedSubprocessNoSleep == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_08j0bu7" default="SequenceFlow_0zhdoec">
+      <bpmn:incoming>SequenceFlow_0lds1b7</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_193rahi</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_179v9tu</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0zhdoec</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0lds1b7" sourceRef="showcase-sequential-multi-instance-embedded-subprocess-no-sleep" targetRef="ExclusiveGateway_08j0bu7" />
+    <bpmn:sequenceFlow id="SequenceFlow_179v9tu" sourceRef="ExclusiveGateway_08j0bu7" targetRef="showcase-compensation">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${flowInput.scenarioSelection.compensation == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0zhdoec" sourceRef="ExclusiveGateway_08j0bu7" targetRef="ExclusiveGateway_1ywuvjp" />
+    <bpmn:sequenceFlow id="SequenceFlow_0ud9918" sourceRef="ExclusiveGateway_0cst3mv" targetRef="ExclusiveGateway_01fn7jr" />
+    <bpmn:sequenceFlow id="SequenceFlow_1jgj7na" sourceRef="ExclusiveGateway_01fn7jr" targetRef="ExclusiveGateway_17xb3u5" />
+    <bpmn:sequenceFlow id="SequenceFlow_0sxz6ap" sourceRef="ExclusiveGateway_17xb3u5" targetRef="ExclusiveGateway_1sf3e2j" />
+    <bpmn:sequenceFlow id="SequenceFlow_193rahi" sourceRef="ExclusiveGateway_1sf3e2j" targetRef="ExclusiveGateway_08j0bu7" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sdkActivityDiagramProgressShowcase-execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="156" y="144" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="162" y="180" width="24" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1ut696k_di" bpmnElement="end">
+        <dc:Bounds x="1272" y="579" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1280" y="557" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_09xi8tk_di" bpmnElement="SequenceFlow_09xi8tk">
+        <di:waypoint x="192" y="162" />
+        <di:waypoint x="228" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="114" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_170vlab_di" bpmnElement="SequenceFlow_170vlab">
+        <di:waypoint x="417" y="162" />
+        <di:waypoint x="463" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="388" y="114" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tac017_di" bpmnElement="SequenceFlow_0tac017">
+        <di:waypoint x="652" y="162" />
+        <di:waypoint x="702" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="580" y="114" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00smyo0_di" bpmnElement="SequenceFlow_00smyo0">
+        <di:waypoint x="417" y="384" />
+        <di:waypoint x="463" y="384" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="580" y="386" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0nymeig_di" bpmnElement="SequenceFlow_0nymeig">
+        <di:waypoint x="1134" y="597" />
+        <di:waypoint x="1175" y="597" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1061" y="386" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1yeftjf_di" bpmnElement="showcase-looping-and-event-subprocess">
+        <dc:Bounds x="317" y="122" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1xlth0j_di" bpmnElement="showcase-parallel-multi-instance-call-activity">
+        <dc:Bounds x="552" y="122" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_011dsl3_di" bpmnElement="showcase-parallel-multi-instance-embedded-subprocess">
+        <dc:Bounds x="317" y="344" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0g1730v_di" bpmnElement="showcase-compensation">
+        <dc:Bounds x="1034" y="557" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0bsha79_di" bpmnElement="ExclusiveGateway_0bsha79" isMarkerVisible="true">
+        <dc:Bounds x="228" y="137" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="201.05" y="170" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0i8y2kj_di" bpmnElement="SequenceFlow_0i8y2kj">
+        <di:waypoint x="278" y="162" />
+        <di:waypoint x="317" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="245.5" y="114" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_00t4ne4_di" bpmnElement="ExclusiveGateway_00t4ne4" isMarkerVisible="true">
+        <dc:Bounds x="463" y="137" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="436" y="170" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0krnyo6_di" bpmnElement="SequenceFlow_0krnyo6">
+        <di:waypoint x="513" y="162" />
+        <di:waypoint x="552" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="480.5" y="114" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1jjfuig_di" bpmnElement="ExclusiveGateway_1jjfuig" isMarkerVisible="true">
+        <dc:Bounds x="228" y="359" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="394" y="442" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kbax0y_di" bpmnElement="SequenceFlow_0kbax0y">
+        <di:waypoint x="278" y="384" />
+        <di:waypoint x="317" y="384" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="437" y="386" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1tyzp65_di" bpmnElement="ExclusiveGateway_1tyzp65" isMarkerVisible="true">
+        <dc:Bounds x="702" y="359" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="873" y="442" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_15e2agg_di" bpmnElement="SequenceFlow_15e2agg">
+        <di:waypoint x="752" y="384" />
+        <di:waypoint x="798" y="384" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="918" y="386" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0200tom_di" bpmnElement="SequenceFlow_0200tom">
+        <di:waypoint x="253" y="137" />
+        <di:waypoint x="253" y="81" />
+        <di:waypoint x="488" y="81" />
+        <di:waypoint x="488" y="137" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="318.5" y="33" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00k5vo5_di" bpmnElement="SequenceFlow_00k5vo5">
+        <di:waypoint x="488" y="187" />
+        <di:waypoint x="488" y="261" />
+        <di:waypoint x="727" y="261" />
+        <di:waypoint x="727" y="187" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="510.5" y="213" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1osqaky_di" bpmnElement="SequenceFlow_1osqaky">
+        <di:waypoint x="253" y="359" />
+        <di:waypoint x="253" y="305" />
+        <di:waypoint x="488" y="305" />
+        <di:waypoint x="488" y="359" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="512" y="307" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0d3ppyn_di" bpmnElement="SequenceFlow_0d3ppyn">
+        <di:waypoint x="727" y="359" />
+        <di:waypoint x="727" y="303" />
+        <di:waypoint x="967" y="303" />
+        <di:waypoint x="967" y="357" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="991.5" y="305" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1ywuvjp_di" bpmnElement="ExclusiveGateway_1ywuvjp" isMarkerVisible="true">
+        <dc:Bounds x="1175" y="572" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1110" y="442" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1hyw9fn_di" bpmnElement="SequenceFlow_1hyw9fn">
+        <di:waypoint x="1225" y="597" />
+        <di:waypoint x="1272" y="597" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1154" y="386" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_05ly5zb_di" bpmnElement="ExclusiveGateway_05ly5zb" isMarkerVisible="true">
+        <dc:Bounds x="702" y="137" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="675" y="88" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1y0vkln_di" bpmnElement="showcase-parallel-multi-instance-call-activity-map-name">
+        <dc:Bounds x="798" y="122" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01hsjwc_di" bpmnElement="SequenceFlow_01hsjwc">
+        <di:waypoint x="752" y="162" />
+        <di:waypoint x="798" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="723" y="114" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nbz5od_di" bpmnElement="SequenceFlow_1nbz5od">
+        <di:waypoint x="898" y="162" />
+        <di:waypoint x="942" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="823" y="114" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1om0t0f_di" bpmnElement="SequenceFlow_1om0t0f">
+        <di:waypoint x="727" y="137" />
+        <di:waypoint x="727" y="85" />
+        <di:waypoint x="967" y="85" />
+        <di:waypoint x="967" y="137" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="795" y="37" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0jz7bb6_di" bpmnElement="ExclusiveGateway_0jz7bb6" isMarkerVisible="true">
+        <dc:Bounds x="942" y="137" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="870" y="170" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_05sc8b0_di" bpmnElement="SequenceFlow_05sc8b0">
+        <di:waypoint x="992" y="162" />
+        <di:waypoint x="1034" y="162" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="961" y="114" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1gbt3p7_di" bpmnElement="showcase-parallel-multi-instance-call-activity-map-noname">
+        <dc:Bounds x="1034" y="122" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1l0kqe7_di" bpmnElement="SequenceFlow_1l0kqe7">
+        <di:waypoint x="1134" y="162" />
+        <di:waypoint x="1176" y="162" />
+        <di:waypoint x="1176" y="287" />
+        <di:waypoint x="192" y="287" />
+        <di:waypoint x="192" y="384" />
+        <di:waypoint x="228" y="384" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="697" y="260" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0g4upc5_di" bpmnElement="SequenceFlow_0g4upc5">
+        <di:waypoint x="967" y="187" />
+        <di:waypoint x="967" y="287" />
+        <di:waypoint x="192" y="287" />
+        <di:waypoint x="192" y="384" />
+        <di:waypoint x="228" y="384" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="592.5" y="260" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1ovgyg9_di" bpmnElement="ExclusiveGateway_1ovgyg9" isMarkerVisible="true">
+        <dc:Bounds x="463" y="359" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="675" y="436" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ekujlv_di" bpmnElement="SequenceFlow_0ekujlv">
+        <di:waypoint x="513" y="384" />
+        <di:waypoint x="552" y="384" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="723" y="386" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0x6j47r_di" bpmnElement="showcase-parallel-multi-instance-embedded-subprocess-nosleep">
+        <dc:Bounds x="552" y="344" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_05yrlr7_di" bpmnElement="SequenceFlow_05yrlr7">
+        <di:waypoint x="652" y="384" />
+        <di:waypoint x="702" y="384" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="869.5" y="386" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bu5q5o_di" bpmnElement="SequenceFlow_1bu5q5o">
+        <di:waypoint x="488" y="409" />
+        <di:waypoint x="488" y="481" />
+        <di:waypoint x="727" y="481" />
+        <di:waypoint x="727" y="409" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="796.5" y="483" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0cst3mv_di" bpmnElement="ExclusiveGateway_0cst3mv" isMarkerVisible="true">
+        <dc:Bounds x="942" y="359" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1a7jqbo_di" bpmnElement="SequenceFlow_1a7jqbo">
+        <di:waypoint x="898" y="384" />
+        <di:waypoint x="942" y="384" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0hss1xx_di" bpmnElement="showcase-sequential-multi-instance-call-activity">
+        <dc:Bounds x="798" y="344" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jnmwcy_di" bpmnElement="SequenceFlow_1jnmwcy">
+        <di:waypoint x="992" y="384" />
+        <di:waypoint x="1034" y="384" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_10q281l_di" bpmnElement="showcase-sequential-multi-instance-call-activity-map-name">
+        <dc:Bounds x="1034" y="344" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_18f0ydr_di" bpmnElement="showcase-sequential-multi-instance-call-activity-map-no-name">
+        <dc:Bounds x="317" y="557" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1bhpk06_di" bpmnElement="showcase-sequential-multi-instance-embedded-subprocess">
+        <dc:Bounds x="552" y="557" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1ep0up4_di" bpmnElement="showcase-sequential-multi-instance-embedded-subprocess-no-sleep">
+        <dc:Bounds x="798" y="557" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_01fn7jr_di" bpmnElement="ExclusiveGateway_01fn7jr" isMarkerVisible="true">
+        <dc:Bounds x="228" y="572" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_17xb3u5_di" bpmnElement="ExclusiveGateway_17xb3u5" isMarkerVisible="true">
+        <dc:Bounds x="455" y="572" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1sf3e2j_di" bpmnElement="ExclusiveGateway_1sf3e2j" isMarkerVisible="true">
+        <dc:Bounds x="705" y="572" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rkssj3_di" bpmnElement="SequenceFlow_0rkssj3">
+        <di:waypoint x="1134" y="384" />
+        <di:waypoint x="1170" y="384" />
+        <di:waypoint x="1170" y="497" />
+        <di:waypoint x="190" y="497" />
+        <di:waypoint x="190" y="597" />
+        <di:waypoint x="228" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0svzo6z_di" bpmnElement="SequenceFlow_0svzo6z">
+        <di:waypoint x="278" y="597" />
+        <di:waypoint x="317" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1p4ervp_di" bpmnElement="SequenceFlow_1p4ervp">
+        <di:waypoint x="417" y="597" />
+        <di:waypoint x="455" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0r2qnuz_di" bpmnElement="SequenceFlow_0r2qnuz">
+        <di:waypoint x="505" y="597" />
+        <di:waypoint x="552" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00w5yba_di" bpmnElement="SequenceFlow_00w5yba">
+        <di:waypoint x="652" y="597" />
+        <di:waypoint x="705" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0woalhu_di" bpmnElement="SequenceFlow_0woalhu">
+        <di:waypoint x="755" y="597" />
+        <di:waypoint x="798" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_08j0bu7_di" bpmnElement="ExclusiveGateway_08j0bu7" isMarkerVisible="true">
+        <dc:Bounds x="942" y="572" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0lds1b7_di" bpmnElement="SequenceFlow_0lds1b7">
+        <di:waypoint x="898" y="597" />
+        <di:waypoint x="942" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_179v9tu_di" bpmnElement="SequenceFlow_179v9tu">
+        <di:waypoint x="992" y="597" />
+        <di:waypoint x="1034" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zhdoec_di" bpmnElement="SequenceFlow_0zhdoec">
+        <di:waypoint x="967" y="622" />
+        <di:waypoint x="967" y="667" />
+        <di:waypoint x="1200" y="667" />
+        <di:waypoint x="1200" y="622" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ud9918_di" bpmnElement="SequenceFlow_0ud9918">
+        <di:waypoint x="967" y="409" />
+        <di:waypoint x="967" y="497" />
+        <di:waypoint x="190" y="497" />
+        <di:waypoint x="190" y="597" />
+        <di:waypoint x="228" y="597" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jgj7na_di" bpmnElement="SequenceFlow_1jgj7na">
+        <di:waypoint x="253" y="572" />
+        <di:waypoint x="253" y="527" />
+        <di:waypoint x="480" y="527" />
+        <di:waypoint x="480" y="572" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sxz6ap_di" bpmnElement="SequenceFlow_0sxz6ap">
+        <di:waypoint x="480" y="622" />
+        <di:waypoint x="480" y="677" />
+        <di:waypoint x="730" y="677" />
+        <di:waypoint x="730" y="622" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_193rahi_di" bpmnElement="SequenceFlow_193rahi">
+        <di:waypoint x="730" y="572" />
+        <di:waypoint x="730" y="527" />
+        <di:waypoint x="967" y="527" />
+        <di:waypoint x="967" y="572" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

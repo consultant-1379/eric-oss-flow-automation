@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "namesOfNodes": {
+      "name": "Names of the Nodes",
+      "type": "object",
+      "properties": {
+        "firstNode": {
+          "name": "First Node Name",
+          "description": "Minimum length is 3 and Maximum length is 10",
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 10,
+          "default": "Node 1"
+        },
+        "secondNode": {
+          "name": "Second Node Name",
+          "description": "Minimum length is 3 and Maximum length is 10",
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 10,
+          "default": "Node 2"
+        },
+        "thirdNode": {
+          "name": "Third Node Name",
+          "description": "Minimum length is 3 and Maximum length is 10",
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 10,
+          "default": "Node 3"
+        }
+      },
+      "required": [
+        "firstNode",
+        "secondNode",
+        "thirdNode"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "namesOfNodes"
+  ]
+}

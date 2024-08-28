@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="conn-sim-execute" name="Connectivity Simulator Execution Flow" isExecutable="true">
+    <bpmn:subProcess id="incident-error-handler" name="Incident error handler" triggeredByEvent="true">
+      <bpmn:sequenceFlow id="SequenceFlow_1i0a2xf" sourceRef="incident-error-start" targetRef="log-incident-error" />
+      <bpmn:startEvent id="incident-error-start" camunda:asyncAfter="true">
+        <bpmn:outgoing>SequenceFlow_1i0a2xf</bpmn:outgoing>
+        <bpmn:errorEventDefinition errorRef="Error_0af2ylk" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="incident-error-end">
+        <bpmn:incoming>SequenceFlow_1xw77to</bpmn:incoming>
+        <bpmn:errorEventDefinition errorRef="Error_0ip2un6" />
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="log-incident-error" name="Log incident error" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1i0a2xf</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1xw77to</bpmn:outgoing>
+        <bpmn:script>println "############## Incident error"</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1xw77to" sourceRef="log-incident-error" targetRef="incident-error-end" />
+    </bpmn:subProcess>
+    <bpmn:startEvent id="StartEvent_1684c05">
+      <bpmn:outgoing>SequenceFlow_04icfyj</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_06k55l3" name="End">
+      <bpmn:incoming>Flow_0aq6zb7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_04icfyj" sourceRef="StartEvent_1684c05" targetRef="Activity_1m02eqz" />
+    <bpmn:scriptTask id="ScriptTask_Calculating_Values" name="Calculating values" scriptFormat="Groovy">
+      <bpmn:incoming>Flow_0dajn3b</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1gj0pzw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1s0extm</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Simulation Complete")
+
+def r = new Random()
+def list = []
+def relationsTable = flowInput.relationChoice.relationsTable
+if (relationsTable != null) {
+  relationsTable.each { item -&gt;
+    def index = item.node1 + ":" + item.node2
+    def connectivity = 2 + r.nextInt(18)
+    list.add("node1": item.node1, "node2": item.node2, "connectivity": connectivity)
+    Reporter.updateReportVariable(execution, index + ".node1", item.node1)
+    Reporter.updateReportVariable(execution, index + ".node2", item.node2)
+    Reporter.updateReportVariable(execution, index + ".connectivity", connectivity)
+  }
+}
+execution.setVariable("connectivityTableMap", list)
+
+def numberOfSimulations = execution.getVariable("numberOfSimulations") + 1
+Reporter.updateReportVariable(execution, "numberOfSimulations", numberOfSimulations)
+execution.setVariable("numberOfSimulations", numberOfSimulations)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0aq6zb7" sourceRef="Activity_16z258q" targetRef="EndEvent_06k55l3" />
+    <bpmn:scriptTask id="Activity_16z258q" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0eh0n7g</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aq6zb7</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Execution Completed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_17r091p" default="Flow_0eh0n7g">
+      <bpmn:incoming>SequenceFlow_1n6wdq9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1gj0pzw</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0eh0n7g</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1n6wdq9" sourceRef="Task_05yh8am" targetRef="ExclusiveGateway_17r091p" />
+    <bpmn:sequenceFlow id="SequenceFlow_1gj0pzw" name="Restart simulation" sourceRef="ExclusiveGateway_17r091p" targetRef="ScriptTask_Calculating_Values">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="groovy">def restart_yes = flowOptions.restart.restart_yes
+if (restart_yes != null) {
+  return true
+}
+return false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Task_05yh8am" name="Simulation Results" camunda:formKey="execute:flow-execution-simulation.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="connectivityTableValues">${connectivityTableMap}</camunda:inputParameter>
+          <camunda:outputParameter name="flowOptions">${flowOptions}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1s0extm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1n6wdq9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0eh0n7g" sourceRef="ExclusiveGateway_17r091p" targetRef="Activity_16z258q" />
+    <bpmn:scriptTask id="Activity_1m02eqz" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_04icfyj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dajn3b</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Starting Connectivity Simulation...")
+
+Reporter.updateReportVariable(execution, "nodesSelected", flowInput.networkElementConfiguration.neNames)
+
+def relationsSelected = []
+def relationsTable = flowInput.relationChoice.relationsTable
+if (relationsTable != null) {
+  relationsTable.each { item -&gt;
+    def index = item.node1 + ":" + item.node2
+    relationsSelected = relationsSelected + [index]
+  }
+}
+Reporter.updateReportVariable(execution, "relationsSelected", relationsSelected.join(","))
+
+execution.setVariable("numberOfSimulations", 0)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0dajn3b" sourceRef="Activity_1m02eqz" targetRef="ScriptTask_Calculating_Values" />
+    <bpmn:sequenceFlow id="SequenceFlow_1s0extm" sourceRef="ScriptTask_Calculating_Values" targetRef="Task_05yh8am" />
+  </bpmn:process>
+  <bpmn:error id="Error_0ip2un6" name="kpiCollectionError" errorCode="kpiCollectionError" />
+  <bpmn:error id="Error_0af2ylk" name="incidentErrorInternal" errorCode="incidentErrorInternal" />
+  <bpmn:error id="Error_0hffi1m" name="CLI Rest Request Failed" errorCode="error.fa.flowapi.exception" />
+  <bpmn:error id="Error_130v9sm" name="error.fa.scripting.bb.execution.timeout" errorCode="error.fa.scripting.bb.execution.timeout" />
+  <bpmn:error id="Error_0bafg6a" name="error.fa.scripting.bb.access.denied" errorCode="error.fa.scripting.bb.access.denied" />
+  <bpmn:error id="Error_1v2s32b" name="error.fa.scripting.bb.execution.failed" errorCode="error.fa.scripting.bb.execution.failed" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="conn-sim-execute">
+      <bpmndi:BPMNEdge id="SequenceFlow_1s0extm_di" bpmnElement="SequenceFlow_1s0extm">
+        <di:waypoint x="460" y="220" />
+        <di:waypoint x="510" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dajn3b_di" bpmnElement="Flow_0dajn3b">
+        <di:waypoint x="310" y="220" />
+        <di:waypoint x="360" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eh0n7g_di" bpmnElement="Flow_0eh0n7g">
+        <di:waypoint x="705" y="220" />
+        <di:waypoint x="750" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gj0pzw_di" bpmnElement="SequenceFlow_1gj0pzw">
+        <di:waypoint x="680" y="195" />
+        <di:waypoint x="680" y="60" />
+        <di:waypoint x="410" y="60" />
+        <di:waypoint x="410" y="180" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="503" y="73" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1n6wdq9_di" bpmnElement="SequenceFlow_1n6wdq9">
+        <di:waypoint x="610" y="220" />
+        <di:waypoint x="655" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aq6zb7_di" bpmnElement="Flow_0aq6zb7">
+        <di:waypoint x="850" y="220" />
+        <di:waypoint x="902" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_04icfyj_di" bpmnElement="SequenceFlow_04icfyj">
+        <di:waypoint x="148" y="220" />
+        <di:waypoint x="210" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1684c05_di" bpmnElement="StartEvent_1684c05">
+        <dc:Bounds x="112" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_00v9qq3_di" bpmnElement="ScriptTask_Calculating_Values">
+        <dc:Bounds x="360" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0dv156x_di" bpmnElement="Task_05yh8am">
+        <dc:Bounds x="510" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m02eqz_di" bpmnElement="Activity_1m02eqz">
+        <dc:Bounds x="210" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_17r091p_di" bpmnElement="ExclusiveGateway_17r091p" isMarkerVisible="true">
+        <dc:Bounds x="655" y="195" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_058nt3d_di" bpmnElement="Activity_16z258q">
+        <dc:Bounds x="750" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_06k55l3_di" bpmnElement="EndEvent_06k55l3">
+        <dc:Bounds x="902" y="202" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="910" y="178" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

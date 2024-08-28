@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "name": "${usertask.name}",
+  "type": "object",
+  "properties": {
+    "nonGroupedUsertask": {
+      "name": "${usertask.name}",
+      "type": "object",
+      "properties": {
+        "data": {
+          "name": "Data",
+          "type": "string",
+          "default": "${usertask.data}"
+        }
+      }
+    }
+  }
+}

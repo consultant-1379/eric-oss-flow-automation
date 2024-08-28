@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "name": "Result",
+  "type": "object",
+  "properties": {
+    "calculationResult": {
+      "name" : "Calculation result",
+      "type": "integer",
+      "readOnly": true,
+      "schemaGen": {
+        "type": "default",
+        "binding": "variable:local:result"
+      }
+    }
+  },
+  "additionalProperties": false
+}

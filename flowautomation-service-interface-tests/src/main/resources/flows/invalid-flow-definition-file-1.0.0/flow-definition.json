@@ -1,0 +1,12 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.interfacetest.testFlowDefinitionInvalid",
+    "flowName" : "Setup phase not available",
+    "flowVersion" : "1.0.0",
+    "description" : "Base flow for import scenario",
+    "setup" : {
+        "processId" : null
+    },
+    "execute" : {
+        "processId" : "execute-flow-setup"
+    }
+}

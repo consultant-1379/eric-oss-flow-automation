@@ -1,0 +1,54 @@
+#
+# COPYRIGHT Ericsson 2021
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+productName: "Flow Automation"
+productNumber: "CXD 101 192"
+images:
+  eric-oss-flow-automation:
+    productName: "eric-oss-flow-automation IMAGE"
+    productNumber: FA_IMAGE_PRODUCT_NUMBER
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: REPO_PATH
+    name: "eric-oss-flow-automation"
+    tag: IMAGE_VERSION
+  eric-oss-flow-automation-db:
+    productName: "eric-oss-flow-automation-db IMAGE"
+    productNumber: FA_DB_IMAGE_PRODUCT_NUMBER
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: REPO_PATH
+    name: "eric-oss-flow-automation-db"
+    tag: IMAGE_VERSION
+  eric-oss-flow-automationTest:
+    productName: "eric-oss-flow-automation Test IMAGE"
+    productNumber: ""
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: proj-eric-oss-drop
+    name: "eric-oss-helm-test"
+    tag: 1.0.0-1
+  logshipper:
+    productName: "Log Shipper Image"
+    productNumber: "CXU 101 0642"
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: "proj-adp-log-released"
+    name: "eric-log-shipper"
+    tag: "10.2.0-16"
+  brAgent:
+    productName: "Backup and Restore Image"
+    productNumber: FA_BRAGENT_IMAGE_PRODUCT_NUMBER
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: REPO_PATH
+    name: "eric-oss-flow-automation-bragent"
+    tag: IMAGE_VERSION

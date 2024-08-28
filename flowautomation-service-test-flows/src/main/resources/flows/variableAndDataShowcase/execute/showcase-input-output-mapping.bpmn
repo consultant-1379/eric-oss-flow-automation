@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0dwpk1s" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="showcase-input-output-mapping" name="Showcase input output mapping" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1r3fqjm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1r3fqjm" sourceRef="StartEvent_1" targetRef="Activity_07hij9m" />
+    <bpmn:scriptTask id="Activity_1ggwbb7" name="Execute &#39;square&#39; reusable script task" scriptFormat="groovy" camunda:resource="deployment://execute/square.groovy">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="inputValue">${initialInputValue}</camunda:inputParameter>
+          <camunda:outputParameter name="result1">${outputValue}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1p87b9p</bpmn:incoming>
+      <bpmn:outgoing>Flow_1atf02f</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0bnn30l" name="Execute &#39;square&#39; reusable script task" scriptFormat="groovy" camunda:resource="deployment://execute/square.groovy">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="inputValue">${result1}</camunda:inputParameter>
+          <camunda:outputParameter name="result2">${outputValue}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1atf02f</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hp0fbc</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1atf02f" sourceRef="Activity_1ggwbb7" targetRef="Activity_0bnn30l" />
+    <bpmn:sequenceFlow id="Flow_1p87b9p" sourceRef="Activity_07hij9m" targetRef="Activity_1ggwbb7" />
+    <bpmn:scriptTask id="Activity_07hij9m" name="Initialise variable" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1r3fqjm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1p87b9p</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("initialInputValue", 2)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1hp0fbc" sourceRef="Activity_0bnn30l" targetRef="Activity_0phbtf8" />
+    <bpmn:scriptTask id="Activity_0phbtf8" name="Check result" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1hp0fbc</bpmn:incoming>
+      <bpmn:outgoing>Flow_07mro2x</bpmn:outgoing>
+      <bpmn:script>assert result2 == 16</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="Event_0wf34k7">
+      <bpmn:incoming>Flow_07mro2x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_07mro2x" sourceRef="Activity_0phbtf8" targetRef="Event_0wf34k7" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="showcase-input-output-mapping">
+      <bpmndi:BPMNEdge id="Flow_1r3fqjm_di" bpmnElement="Flow_1r3fqjm">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="260" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1atf02f_di" bpmnElement="Flow_1atf02f">
+        <di:waypoint x="500" y="117" />
+        <di:waypoint x="540" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1p87b9p_di" bpmnElement="Flow_1p87b9p">
+        <di:waypoint x="360" y="117" />
+        <di:waypoint x="400" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hp0fbc_di" bpmnElement="Flow_1hp0fbc">
+        <di:waypoint x="640" y="117" />
+        <di:waypoint x="680" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07mro2x_di" bpmnElement="Flow_07mro2x">
+        <di:waypoint x="780" y="117" />
+        <di:waypoint x="822" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kundsu_di" bpmnElement="Activity_1ggwbb7">
+        <dc:Bounds x="400" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bnn30l_di" bpmnElement="Activity_0bnn30l">
+        <dc:Bounds x="540" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0t0vew3_di" bpmnElement="Activity_07hij9m">
+        <dc:Bounds x="260" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0qd710t_di" bpmnElement="Activity_0phbtf8">
+        <dc:Bounds x="680" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0wf34k7_di" bpmnElement="Event_0wf34k7">
+        <dc:Bounds x="822" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

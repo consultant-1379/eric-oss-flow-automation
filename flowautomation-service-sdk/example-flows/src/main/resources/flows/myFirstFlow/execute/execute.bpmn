@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0diluad" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.8.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.18.0">
+  <bpmn:process id="execute" name="Execute" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0oc9wrr</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0oc9wrr" sourceRef="StartEvent_1" targetRef="Activity_06p3qg9" />
+    <bpmn:scriptTask id="Activity_06p3qg9" name="Concat Messages" scriptFormat="groovy" camunda:resource="deployment://execute/concatStrings.groovy">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="string1">${flowInput.message1.text}</camunda:inputParameter>
+          <camunda:inputParameter name="string2">${flowInput.message2.text}</camunda:inputParameter>
+          <camunda:outputParameter name="joinedMessage">${concatenatedString}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0oc9wrr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f5ajw9</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0f5ajw9" sourceRef="Activity_06p3qg9" targetRef="Event_0595v35">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Waiting")</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateCatchEvent id="Event_0595v35" name="Wait 20s">
+      <bpmn:incoming>Flow_0f5ajw9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yewozh</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_08jukwo">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT20S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0yewozh" sourceRef="Event_0595v35" targetRef="Activity_0bp9xh8">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="take">
+          <camunda:script scriptFormat="groovy">import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "")</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Activity_0bp9xh8" name="Append default message" scriptFormat="groovy" camunda:resource="deployment://execute/concatStrings.groovy">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="string1">${joinedMessage}</camunda:inputParameter>
+          <camunda:inputParameter name="string2">: was the input</camunda:inputParameter>
+          <camunda:outputParameter name="finalMessage">${concatenatedString}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0yewozh</bpmn:incoming>
+      <bpmn:outgoing>Flow_17llodv</bpmn:outgoing>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_17llodv" sourceRef="Activity_0bp9xh8" targetRef="Activity_1jht8yu" />
+    <bpmn:endEvent id="Event_1v0bisc">
+      <bpmn:incoming>Flow_1n2pxa4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1n2pxa4" sourceRef="Activity_1jht8yu" targetRef="Event_1v0bisc" />
+    <bpmn:scriptTask id="Activity_1jht8yu" name="Build report" scriptFormat="groovy">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_17llodv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1n2pxa4</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportVariable(execution, "finalMessage", finalMessage)</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_018ygl6_di" bpmnElement="Activity_06p3qg9">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01zrj6l_di" bpmnElement="Event_0595v35">
+        <dc:Bounds x="432" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="431" y="142" width="43" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_07rjtcb_di" bpmnElement="Activity_0bp9xh8">
+        <dc:Bounds x="530" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1v0bisc_di" bpmnElement="Event_1v0bisc">
+        <dc:Bounds x="872" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0b5v0ja_di" bpmnElement="Activity_1jht8yu">
+        <dc:Bounds x="700" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0oc9wrr_di" bpmnElement="Flow_0oc9wrr">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f5ajw9_di" bpmnElement="Flow_0f5ajw9">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="432" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yewozh_di" bpmnElement="Flow_0yewozh">
+        <di:waypoint x="468" y="117" />
+        <di:waypoint x="530" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17llodv_di" bpmnElement="Flow_17llodv">
+        <di:waypoint x="630" y="117" />
+        <di:waypoint x="700" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n2pxa4_di" bpmnElement="Flow_1n2pxa4">
+        <di:waypoint x="800" y="117" />
+        <di:waypoint x="872" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

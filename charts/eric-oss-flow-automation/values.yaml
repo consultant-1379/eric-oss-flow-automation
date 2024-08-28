@@ -1,0 +1,250 @@
+#
+# COPYRIGHT Ericsson 2021
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+# Default values for eric-oss-flow-automation.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+#global:
+#  registry:
+#    imagePullPolicy: IfNotPresent
+#    url: armdocker.rnd.ericsson.se
+#  timezone: UTC
+#  #Secret must be manually created in the namespace, no default value
+#  pullSecret: eric-adp-example-secret
+#  fsGroup:
+#    manual: 10000
+#    namespace: true
+#  # The IP family the service belongs to when service.type is set to ClusterIP.
+#  # Options are: IPv4, IPv6
+#  internalIPFamily:
+#  security:
+#    policyBinding:
+#      create: true
+#    policyReferenceMap:
+#      default-restricted-security-policy: "<restricted security policy at customer deployment>"
+#    tls:
+#      enabled: true
+#  # Configuring global streamingMethod: indirect, direct, dual. default=direct
+#  log:
+#    streamingMethod: "direct"
+
+replicaCount: 1
+
+podDisruptionBudget:
+  # Minimum number/percentage of Pods that must remain available during the planned disruption.
+  # Value can be expressed as an integer or as a percentage. When specified as a percentage of the Pods,
+  # if it does not map to an exact number, Kubernetes rounds up to the nearest integer.
+  # minAvailable: 2 # example value for 2 pods defined as integer
+  minAvailable: "40%"
+
+updateStrategy:
+ type: RollingUpdate
+ rollingUpdate:
+   maxSurge: 1
+   maxUnavailable: 0
+
+#Empty labels list for application deployment engineer to add more labels (In Compliance with DR-D1121-068).
+labels: {}
+
+annotations: {}
+
+podAnnotations: {}
+
+imageCredentials:
+  eric-oss-flow-automation:
+    repoPath: # see default in eric-product-info.yaml
+    registry: {}
+#      imagePullPolicy: # overrides global image pull policy
+      # overrides global registry url
+      # url:
+      #- Secret must be manually created in the namespace, no default value
+      # pullSecret: REPO_SECRET
+  eric-oss-flow-automation-db:
+    repoPath: # see default in eric-product-info.yaml
+    registry: {}
+#      imagePullPolicy: # overrides global image pull policy
+  eric-oss-flow-automationTest:
+    repoPath: # see default in eric-product-info.yaml
+    registry: {}
+#      imagePullPolicy: # overrides global image pull policy
+  brAgent:
+    repoPath: # see default in eric-product-info.yaml
+    registry: {}
+#      imagePullPolicy: # overrides global image pull policy
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 8080    # Changed from 80 to 8080 and spring application is hosted on 8080
+  endpoints:
+    chassisapi:
+      tls:
+        enforced: required
+        verifyClientCertificate: required
+
+bragent:
+  name: eric-oss-flow-automation-bragent
+  enabled: true
+  path: /actuator/health
+  scrape: true
+  port: 8002
+  backupTypeList:
+    - "DEFAULT"
+    - "PLATFORM"
+
+ingress:
+  enabled: false
+  ingressClass: OAM-IngressClass
+  hosts:
+    - host: chart-example.local
+      paths: [/]
+
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+eric-pm-server:
+  rbac:
+    appMonitoring:
+      enabled: true
+
+prometheus:
+  path: /metrics
+  scrape: true
+  port: 9990
+
+resources:
+  eric-oss-flow-automation:
+    requests:
+      memory: 3072Mi
+      cpu: 500m
+      ephemeral-storage: ""
+    limits:
+      memory: 3596Mi
+      cpu: 1700m
+      ephemeral-storage: ""
+  eric-oss-flow-automationTest:
+    requests:
+      memory: 128Mi
+      cpu: 50m
+      ephemeral-storage: ""
+    limits:
+      memory: 1Gi
+      cpu: 256m
+      ephemeral-storage: ""
+  create-db-schema:
+    limits:
+      memory: 256Mi
+      cpu: 100m
+      ephemeral-storage: ""
+    requests:
+      memory: 128Mi
+      cpu: 100m
+      ephemeral-storage: ""
+  brAgent:
+    limits:
+      memory: 512Mi
+      cpu: 500m
+      ephemeral-storage: ""
+    requests:
+      memory: 512Mi
+      cpu: 500m
+      ephemeral-storage: ""
+
+autoScaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+    
+nodeSelector: {}
+
+tolerations:
+  deployment: []
+  test: []
+
+affinity:
+  podAntiAffinity: "soft"
+
+topologySpreadConstraints:
+  deployment: []
+  test: []
+
+terminationGracePeriodSeconds: 30
+
+podPriority:
+  eric-oss-flow-automation:
+    priorityClassName : ""
+  eric-oss-flow-automationTest:
+    priorityClassName: ""
+
+probes:
+  eric-oss-flow-automation:
+    livenessProbe:
+      failureThreshold: 3
+      initialDelaySeconds: 60
+      periodSeconds: 30
+      timeoutSeconds: 60
+    readinessProbe:
+      failureThreshold: 5
+      initialDelaySeconds: 180
+      periodSeconds: 30
+      timeoutSeconds: 60
+  brAgent:
+    livenessProbe:
+      initialDelaySeconds: 60
+      timeoutSeconds: 15
+      periodSeconds: 15
+      successThreshold: 1
+      failureThreshold: 3
+    readinessProbe:
+      initialDelaySeconds: 60
+      timeoutSeconds: 15
+      periodSeconds: 15
+      successThreshold: 1
+      failureThreshold: 3
+
+datasource:
+  postgresHost: eric-oss-flow-automation-db-pg
+  postgresPort: 5432
+  databaseName: flowautomationdb
+  creationTime: 30
+  credentials:
+    secret: eric-oss-flow-automation-secret
+    keyForSuperUserId: "super-user"
+    keyForSuperPw: "super-pwd"
+
+gas:
+  part-of: workspace-gui
+  protocol: http
+
+# local streamingMethod
+log:
+  streamingMethod: "indirect" #supported values:direct/indirect/dual
+  logtransformer:
+    host: eric-log-transformer

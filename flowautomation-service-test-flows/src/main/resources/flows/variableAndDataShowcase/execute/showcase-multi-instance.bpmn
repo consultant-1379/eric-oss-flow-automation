@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0dwpk1s" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="showcase-multi-instance" name="Showcase multi-instance" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_08d8hx6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_08d8hx6" sourceRef="StartEvent_1" targetRef="Activity_0g6o2z4" />
+    <bpmn:subProcess id="Activity_17izv36">
+      <bpmn:incoming>Flow_0tusnmh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tqwihj</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="inputValues" camunda:elementVariable="inputValue" />
+      <bpmn:startEvent id="Event_17o8tto">
+        <bpmn:outgoing>Flow_1i1mlih</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_1i1mlih" sourceRef="Event_17o8tto" targetRef="Activity_0s65ymt" />
+      <bpmn:sequenceFlow id="Flow_05qlgnu" sourceRef="Activity_0s65ymt" targetRef="Activity_100prgg" />
+      <bpmn:endEvent id="Event_1n2c2nm">
+        <bpmn:incoming>Flow_1ip564y</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_1ip564y" sourceRef="Activity_100prgg" targetRef="Event_1n2c2nm" />
+      <bpmn:scriptTask id="Activity_0s65ymt" name="Calculate square" scriptFormat="groovy">
+        <bpmn:incoming>Flow_1i1mlih</bpmn:incoming>
+        <bpmn:outgoing>Flow_05qlgnu</bpmn:outgoing>
+        <bpmn:script>execution.setVariableLocal("localOutputValue", inputValue*inputValue)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:scriptTask id="Activity_100prgg" name="Add to sum" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="groovy">
+        <bpmn:incoming>Flow_05qlgnu</bpmn:incoming>
+        <bpmn:outgoing>Flow_1ip564y</bpmn:outgoing>
+        <bpmn:script>execution.setVariable("sum", sum + localOutputValue)</bpmn:script>
+      </bpmn:scriptTask>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_0tusnmh" sourceRef="Activity_0g6o2z4" targetRef="Activity_17izv36" />
+    <bpmn:sequenceFlow id="Flow_0tqwihj" sourceRef="Activity_17izv36" targetRef="Activity_0eqew7z" />
+    <bpmn:endEvent id="Event_13j52mp">
+      <bpmn:incoming>Flow_0rc2jei</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0rc2jei" sourceRef="Activity_0eqew7z" targetRef="Event_13j52mp" />
+    <bpmn:scriptTask id="Activity_0g6o2z4" name="Initialise variables" scriptFormat="groovy">
+      <bpmn:incoming>Flow_08d8hx6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tusnmh</bpmn:outgoing>
+      <bpmn:script>def inputValues = [2,2]
+execution.setVariable("inputValues", inputValues)
+execution.setVariable("sum", 0)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0eqew7z" name="Check result" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0tqwihj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rc2jei</bpmn:outgoing>
+      <bpmn:script>assert sum == 8</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="showcase-multi-instance">
+      <bpmndi:BPMNEdge id="Flow_0rc2jei_di" bpmnElement="Flow_0rc2jei">
+        <di:waypoint x="1100" y="180" />
+        <di:waypoint x="1172" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tqwihj_di" bpmnElement="Flow_0tqwihj">
+        <di:waypoint x="930" y="180" />
+        <di:waypoint x="1000" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tusnmh_di" bpmnElement="Flow_0tusnmh">
+        <di:waypoint x="330" y="180" />
+        <di:waypoint x="400" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08d8hx6_di" bpmnElement="Flow_08d8hx6">
+        <di:waypoint x="178" y="180" />
+        <di:waypoint x="230" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="142" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17izv36_di" bpmnElement="Activity_17izv36" isExpanded="true">
+        <dc:Bounds x="400" y="80" width="530" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1ip564y_di" bpmnElement="Flow_1ip564y">
+        <di:waypoint x="790" y="180" />
+        <di:waypoint x="852" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05qlgnu_di" bpmnElement="Flow_05qlgnu">
+        <di:waypoint x="630" y="180" />
+        <di:waypoint x="690" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i1mlih_di" bpmnElement="Flow_1i1mlih">
+        <di:waypoint x="476" y="180" />
+        <di:waypoint x="530" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_17o8tto_di" bpmnElement="Event_17o8tto">
+        <dc:Bounds x="440" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1n2c2nm_di" bpmnElement="Event_1n2c2nm">
+        <dc:Bounds x="852" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_113rubn_di" bpmnElement="Activity_0s65ymt">
+        <dc:Bounds x="530" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gl2mdb_di" bpmnElement="Activity_100prgg">
+        <dc:Bounds x="690" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13j52mp_di" bpmnElement="Event_13j52mp">
+        <dc:Bounds x="1172" y="162" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wp2ihv_di" bpmnElement="Activity_0g6o2z4">
+        <dc:Bounds x="230" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m3sm1j_di" bpmnElement="Activity_0eqew7z">
+        <dc:Bounds x="1000" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

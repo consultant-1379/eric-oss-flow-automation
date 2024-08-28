@@ -1,0 +1,15 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.validateDefaultDateTimeInJsonSchema",
+  "flowName": "Validate Default Date Time In Json Schema",
+  "flowVersion": "1.0.0",
+  "description": "User task schema Date/Time validation example",
+  "setup": {
+    "processId": "validateUserTaskSchema-setup",
+    "userTask": {
+      "backEnabled": true
+    }
+  },
+  "execute": {
+    "processId": "validateUserTaskSchema-execute"
+  }
+}

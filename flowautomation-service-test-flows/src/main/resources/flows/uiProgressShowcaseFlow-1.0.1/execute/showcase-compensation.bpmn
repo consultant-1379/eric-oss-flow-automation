@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_1kpyl6l" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="showcase-compensation" name="Showcase compensation" isExecutable="true">
+    <bpmn:startEvent id="start">
+      <bpmn:outgoing>SequenceFlow_10ff98n</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="end">
+      <bpmn:incoming>SequenceFlow_0b0iz7h</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_10ff98n" sourceRef="start" targetRef="do-something" />
+    <bpmn:sequenceFlow id="SequenceFlow_0jenfer" sourceRef="do-something" targetRef="IntermediateThrowEvent_05ak97k" />
+    <bpmn:scriptTask id="do-something" name="Do Something" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_10ff98n</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jenfer</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, 'Doing something')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0b0iz7h" sourceRef="IntermediateThrowEvent_05ak97k" targetRef="end" />
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_05ak97k">
+      <bpmn:incoming>SequenceFlow_0jenfer</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0b0iz7h</bpmn:outgoing>
+      <bpmn:compensateEventDefinition />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:boundaryEvent id="BoundaryEvent_1pi6764" attachedToRef="do-something">
+      <bpmn:compensateEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:scriptTask id="undo-something" name="Undo Something" isForCompensation="true" scriptFormat="groovy">
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, 'Undoing something')</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:association id="Association_1oxkxff" associationDirection="One" sourceRef="BoundaryEvent_1pi6764" targetRef="undo-something" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="showcase-compensation">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_04hejz1_di" bpmnElement="end">
+        <dc:Bounds x="492" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="465" y="142" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_10ff98n_di" bpmnElement="SequenceFlow_10ff98n">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="260" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="189.5" y="99" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jenfer_di" bpmnElement="SequenceFlow_0jenfer">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="406" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="383" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_06u4afl_di" bpmnElement="do-something">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0b0iz7h_di" bpmnElement="SequenceFlow_0b0iz7h">
+        <di:waypoint x="442" y="120" />
+        <di:waypoint x="492" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="422" y="99" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1vekmp6_di" bpmnElement="IntermediateThrowEvent_05ak97k">
+        <dc:Bounds x="406" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="424" y="142" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_06hph10_di" bpmnElement="BoundaryEvent_1pi6764">
+        <dc:Bounds x="292" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="310" y="120" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1oxkxff_di" bpmnElement="Association_1oxkxff">
+        <di:waypoint x="310" y="178" />
+        <di:waypoint x="310" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0yt6nnu_di" bpmnElement="undo-something">
+        <dc:Bounds x="260" y="218" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

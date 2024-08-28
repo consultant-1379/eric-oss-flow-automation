@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="conn-sim-setup" name="Connectivity Simulator Setup Flow" isExecutable="true">
+    <bpmn:subProcess id="FAInternal-flow-setup-wrapper" triggeredByEvent="true">
+      <bpmn:startEvent id="StartEvent_1a2n0m4">
+        <bpmn:outgoing>SequenceFlow_0mou4au</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_0s6encq" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="EndEvent_02n5qoj" camunda:asyncBefore="true">
+        <bpmn:extensionElements>
+          <camunda:executionListener class="com.ericsson.oss.services.flowautomation.flow.wrapper.FlowInstanceFailListener" event="end" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_0449ezb</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="ScriptTask_0ceykln" name="Report Failed" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_0mou4au</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0449ezb</bpmn:outgoing>
+        <bpmn:script>import com.ericsson.oss.services.flowautomation.flow.wrapper.ReportSummaryValues
+import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, ReportSummaryValues.FAILED)
+
+// In the exception the appropriate error should be passed
+throw new org.camunda.bpm.engine.delegate.BpmnError("Setup Failed")</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_0449ezb" sourceRef="ScriptTask_0ceykln" targetRef="EndEvent_02n5qoj" />
+      <bpmn:sequenceFlow id="SequenceFlow_0mou4au" sourceRef="StartEvent_1a2n0m4" targetRef="ScriptTask_0ceykln" />
+    </bpmn:subProcess>
+    <bpmn:startEvent id="StartEvent_1yrfvwt">
+      <bpmn:outgoing>SequenceFlow_0tygyer</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_16mwoqp" name="End">
+      <bpmn:incoming>Flow_0lwlfyv</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_021773d</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:callActivity id="Activity_4ki7g5r" name="Nodes Selection" calledElement="conn-sim-nodes-selection-subflow">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="flowInput" target="flowInput" />
+        <camunda:out source="flowInput" target="flowInput" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_13x49af</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1cjn1xh</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0tygyer" sourceRef="StartEvent_1yrfvwt" targetRef="ExclusiveGateway_15hv5y0" />
+    <bpmn:sequenceFlow id="SequenceFlow_1cjn1xh" sourceRef="Activity_4ki7g5r" targetRef="Activity_0p4d3t1" />
+    <bpmn:boundaryEvent id="BoundaryEvent_0hrha7r" attachedToRef="Activity_4ki7g5r">
+      <bpmn:outgoing>SequenceFlow_11mkqk9</bpmn:outgoing>
+      <bpmn:errorEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_11mkqk9" sourceRef="BoundaryEvent_0hrha7r" targetRef="Task_0jclmhs" />
+    <bpmn:endEvent id="EndEvent_0r7eqtj" name="Setup Failed">
+      <bpmn:incoming>SequenceFlow_05ini2v</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0qo6z81</bpmn:incoming>
+      <bpmn:incoming>Flow_0imural</bpmn:incoming>
+      <bpmn:incoming>Flow_0y9ym0q</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_05ini2v" sourceRef="Task_1a18dly" targetRef="EndEvent_0r7eqtj" />
+    <bpmn:scriptTask id="Task_0jclmhs" name="Nodes Selection failed" scriptFormat="Groovy">
+      <bpmn:incoming>SequenceFlow_11mkqk9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qo6z81</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flow.wrapper.ReportSummaryValues
+import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
+
+log = Logger.getLogger(getClass())
+log.level = Level.ERROR
+
+log.error("Nodes Selection Failed: SETUP_FAILED")
+Reporter.updateReportSummary(execution, ReportSummaryValues.SETUP_FAILED)
+
+throw new org.camunda.bpm.engine.delegate.BpmnError("Setup Failed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Task_1a18dly" name="Additional Settings failed" scriptFormat="Groovy">
+      <bpmn:incoming>SequenceFlow_0d99hhc</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05ini2v</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flow.wrapper.ReportSummaryValues
+import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
+
+log = Logger.getLogger(getClass())
+log.level = Level.ERROR
+
+log.error("Additional Settings Failed: SETUP_FAILED")
+Reporter.updateReportSummary(execution, ReportSummaryValues.SETUP_FAILED)
+
+throw new org.camunda.bpm.engine.delegate.BpmnError("Setup Failed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0qo6z81" sourceRef="Task_0jclmhs" targetRef="EndEvent_0r7eqtj" />
+    <bpmn:callActivity id="Activity_8fh7ts6" name="Additional Settings" calledElement="conn-sim-additional-settings-subflow">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="flowInput" target="flowInput" />
+        <camunda:out source="flowInput" target="flowInput" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1b9vyay</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lwlfyv</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:boundaryEvent id="BoundaryEvent_00po89w" attachedToRef="Activity_8fh7ts6">
+      <bpmn:outgoing>SequenceFlow_0d99hhc</bpmn:outgoing>
+      <bpmn:errorEventDefinition />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0d99hhc" sourceRef="BoundaryEvent_00po89w" targetRef="Task_1a18dly" />
+    <bpmn:sequenceFlow id="Flow_0lwlfyv" sourceRef="Activity_8fh7ts6" targetRef="EndEvent_16mwoqp" />
+    <bpmn:callActivity id="Activity_1xf2g94" name="License Check" calledElement="conn-sim-license-check-subflow">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="flowInput" target="flowInput" />
+        <camunda:out source="flowInput" target="flowInput" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1rcg26z</bpmn:incoming>
+      <bpmn:outgoing>Flow_13x49af</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:boundaryEvent id="Event_13ezwg6" attachedToRef="Activity_1xf2g94">
+      <bpmn:outgoing>Flow_0i3utwq</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_14mkhrp" />
+    </bpmn:boundaryEvent>
+    <bpmn:scriptTask id="Activity_0gf8zm0" name="License Check failed" scriptFormat="Groovy">
+      <bpmn:incoming>Flow_0i3utwq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0imural</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flow.wrapper.ReportSummaryValues
+import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
+
+log = Logger.getLogger(getClass())
+log.level = Level.ERROR
+
+log.error("License Check Failed: SETUP_FAILED")
+Reporter.updateReportSummary(execution, ReportSummaryValues.SETUP_FAILED)
+
+throw new org.camunda.bpm.engine.delegate.BpmnError("Setup Failed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0i3utwq" sourceRef="Event_13ezwg6" targetRef="Activity_0gf8zm0" />
+    <bpmn:sequenceFlow id="Flow_0imural" sourceRef="Activity_0gf8zm0" targetRef="EndEvent_0r7eqtj" />
+    <bpmn:sequenceFlow id="Flow_13x49af" sourceRef="Activity_1xf2g94" targetRef="Activity_4ki7g5r" />
+    <bpmn:callActivity id="Activity_0p4d3t1" name="Relations Choice" calledElement="conn-sim-relations-choice-subflow">
+      <bpmn:extensionElements>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+        <camunda:in source="flowInput" target="flowInput" />
+        <camunda:out source="flowInput" target="flowInput" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1cjn1xh</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b9vyay</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_1b9vyay" sourceRef="Activity_0p4d3t1" targetRef="Activity_8fh7ts6" />
+    <bpmn:boundaryEvent id="Event_1qz2ccp" attachedToRef="Activity_0p4d3t1">
+      <bpmn:outgoing>Flow_0yf9jf6</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_07krcls" />
+    </bpmn:boundaryEvent>
+    <bpmn:scriptTask id="Activity_0zxlhd7" name="Relations Choice failed" scriptFormat="Groovy">
+      <bpmn:incoming>Flow_0yf9jf6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0y9ym0q</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flow.wrapper.ReportSummaryValues
+import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+import org.apache.log4j.Level
+import org.apache.log4j.Logger
+
+log = Logger.getLogger(getClass())
+log.level = Level.ERROR
+
+log.error("Relations Choice Failed: SETUP_FAILED")
+Reporter.updateReportSummary(execution, ReportSummaryValues.SETUP_FAILED)
+
+throw new org.camunda.bpm.engine.delegate.BpmnError("Setup Failed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0yf9jf6" sourceRef="Event_1qz2ccp" targetRef="Activity_0zxlhd7" />
+    <bpmn:sequenceFlow id="Flow_0y9ym0q" sourceRef="Activity_0zxlhd7" targetRef="EndEvent_0r7eqtj" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_15hv5y0" default="SequenceFlow_1rcg26z">
+      <bpmn:incoming>SequenceFlow_0tygyer</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rcg26z</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_021773d</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1rcg26z" name="interactive mode" sourceRef="ExclusiveGateway_15hv5y0" targetRef="Activity_1xf2g94" />
+    <bpmn:sequenceFlow id="SequenceFlow_021773d" name="file input mode" sourceRef="ExclusiveGateway_15hv5y0" targetRef="EndEvent_16mwoqp">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty execution.getVariable('flowInput')}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmn:error id="Error_1ms9yn0" name="CLI Rest Request Failed" errorCode="error.fa.flowapi.exception" />
+  <bpmn:error id="Error_0xrj8ad" name="CLI Rest Request Failed" errorCode="error.fa.flowapi.exception" />
+  <bpmn:error id="Error_0bhyrqt" name="UserTaskValidationError" errorCode="com.ericsson.oss.services.flowautomation.flowapi.usertask.UsertaskInputProcessingError" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="conn-sim-setup">
+      <bpmndi:BPMNEdge id="Flow_0y9ym0q_di" bpmnElement="Flow_0y9ym0q">
+        <di:waypoint x="814" y="419" />
+        <di:waypoint x="814" y="449" />
+        <di:waypoint x="1066" y="449" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yf9jf6_di" bpmnElement="Flow_0yf9jf6">
+        <di:waypoint x="814" y="277" />
+        <di:waypoint x="814" y="339" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b9vyay_di" bpmnElement="Flow_1b9vyay">
+        <di:waypoint x="834" y="219" />
+        <di:waypoint x="894" y="219" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13x49af_di" bpmnElement="Flow_13x49af">
+        <di:waypoint x="514" y="219" />
+        <di:waypoint x="574" y="219" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0imural_di" bpmnElement="Flow_0imural">
+        <di:waypoint x="497" y="419" />
+        <di:waypoint x="497" y="449" />
+        <di:waypoint x="1066" y="449" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i3utwq_di" bpmnElement="Flow_0i3utwq">
+        <di:waypoint x="497" y="277" />
+        <di:waypoint x="497" y="339" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lwlfyv_di" bpmnElement="Flow_0lwlfyv">
+        <di:waypoint x="994" y="219" />
+        <di:waypoint x="1066" y="219" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0d99hhc_di" bpmnElement="SequenceFlow_0d99hhc">
+        <di:waypoint x="974" y="277" />
+        <di:waypoint x="974" y="339" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="605" y="229" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qo6z81_di" bpmnElement="SequenceFlow_0qo6z81">
+        <di:waypoint x="657" y="419" />
+        <di:waypoint x="657" y="449" />
+        <di:waypoint x="1066" y="449" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_05ini2v_di" bpmnElement="SequenceFlow_05ini2v">
+        <di:waypoint x="974" y="419" />
+        <di:waypoint x="974" y="449" />
+        <di:waypoint x="1066" y="449" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_11mkqk9_di" bpmnElement="SequenceFlow_11mkqk9">
+        <di:waypoint x="657" y="277" />
+        <di:waypoint x="657" y="339" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1cjn1xh_di" bpmnElement="SequenceFlow_1cjn1xh">
+        <di:waypoint x="674" y="219" />
+        <di:waypoint x="734" y="219" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="437" y="125" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0tygyer_di" bpmnElement="SequenceFlow_0tygyer">
+        <di:waypoint x="192" y="219" />
+        <di:waypoint x="239" y="219" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_0v9rjvu_di" bpmnElement="FAInternal-flow-setup-wrapper" isExpanded="true">
+        <dc:Bounds x="634" y="489" width="354" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0mou4au_di" bpmnElement="SequenceFlow_0mou4au">
+        <di:waypoint x="707" y="561" />
+        <di:waypoint x="757" y="561" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0449ezb_di" bpmnElement="SequenceFlow_0449ezb">
+        <di:waypoint x="857" y="561" />
+        <di:waypoint x="907" y="561" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1a2n0m4_di" bpmnElement="StartEvent_1a2n0m4">
+        <dc:Bounds x="671" y="543" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_02n5qoj_di" bpmnElement="EndEvent_02n5qoj">
+        <dc:Bounds x="907" y="543" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0ceykln_di" bpmnElement="ScriptTask_0ceykln">
+        <dc:Bounds x="757" y="521" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1yrfvwt_di" bpmnElement="StartEvent_1yrfvwt">
+        <dc:Bounds x="156" y="201" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_16mwoqp_di" bpmnElement="EndEvent_16mwoqp">
+        <dc:Bounds x="1066" y="201" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1074" y="247" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1japhey_di" bpmnElement="Activity_4ki7g5r">
+        <dc:Bounds x="574" y="179" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0r7eqtj_di" bpmnElement="EndEvent_0r7eqtj">
+        <dc:Bounds x="1066" y="431" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1053" y="407" width="62" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0y5b9en_di" bpmnElement="Task_0jclmhs">
+        <dc:Bounds x="607" y="339" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1gdg6dj_di" bpmnElement="Task_1a18dly">
+        <dc:Bounds x="924" y="339" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_05h3qg1_di" bpmnElement="Activity_8fh7ts6">
+        <dc:Bounds x="894" y="179" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xf2g94_di" bpmnElement="Activity_1xf2g94">
+        <dc:Bounds x="414" y="179" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0gf8zm0_di" bpmnElement="Activity_0gf8zm0">
+        <dc:Bounds x="447" y="339" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0p4d3t1_di" bpmnElement="Activity_0p4d3t1">
+        <dc:Bounds x="734" y="179" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zxlhd7_di" bpmnElement="Activity_0zxlhd7">
+        <dc:Bounds x="764" y="339" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1qz2ccp_di" bpmnElement="Event_1qz2ccp">
+        <dc:Bounds x="796" y="241" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_13ezwg6_di" bpmnElement="Event_13ezwg6">
+        <dc:Bounds x="479" y="241" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0ngkr5b_di" bpmnElement="BoundaryEvent_00po89w">
+        <dc:Bounds x="956" y="241" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="590" y="198" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_130xm4a_di" bpmnElement="BoundaryEvent_0hrha7r">
+        <dc:Bounds x="639" y="241" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_15hv5y0_di" bpmnElement="ExclusiveGateway_15hv5y0" isMarkerVisible="true">
+        <dc:Bounds x="239" y="194" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rcg26z_di" bpmnElement="SequenceFlow_1rcg26z">
+        <di:waypoint x="289" y="219" />
+        <di:waypoint x="414" y="219" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="303" y="201" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_021773d_di" bpmnElement="SequenceFlow_021773d">
+        <di:waypoint x="264" y="219" />
+        <di:waypoint x="264" y="99" />
+        <di:waypoint x="1084" y="99" />
+        <di:waypoint x="1084" y="201" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="278" y="81" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

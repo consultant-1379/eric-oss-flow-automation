@@ -1,0 +1,52 @@
+#
+# COPYRIGHT Ericsson 2022
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "eric-oss-flow-automation.name" . }}-gas-configmap
+  labels:
+{{- include "eric-oss-flow-automation.labels" . | nindent 4 }}
+  annotations:
+{{- include "eric-oss-flow-automation.annotations" . | nindent 4 }}
+data:
+  config.json: |
+    {
+      "apps": [
+        {
+          "type": "external",
+          "name": "taskAutomation:flow-automation",
+          "url": "{{ template "eric-oss-flow-automation.ui-homepage" . }}",
+          "version": "1.0.0",
+          "displayName": "Flow Automation",
+          "descriptionShort": "Flow Automation",
+          "descriptionLong": "Flow Automation is a generic workflow-based automation framework and application",
+          "groupNames": [
+            "taskAutomation"
+          ]
+        }
+      ],
+      "groups": [
+        {
+          "name": "taskAutomation",
+          "version": "1.0.0",
+          "displayName": "Automation",
+          "descriptionShort":"Task Automation",
+          "descriptionLong":"Task Automation",
+          "type": "category"
+        }
+      ]
+    }

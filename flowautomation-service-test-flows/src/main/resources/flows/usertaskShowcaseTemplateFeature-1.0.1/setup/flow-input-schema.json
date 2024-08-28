@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Dynamic Multi-Task Usertask",
+  "type": "object",
+  "properties": {
+    "_1DynamicObject": {
+      "name": "Dynamic Object 1",
+      "type": "object",
+      "properties": {
+        "task1": {
+          "name": "Task 1",
+          "type": "boolean",
+          "format": "checkbox",
+          "info": "This is Task 1"
+        },
+        "task2": {
+          "name": "Task 2",
+          "type": "boolean",
+          "format": "checkbox",
+          "info": "This is Task 2"
+        },
+        "listBox1" : {
+          "name" : "List Box 1",
+          "type" : "string",
+          "format" : "select-list",
+          "info" : "This is List Box 1",
+          "enum" : [ "ITEM1", "ITEM2", "ITEM3" ],
+          "enumNames" : [ "Item 1", "Item 2", "Item 3" ],
+          "default" : "ITEM1"
+        }
+      },
+      "required": [
+        "task1",
+        "task2",
+        "listBox1"
+      ],
+      "additionalProperties": false
+    },
+    "_2DynamicObject": {
+    "name": "Dynamic Object 2",
+    "type": "object",
+    "properties": {
+      "task1": {
+        "name": "Task 1",
+        "type": "boolean",
+        "format": "checkbox",
+        "info": "This is Task 1"
+      },
+      "task2": {
+        "name": "Task 2",
+        "type": "boolean",
+        "format": "checkbox",
+        "info": "This is Task 2"
+      },
+      "task3": {
+        "name": "Task 3",
+        "type": "boolean",
+        "format": "checkbox",
+        "info": "This is Task 3"
+      },
+      "task4": {
+        "name": "Task 4",
+        "type": "boolean",
+        "format": "checkbox",
+        "info": "This is Task 4"
+      },
+      "listBox2" : {
+        "name" : "List Box 2",
+        "type" : "string",
+        "format" : "select-list",
+        "info" : "This is List Box 2",
+        "enum" : [ "ITEM4", "ITEM5", "ITEM6" ],
+        "enumNames" : [ "Item 4", "Item 5", "Item 6" ],
+        "default" : "ITEM4"
+      }
+    },
+    "required": [
+      "task1",
+      "task2",
+      "task3",
+      "task4",
+      "listBox2"
+    ],
+    "additionalProperties": false
+  }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,37 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "configuration": {
+            "name": "Configuration",
+            "type": "object",
+            "properties": {
+                "numElements": {
+                    "name": "Number of Elements",
+                    "type": "string",
+                    "default": "10"
+                },
+                "loadControlPoolSize": {
+                    "name": "Load Control Pool Size",
+                    "type": "string",
+                    "default": "4"
+                },
+                "instanceSleepSeconds": {
+                    "name": "Instance Sleep in Seconds",
+                    "type": "string",
+                    "default": "10"
+                },
+                "generateIncidents": {
+                    "name": "Generate incidents",
+                    "type": "boolean",
+                    "format": "checkbox",
+                    "default": false
+                }
+            },
+            "required": [ "numElements", "loadControlPoolSize", "instanceSleepSeconds", "generateIncidents" ]
+        }
+    },
+    "required": [
+        "configuration"
+    ]
+}

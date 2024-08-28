@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Ask what to throw usertask schema",
+  "description": "Ask what to throw usertask schema",
+  "$id": "ask-what-to-throw-usertask-schema",
+  "name": "Ask what to throw",
+  "type": "object",
+  "properties": {
+    "askWhatToThrow": {
+      "name": "Ask what to throw",
+      "type": "object",
+      "properties": {
+        "throwWhat": {
+          "name": "Throw what ?",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [
+            {
+              "properties": {
+                "nothing": {
+                  "name": "Nothing",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "nothing"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "error": {
+                  "name": "Error",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "error"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "exception": {
+                  "name": "Exception",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "exception"
+              ],
+              "additionalProperties": false
+            }
+          ],
+          "default": "nothing"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "throwWhat"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "askWhatToThrow"
+  ]
+}

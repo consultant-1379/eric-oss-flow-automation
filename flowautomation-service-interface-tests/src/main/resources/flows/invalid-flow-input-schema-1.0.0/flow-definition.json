@@ -1,0 +1,12 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.invalid.flow.input.schema",
+    "flowName" : "Invalid Flow input schema",
+    "flowVersion" : "1.0.0",
+    "description" : "Invalid Flow input schema",
+    "setup" : {
+        "processId" : "setup-flow"
+    },
+    "execute" : {
+        "processId" : "execute-flow"
+    }
+}

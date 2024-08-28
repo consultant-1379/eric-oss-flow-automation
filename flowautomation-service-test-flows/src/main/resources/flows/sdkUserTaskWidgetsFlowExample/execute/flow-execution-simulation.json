@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Connectivity Simulator Flow Execution User Task Schema",
+  "description": "Connectivity Simulator Flow Execution User Task Schema",
+  "$id": "flow-execution-optimizing-schema",
+  "name": "Simulation Results",
+  "type": "object",
+  "properties": {
+    "flowOptions": {
+      "name": "Simulation Results",
+      "type": "object",
+      "properties": {
+        "table1": {
+          "name": "Connectivity details",
+          "type": "array",
+          "format": "informational-table",
+          "items": {
+            "type": "object",
+            "properties": {
+              "node1": {
+                "type": "string",
+                "name": "Node A"
+              },
+              "node2": {
+                "type": "string",
+                "name": "Node B"
+              },
+              "connectivity": {
+                "type": "integer",
+                "name": "Connectivity"
+              }
+            },
+            "additionalProperties": false
+          },
+          "schemaGen": {
+            "type": "default",
+            "binding": "variable:local:connectivityTableValues"
+          }
+        },
+        "restart": {
+          "name": "Do you want to restart the simulation?",
+          "type": "object",
+          "format": "radio",
+          "oneOf": [
+            {
+              "properties": {
+                "restart_yes": {
+                  "name": "Yes",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "restart_yes"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "properties": {
+                "restart_no": {
+                  "name": "No",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "restart_no"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "restart"
+      ]
+    }
+  }
+}

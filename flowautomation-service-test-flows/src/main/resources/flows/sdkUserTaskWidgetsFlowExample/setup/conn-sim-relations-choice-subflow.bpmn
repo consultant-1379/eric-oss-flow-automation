@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0mqj27b" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="conn-sim-relations-choice-subflow" name="Relations Selection" isExecutable="true">
+    <bpmn:subProcess id="Activity_144urwv" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_0lxtuk5">
+        <bpmn:outgoing>Flow_15b4dfg</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1mj16el" />
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_1gour2s" camunda:asyncBefore="true">
+        <bpmn:extensionElements>
+          <camunda:executionListener class="com.ericsson.oss.services.flowautomation.flow.wrapper.FlowInstanceFailListener" event="end" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_19j29fm</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:scriptTask id="Activity_0d8ddc2" name="Report Failed" scriptFormat="groovy">
+        <bpmn:incoming>Flow_15b4dfg</bpmn:incoming>
+        <bpmn:outgoing>Flow_19j29fm</bpmn:outgoing>
+        <bpmn:script>import com.ericsson.oss.services.flowautomation.flow.wrapper.ReportSummaryValues
+import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, ReportSummaryValues.FAILED)
+
+// In the exception the appropriate error should be passed
+throw new org.camunda.bpm.engine.delegate.BpmnError("Setup Failed")</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="Flow_15b4dfg" sourceRef="Event_0lxtuk5" targetRef="Activity_0d8ddc2" />
+      <bpmn:sequenceFlow id="Flow_19j29fm" sourceRef="Activity_0d8ddc2" targetRef="Event_1gour2s" />
+    </bpmn:subProcess>
+    <bpmn:startEvent id="Event_0yd4eqt">
+      <bpmn:outgoing>Flow_04f4jr0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1elo7fs" name="End">
+      <bpmn:incoming>Flow_1f4bkwg</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_0bhegt5" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>Flow_04f4jr0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qqj3mp</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+Reporter.updateReportSummary(execution, "Relations Choice In Progress")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0uqpoj1" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0yqotie</bpmn:incoming>
+      <bpmn:outgoing>Flow_1f4bkwg</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+Reporter.updateReportSummary(execution, "Relations Choice Completed")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="Activity_0cyzpxi" name="Initialize RelationsTable" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0qqj3mp</bpmn:incoming>
+      <bpmn:outgoing>Flow_007iax2</bpmn:outgoing>
+      <bpmn:script>def list = []
+def neNames = flowInput.networkElementConfiguration.neNames.split(",")
+neNames.each { neName1 -&gt;
+    neNames.each { neName2 -&gt;
+        if (neName1 != neName2) {
+            list.add("node1": neName1, "node2": neName2)
+        }
+    }
+}
+execution.setVariable("selectedNodesMap", neNames)
+execution.setVariable("relationMap", list)
+execution.setVariable("defaultRelationMap",[])</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="Activity_0ubjkzo" name="Select Relations" camunda:formKey="setup:relationChoice">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="relationValues">${relationMap}</camunda:inputParameter>
+          <camunda:inputParameter name="defaultRelationValues">${defaultRelationMap}</camunda:inputParameter>
+          <camunda:inputParameter name="selectedNodesValues">${selectedNodesMap}</camunda:inputParameter>
+          <camunda:outputParameter name="relationChoice">${relationChoice}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_007iax2</bpmn:incoming>
+      <bpmn:outgoing>Flow_173uq6n</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Activity_1m3od68" name="Validate Input" scriptFormat="groovy">
+      <bpmn:incoming>Flow_173uq6n</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yqotie</bpmn:outgoing>
+      <bpmn:script>flowInput.relationChoice = relationChoice</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_04f4jr0" sourceRef="Event_0yd4eqt" targetRef="Activity_0bhegt5" />
+    <bpmn:sequenceFlow id="Flow_1f4bkwg" sourceRef="Activity_0uqpoj1" targetRef="Event_1elo7fs" />
+    <bpmn:sequenceFlow id="Flow_0qqj3mp" sourceRef="Activity_0bhegt5" targetRef="Activity_0cyzpxi" />
+    <bpmn:sequenceFlow id="Flow_0yqotie" sourceRef="Activity_1m3od68" targetRef="Activity_0uqpoj1" />
+    <bpmn:sequenceFlow id="Flow_007iax2" sourceRef="Activity_0cyzpxi" targetRef="Activity_0ubjkzo" />
+    <bpmn:sequenceFlow id="Flow_173uq6n" sourceRef="Activity_0ubjkzo" targetRef="Activity_1m3od68" />
+  </bpmn:process>
+  <bpmn:error id="Error_09nprec" name="UserTaskValidationError" errorCode="com.ericsson.oss.services.flowautomation.flowapi.usertask.UsertaskInputProcessingError" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="conn-sim-relations-choice-subflow">
+      <bpmndi:BPMNEdge id="Flow_04f4jr0_di" bpmnElement="Flow_04f4jr0">
+        <di:waypoint x="192" y="121" />
+        <di:waypoint x="244" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f4bkwg_di" bpmnElement="Flow_1f4bkwg">
+        <di:waypoint x="944" y="121" />
+        <di:waypoint x="996" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qqj3mp_di" bpmnElement="Flow_0qqj3mp">
+        <di:waypoint x="344" y="121" />
+        <di:waypoint x="394" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yqotie_di" bpmnElement="Flow_0yqotie">
+        <di:waypoint x="794" y="121" />
+        <di:waypoint x="844" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_007iax2_di" bpmnElement="Flow_007iax2">
+        <di:waypoint x="494" y="121" />
+        <di:waypoint x="544" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_173uq6n_di" bpmnElement="Flow_173uq6n">
+        <di:waypoint x="644" y="121" />
+        <di:waypoint x="694" y="121" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_0cyzpxi_di" bpmnElement="Activity_0cyzpxi">
+        <dc:Bounds x="394" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1m3od68_di" bpmnElement="Activity_1m3od68">
+        <dc:Bounds x="694" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ubjkzo_di" bpmnElement="Activity_0ubjkzo">
+        <dc:Bounds x="544" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uqpoj1_di" bpmnElement="Activity_0uqpoj1">
+        <dc:Bounds x="844" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1elo7fs_di" bpmnElement="Event_1elo7fs">
+        <dc:Bounds x="996" y="103" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1004" y="146" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bhegt5_di" bpmnElement="Activity_0bhegt5">
+        <dc:Bounds x="244" y="81" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0yd4eqt_di" bpmnElement="Event_0yd4eqt">
+        <dc:Bounds x="156" y="103" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_144urwv_di" bpmnElement="Activity_144urwv" isExpanded="true">
+        <dc:Bounds x="394" y="241" width="354" height="140" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_15b4dfg_di" bpmnElement="Flow_15b4dfg">
+        <di:waypoint x="467" y="313" />
+        <di:waypoint x="517" y="313" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19j29fm_di" bpmnElement="Flow_19j29fm">
+        <di:waypoint x="617" y="313" />
+        <di:waypoint x="667" y="313" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0lxtuk5_di" bpmnElement="Event_0lxtuk5">
+        <dc:Bounds x="431" y="295" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gour2s_di" bpmnElement="Event_1gour2s">
+        <dc:Bounds x="667" y="295" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0d8ddc2_di" bpmnElement="Activity_0d8ddc2">
+        <dc:Bounds x="517" y="273" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

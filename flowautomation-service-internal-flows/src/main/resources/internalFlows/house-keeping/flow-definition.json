@@ -1,0 +1,9 @@
+{
+  "flowId": "com.ericsson.oss.fa.internal.flows.houseKeeping",
+  "flowName": "Flow Automation House Keeping",
+  "flowVersion": "${fa.internal.flow.version}",
+  "description": "The Housekeeping flow is an internal Flow Automation flow, used to perform data clean-up. It is deployed and started when the Flow Automation application is installed. It is configured to perform housekeeping every 24 hours.  The housekeeping deletes flow instances in COMPLETED state for more than 7 days. The user task shows the scheduled date and time of the housekeeping and can be submitted if you want to run the house keeping outside the scheduled time.  The housekeeping would then start immediately.  The user task is displayed in the Flow Instance Details page, one minute after the task is run and there can only be a single instance of this flow. Authorised users require the Flow Automation REMOVE capability, to view this flow and its instance. Submitting the User Task is the only action available on this flow for authorised users.",
+  "execute": {
+    "processId": "FA-House-Keeping"
+  }
+}

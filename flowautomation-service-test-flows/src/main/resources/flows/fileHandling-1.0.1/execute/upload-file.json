@@ -1,0 +1,31 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Upload file usertask schema",
+    "description": "Upload file usertask schema",
+    "$id": "upload-file-usertask-schema",
+    "name": "Upload File",
+    "type": "object",
+    "properties":{
+        "uploadFile": {
+            "name": "Upload File",
+            "type": "object",
+            "properties" : {
+                "uploadedFile" : {
+                    "name" : "File",
+                    "type" : "object",
+                    "format" : "file",
+                    "properties" : {
+                        "fileName" : {
+                            "type" : "string"
+                        }
+                    },
+                    "required" : [ "fileName" ]
+                }
+            },
+            "required" : [ "uploadedFile" ],
+            "additionalProperties" : false
+        }
+    },
+    "additionalProperties": false,
+    "required": [ "uploadFile" ]
+}

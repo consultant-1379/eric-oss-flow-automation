@@ -1,0 +1,15 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.backEnabled",
+    "flowName" : "Flow with back enabled",
+    "flowVersion" : "1.0.0",
+    "description" : "Basic flow that shows the back enabled support",
+    "setup" : {
+        "processId": "back-setup",
+        "userTask": {
+            "backEnabled": true
+        }
+    },
+    "execute" : {
+        "processId" : "back-execute"
+    }
+}

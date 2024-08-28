@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "description": "Notification Task",
+  "properties": {
+    "notificationTask": {
+      "name": "Notification Task",
+      "type": "object",
+      "properties": {
+        "notify": {
+          "name": "This user task is displayed using notification.json file",
+          "type": "string",
+          "format": "informational"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

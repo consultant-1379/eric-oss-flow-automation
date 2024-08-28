@@ -1,0 +1,12 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.setup-configuration",
+  "flowName": "Flow with usertasks in setup phase",
+  "flowVersion": "1.0.1",
+  "description": "This is a flow with couple of usertasks in setup phase",
+  "setup": {
+    "processId": "flow-setup"
+  },
+  "execute": {
+    "processId": "flow-execute"
+  }
+}

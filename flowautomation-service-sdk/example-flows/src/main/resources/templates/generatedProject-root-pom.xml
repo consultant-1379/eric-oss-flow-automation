@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2023
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.ericsson.oss.ae.flowautomation.sdk.exampleflows</groupId>
+    <artifactId>@{artifactId}</artifactId>
+    <version>@{version}</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <java.version>11</java.version>
+
+        <version.flowautomation.services>1.68.0-SNAPSHOT</version.flowautomation.services>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.maven-surefire-plugin>2.22.2</version.maven-surefire-plugin>
+        <version.junit>4.13.2</version.junit>
+        <version.camunda-bpm-mockito>3.2.1</version.camunda-bpm-mockito>
+        <version.maven-assembly-plugin>3.3.0</version.maven-assembly-plugin>
+        <version.maven-surefire-plugin>2.22.2</version.maven-surefire-plugin>
+        <version.build-helper-maven-plugin>3.0.0</version.build-helper-maven-plugin>
+        <version.gmavenplus>1.13.1</version.gmavenplus>
+        <version.groovy>3.0.12</version.groovy>
+    </properties>
+
+    <modules>
+        <module>flow</module>
+        <module>testsuite</module>
+    </modules>
+
+</project>

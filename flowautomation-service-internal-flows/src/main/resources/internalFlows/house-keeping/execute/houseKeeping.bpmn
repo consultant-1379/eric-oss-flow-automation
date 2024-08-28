@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1qi320b" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="FA-House-Keeping" name="Flow Automation House Keeping" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>SequenceFlow_0kl9cyk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0kl9cyk" sourceRef="StartEvent_1" targetRef="Task_13ar26q" />
+    <bpmn:parallelGateway id="ExclusiveGateway_1vye5ed">
+      <bpmn:incoming>SequenceFlow_1yoaqrt</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1m6jxbk</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0en1djo</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1dh5jqp</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0jjfdfb</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1m6jxbk" sourceRef="ExclusiveGateway_1vye5ed" targetRef="Task_0kwuujr" />
+    <bpmn:userTask id="Task_0kwuujr" name="Flow Automation House Keeping Job" camunda:formKey="execute:chooseOption.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="houseKeepingScheduledDateTime">${scheduledDateTime}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1m6jxbk</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1dl5oeo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1210i7f</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1210i7f" sourceRef="Task_0kwuujr" targetRef="IntermediateThrowEvent_01tfkni" />
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_01tfkni" name="Do House Keeping Now">
+      <bpmn:incoming>SequenceFlow_1210i7f</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1bahp38</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0orilw6" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.InstantHouseKeeperMessageThrowDelegate" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0en1djo" sourceRef="ExclusiveGateway_1vye5ed" targetRef="Task_0ls5zs4" />
+    <bpmn:subProcess id="Task_1eunpw7">
+      <bpmn:incoming>SequenceFlow_1q80bxh</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xs3ent</bpmn:outgoing>
+      <bpmn:endEvent id="EndEvent_15xqj5e">
+        <bpmn:incoming>SequenceFlow_0pmyllc</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:startEvent id="StartEvent_037lxqd">
+        <bpmn:outgoing>SequenceFlow_1xt6d5e</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1xt6d5e" sourceRef="StartEvent_037lxqd" targetRef="HK_Interval_Timer_Id" />
+      <bpmn:intermediateCatchEvent id="HK_Interval_Timer_Id" name="HK interval" camunda:asyncBefore="true" camunda:exclusive="false">
+        <bpmn:incoming>SequenceFlow_1xt6d5e</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0pmyllc</bpmn:outgoing>
+        <bpmn:timerEventDefinition>
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${adjustedInterval}</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0pmyllc" sourceRef="HK_Interval_Timer_Id" targetRef="EndEvent_15xqj5e" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="SequenceFlow_1u42el0" sourceRef="Task_0ls5zs4" targetRef="ScriptTask_0ovmwv4" />
+    <bpmn:boundaryEvent id="BoundaryEvent_1e1isj7" name="Do House Keeping Now" camunda:asyncAfter="true" camunda:exclusive="false" attachedToRef="Task_1eunpw7">
+      <bpmn:outgoing>SequenceFlow_02jtz24</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0orilw6" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_02jtz24" sourceRef="BoundaryEvent_1e1isj7" targetRef="Task_1o7fhm3" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ygf18r" sourceRef="Task_13ar26q" targetRef="ScriptTask_0342duj" />
+    <bpmn:subProcess id="SubProcess_0e1qvtc" camunda:asyncBefore="true">
+      <bpmn:incoming>SequenceFlow_18wguxr</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1u5ikyx</bpmn:outgoing>
+      <bpmn:startEvent id="StartEvent_0t1k8x0">
+        <bpmn:outgoing>SequenceFlow_1c454t0</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="Task_0arvkle" name="Do Housekeeping" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeeperDelegate">
+        <bpmn:incoming>SequenceFlow_1c454t0</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0pws23c</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:endEvent id="EndEvent_01l92q0">
+        <bpmn:incoming>SequenceFlow_074n6ju</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1c454t0" sourceRef="StartEvent_0t1k8x0" targetRef="Task_0arvkle" />
+      <bpmn:sequenceFlow id="SequenceFlow_0pws23c" sourceRef="Task_0arvkle" targetRef="Task_0ux3vk2" />
+      <bpmn:sequenceFlow id="SequenceFlow_1oha2mb" sourceRef="Task_0ux3vk2" targetRef="Task_03uqk9r" />
+      <bpmn:sequenceFlow id="SequenceFlow_1akwp6r" sourceRef="Task_03uqk9r" targetRef="ScriptTask_07xp6ui" />
+      <bpmn:serviceTask id="Task_0ux3vk2" name="Clean Up Stopped Instances From Runtime" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeepingRuntimeStoppedInstancesDelegate">
+        <bpmn:incoming>SequenceFlow_0pws23c</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1oha2mb</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="Task_03uqk9r" name="Clean Up Stopped Instances From History" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeepingHistoricStoppedInstancesDelegate">
+        <bpmn:incoming>SequenceFlow_1oha2mb</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1akwp6r</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:scriptTask id="ScriptTask_1nvjs0b" name="Launch REINDEX of act_hi_actinst" scriptFormat="groovy" camunda:resource="deployment://Groovy/Reindex_act_hi_actinst.groovy">
+        <bpmn:incoming>SequenceFlow_0uohqee</bpmn:incoming>
+        <bpmn:incoming>SequenceFlow_1yyu1da</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_09f4tgq</bpmn:outgoing>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_09f4tgq" sourceRef="ScriptTask_1nvjs0b" targetRef="ExclusiveGateway_1scq5rw" />
+      <bpmn:exclusiveGateway id="ExclusiveGateway_1scq5rw" name="Check if Reindex is done" default="SequenceFlow_074n6ju">
+        <bpmn:incoming>SequenceFlow_09f4tgq</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_074n6ju</bpmn:outgoing>
+        <bpmn:outgoing>SequenceFlow_0cyfdnl</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="SequenceFlow_074n6ju" name="Yes" sourceRef="ExclusiveGateway_1scq5rw" targetRef="EndEvent_01l92q0" />
+      <bpmn:sequenceFlow id="SequenceFlow_0cyfdnl" name="No" sourceRef="ExclusiveGateway_1scq5rw" targetRef="IntermediateCatchEvent_039h80g">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!execution.getVariable("REINDEX_DONE")}</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_039h80g" name="Sleep for 5 seconds">
+        <bpmn:incoming>SequenceFlow_0cyfdnl</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_0uohqee</bpmn:outgoing>
+        <bpmn:timerEventDefinition id="TimerEventDefinition_1o8pnw4">
+          <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5S</bpmn:timeDuration>
+        </bpmn:timerEventDefinition>
+      </bpmn:intermediateCatchEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_0uohqee" sourceRef="IntermediateCatchEvent_039h80g" targetRef="ScriptTask_1nvjs0b" />
+      <bpmn:scriptTask id="ScriptTask_07xp6ui" name="Prepare REINDEX of act_hi_actinst" scriptFormat="groovy">
+        <bpmn:incoming>SequenceFlow_1akwp6r</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1yyu1da</bpmn:outgoing>
+        <bpmn:script>execution.setVariable("REINDEX_DONE", false)
+execution.setVariable("REINDEX_RETRY_COUNTER", 0)</bpmn:script>
+      </bpmn:scriptTask>
+      <bpmn:sequenceFlow id="SequenceFlow_1yyu1da" sourceRef="ScriptTask_07xp6ui" targetRef="ScriptTask_1nvjs0b" />
+    </bpmn:subProcess>
+    <bpmn:scriptTask id="Task_1o7fhm3" name="Request for House Keeping" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_02jtz24</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0xs3ent</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qp8n7w</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("PERFORM_HOUSE_KEEPING", true)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0xs3ent" sourceRef="Task_1eunpw7" targetRef="Task_1o7fhm3" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1ojvvna" name="Wait for 1 min" camunda:asyncBefore="true" camunda:exclusive="false">
+      <bpmn:incoming>SequenceFlow_1bahp38</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1dl5oeo</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1bahp38" sourceRef="IntermediateThrowEvent_01tfkni" targetRef="IntermediateThrowEvent_1ojvvna" />
+    <bpmn:sequenceFlow id="SequenceFlow_1dl5oeo" sourceRef="IntermediateThrowEvent_1ojvvna" targetRef="Task_0kwuujr" />
+    <bpmn:intermediateCatchEvent id="IntermediateThrowEvent_1cpci7t" name="Sleep for 1 min">
+      <bpmn:incoming>SequenceFlow_1dh5jqp</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0ldbvi7</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_08wef07</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_125e6ov</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1dh5jqp" sourceRef="ExclusiveGateway_1vye5ed" targetRef="IntermediateThrowEvent_1cpci7t" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0swemf4" name="Check if House Keeping is requested" default="SequenceFlow_18wguxr">
+      <bpmn:incoming>SequenceFlow_125e6ov</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18wguxr</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0ldbvi7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_125e6ov" sourceRef="IntermediateThrowEvent_1cpci7t" targetRef="ExclusiveGateway_0swemf4" />
+    <bpmn:sequenceFlow id="SequenceFlow_18wguxr" name="Yes" sourceRef="ExclusiveGateway_0swemf4" targetRef="SubProcess_0e1qvtc" />
+    <bpmn:scriptTask id="Task_0365460" name="Reset House Keeping Status" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1u5ikyx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_08wef07</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("PERFORM_HOUSE_KEEPING", false)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0ldbvi7" name="No" sourceRef="ExclusiveGateway_0swemf4" targetRef="IntermediateThrowEvent_1cpci7t">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!execution.getVariable("PERFORM_HOUSE_KEEPING")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1u5ikyx" sourceRef="SubProcess_0e1qvtc" targetRef="Task_0365460" />
+    <bpmn:sequenceFlow id="SequenceFlow_08wef07" sourceRef="Task_0365460" targetRef="IntermediateThrowEvent_1cpci7t" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qp8n7w" sourceRef="Task_1o7fhm3" targetRef="Task_0ls5zs4" />
+    <bpmn:serviceTask id="Task_13ar26q" name="Init" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeeperConfigurationDelegate">
+      <bpmn:incoming>SequenceFlow_0kl9cyk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ygf18r</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_0ls5zs4" name="Determine next HK time" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.HouseKeepingSchedulerDelegate">
+      <bpmn:incoming>SequenceFlow_0en1djo</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0qp8n7w</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1u42el0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateCatchEvent id="IntermediateCatchEvent_1r8yod7" name="Sleep for 30 min">
+      <bpmn:incoming>SequenceFlow_0jjfdfb</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1eej8lz</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qedjbv</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0236qrl">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0jjfdfb" sourceRef="ExclusiveGateway_1vye5ed" targetRef="IntermediateCatchEvent_1r8yod7" />
+    <bpmn:serviceTask id="ServiceTask_0k2wuvz" name="Do Housekeeping for Internal Flows" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.housekeeping.InternalFlowsHouseKeeperDelegate">
+      <bpmn:incoming>SequenceFlow_0qedjbv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1eej8lz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0qedjbv" sourceRef="IntermediateCatchEvent_1r8yod7" targetRef="ServiceTask_0k2wuvz" />
+    <bpmn:sequenceFlow id="SequenceFlow_1eej8lz" sourceRef="ServiceTask_0k2wuvz" targetRef="IntermediateCatchEvent_1r8yod7" />
+    <bpmn:scriptTask id="ScriptTask_0ovmwv4" name="Update Report" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1u42el0</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1q80bxh</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportVariable(execution, "nextExecution", execution.getVariable("scheduledDateTime"))</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1q80bxh" sourceRef="ScriptTask_0ovmwv4" targetRef="Task_1eunpw7" />
+    <bpmn:scriptTask id="ScriptTask_0342duj" name="Init Report" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1ygf18r</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yoaqrt</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportVariable(execution, "nextExecution", "NA")
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1yoaqrt" sourceRef="ScriptTask_0342duj" targetRef="ExclusiveGateway_1vye5ed" />
+  </bpmn:process>
+  <bpmn:message id="Message_0orilw6" name="DO_HOUSE_KEEPING_NOW" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="FA-House-Keeping">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="112" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="119" y="425" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kl9cyk_di" bpmnElement="SequenceFlow_0kl9cyk">
+        <di:waypoint x="148" y="400" />
+        <di:waypoint x="180" y="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="184" y="313" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ParallelGateway_0xvt459_di" bpmnElement="ExclusiveGateway_1vye5ed">
+        <dc:Bounds x="443" y="375" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="269" y="328" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1m6jxbk_di" bpmnElement="SequenceFlow_1m6jxbk">
+        <di:waypoint x="468" y="375" />
+        <di:waypoint x="468" y="135" />
+        <di:waypoint x="568" y="135" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="249" y="256" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0d1fyph_di" bpmnElement="Task_0kwuujr">
+        <dc:Bounds x="568" y="95" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1210i7f_di" bpmnElement="SequenceFlow_1210i7f">
+        <di:waypoint x="668" y="135" />
+        <di:waypoint x="880" y="135" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="471.5" y="194" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1k1flss_di" bpmnElement="IntermediateThrowEvent_01tfkni">
+        <dc:Bounds x="880" y="117" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="866" y="81" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0en1djo_di" bpmnElement="SequenceFlow_0en1djo">
+        <di:waypoint x="493" y="400" />
+        <di:waypoint x="554" y="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="249" y="439.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_1by8xgx_di" bpmnElement="Task_1eunpw7" isExpanded="true">
+        <dc:Bounds x="874" y="340" width="240" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_037lxqd_di" bpmnElement="StartEvent_037lxqd">
+        <dc:Bounds x="897" y="383" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="563" y="360" width="82" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_15xqj5e_di" bpmnElement="EndEvent_15xqj5e">
+        <dc:Bounds x="1054" y="383" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="657" y="555" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1u42el0_di" bpmnElement="SequenceFlow_1u42el0">
+        <di:waypoint x="654" y="400" />
+        <di:waypoint x="714" y="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="424" y="511" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1xt6d5e_di" bpmnElement="SequenceFlow_1xt6d5e">
+        <di:waypoint x="933" y="401" />
+        <di:waypoint x="976" y="401" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="584.5" y="512" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1bz5twv_di" bpmnElement="HK_Interval_Timer_Id">
+        <dc:Bounds x="976" y="383" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="968" y="423" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_01l92q0_di" bpmnElement="EndEvent_01l92q0">
+        <dc:Bounds x="1712" y="689" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1256" y="375" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pmyllc_di" bpmnElement="SequenceFlow_0pmyllc">
+        <di:waypoint x="1012" y="401" />
+        <di:waypoint x="1054" y="401" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="663" y="512" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_1gxvkk3_di" bpmnElement="BoundaryEvent_1e1isj7">
+        <dc:Bounds x="1040" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1079" y="476" width="66" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_02jtz24_di" bpmnElement="SequenceFlow_02jtz24">
+        <di:waypoint x="1058" y="478" />
+        <di:waypoint x="1058" y="532" />
+        <di:waypoint x="1259" y="532" />
+        <di:waypoint x="1259" y="440" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="751.5" y="620" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ygf18r_di" bpmnElement="SequenceFlow_1ygf18r">
+        <di:waypoint x="280" y="400" />
+        <di:waypoint x="310" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1xwejjt_di" bpmnElement="Task_0arvkle">
+        <dc:Bounds x="910" y="667" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_0e1qvtc_di" bpmnElement="SubProcess_0e1qvtc" isExpanded="true">
+        <dc:Bounds x="794" y="607" width="1006" height="223" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0t1k8x0_di" bpmnElement="StartEvent_0t1k8x0">
+        <dc:Bounds x="835" y="689" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1c454t0_di" bpmnElement="SequenceFlow_1c454t0">
+        <di:waypoint x="871" y="707" />
+        <di:waypoint x="910" y="707" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1tz4say_di" bpmnElement="Task_1o7fhm3">
+        <dc:Bounds x="1209" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xs3ent_di" bpmnElement="SequenceFlow_0xs3ent">
+        <di:waypoint x="1114" y="400" />
+        <di:waypoint x="1209" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_110mfor_di" bpmnElement="IntermediateThrowEvent_1ojvvna">
+        <dc:Bounds x="1053" y="117" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1038" y="87" width="68" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bahp38_di" bpmnElement="SequenceFlow_1bahp38">
+        <di:waypoint x="916" y="135" />
+        <di:waypoint x="1053" y="135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dl5oeo_di" bpmnElement="SequenceFlow_1dl5oeo">
+        <di:waypoint x="1071" y="153" />
+        <di:waypoint x="1071" y="251" />
+        <di:waypoint x="618" y="251" />
+        <di:waypoint x="618" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_04fl92u_di" bpmnElement="IntermediateThrowEvent_1cpci7t">
+        <dc:Bounds x="526" y="689" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="568" y="691" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dh5jqp_di" bpmnElement="SequenceFlow_1dh5jqp">
+        <di:waypoint x="468" y="425" />
+        <di:waypoint x="468" y="707" />
+        <di:waypoint x="526" y="707" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0swemf4_di" bpmnElement="ExclusiveGateway_0swemf4" isMarkerVisible="true">
+        <dc:Bounds x="660" y="682" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="656" y="629" width="75" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_125e6ov_di" bpmnElement="SequenceFlow_125e6ov">
+        <di:waypoint x="562" y="707" />
+        <di:waypoint x="660" y="707" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_18wguxr_di" bpmnElement="SequenceFlow_18wguxr">
+        <di:waypoint x="710" y="707" />
+        <di:waypoint x="794" y="707" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="748" y="691" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_15v0szl_di" bpmnElement="Task_0365460">
+        <dc:Bounds x="1850" y="667" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ldbvi7_di" bpmnElement="SequenceFlow_0ldbvi7">
+        <di:waypoint x="685" y="732" />
+        <di:waypoint x="685" y="827" />
+        <di:waypoint x="544" y="827" />
+        <di:waypoint x="544" y="725" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="608" y="809" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1u5ikyx_di" bpmnElement="SequenceFlow_1u5ikyx">
+        <di:waypoint x="1800" y="705" />
+        <di:waypoint x="1850" y="705" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_08wef07_di" bpmnElement="SequenceFlow_08wef07">
+        <di:waypoint x="1900" y="667" />
+        <di:waypoint x="1900" y="547" />
+        <di:waypoint x="544" y="547" />
+        <di:waypoint x="544" y="689" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qp8n7w_di" bpmnElement="SequenceFlow_0qp8n7w">
+        <di:waypoint x="1259" y="360" />
+        <di:waypoint x="1259" y="288" />
+        <di:waypoint x="604" y="288" />
+        <di:waypoint x="604" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0e6l23l_di" bpmnElement="Task_13ar26q">
+        <dc:Bounds x="180" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1t2xdlj_di" bpmnElement="Task_0ls5zs4">
+        <dc:Bounds x="554" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0pws23c_di" bpmnElement="SequenceFlow_0pws23c">
+        <di:waypoint x="1010" y="707" />
+        <di:waypoint x="1050" y="707" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1oha2mb_di" bpmnElement="SequenceFlow_1oha2mb">
+        <di:waypoint x="1150" y="707" />
+        <di:waypoint x="1190" y="707" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1akwp6r_di" bpmnElement="SequenceFlow_1akwp6r">
+        <di:waypoint x="1290" y="707" />
+        <di:waypoint x="1330" y="707" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0h17as8_di" bpmnElement="Task_0ux3vk2">
+        <dc:Bounds x="1050" y="667" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_01cbi0y_di" bpmnElement="Task_03uqk9r">
+        <dc:Bounds x="1190" y="667" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_1r8yod7_di" bpmnElement="IntermediateCatchEvent_1r8yod7">
+        <dc:Bounds x="450" y="876" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="364" y="887" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jjfdfb_di" bpmnElement="SequenceFlow_0jjfdfb">
+        <di:waypoint x="468" y="425" />
+        <di:waypoint x="468" y="876" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0k2wuvz_di" bpmnElement="ServiceTask_0k2wuvz">
+        <dc:Bounds x="585" y="854" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qedjbv_di" bpmnElement="SequenceFlow_0qedjbv">
+        <di:waypoint x="486" y="894" />
+        <di:waypoint x="585" y="894" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1eej8lz_di" bpmnElement="SequenceFlow_1eej8lz">
+        <di:waypoint x="628" y="935" />
+        <di:waypoint x="628" y="969" />
+        <di:waypoint x="468" y="969" />
+        <di:waypoint x="468" y="912" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1nvjs0b_di" bpmnElement="ScriptTask_1nvjs0b">
+        <dc:Bounds x="1470" y="667" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_09f4tgq_di" bpmnElement="SequenceFlow_09f4tgq">
+        <di:waypoint x="1570" y="707" />
+        <di:waypoint x="1615" y="707" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0ovmwv4_di" bpmnElement="ScriptTask_0ovmwv4">
+        <dc:Bounds x="714" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1q80bxh_di" bpmnElement="SequenceFlow_1q80bxh">
+        <di:waypoint x="814" y="400" />
+        <di:waypoint x="874" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0342duj_di" bpmnElement="ScriptTask_0342duj">
+        <dc:Bounds x="310" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yoaqrt_di" bpmnElement="SequenceFlow_1yoaqrt">
+        <di:waypoint x="410" y="400" />
+        <di:waypoint x="443" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1scq5rw_di" bpmnElement="ExclusiveGateway_1scq5rw" isMarkerVisible="true">
+        <dc:Bounds x="1615" y="682" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1598" y="646" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_074n6ju_di" bpmnElement="SequenceFlow_074n6ju">
+        <di:waypoint x="1665" y="707" />
+        <di:waypoint x="1712" y="707" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1680" y="691" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0cyfdnl_di" bpmnElement="SequenceFlow_0cyfdnl">
+        <di:waypoint x="1640" y="732" />
+        <di:waypoint x="1640" y="762" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1648" y="729" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_039h80g_di" bpmnElement="IntermediateCatchEvent_039h80g">
+        <dc:Bounds x="1622" y="762" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1663" y="766" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0uohqee_di" bpmnElement="SequenceFlow_0uohqee">
+        <di:waypoint x="1622" y="780" />
+        <di:waypoint x="1520" y="780" />
+        <di:waypoint x="1520" y="747" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_07xp6ui_di" bpmnElement="ScriptTask_07xp6ui">
+        <dc:Bounds x="1330" y="667" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yyu1da_di" bpmnElement="SequenceFlow_1yyu1da">
+        <di:waypoint x="1430" y="707" />
+        <di:waypoint x="1470" y="707" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

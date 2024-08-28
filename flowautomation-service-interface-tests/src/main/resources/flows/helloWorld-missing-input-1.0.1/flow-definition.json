@@ -1,0 +1,12 @@
+{
+    "flowId": "com.ericsson.oss.fa.flows.helloWorldMissingInput",
+    "flowName": "Hello World with missing input schema",
+    "flowVersion": "1.0.1",
+    "description": "Hello world flow with missing input schema",
+    "setup": {
+        "processId": "hello-setup"
+    },
+    "execute": {
+        "processId": "hello-execute-2"
+    }
+}

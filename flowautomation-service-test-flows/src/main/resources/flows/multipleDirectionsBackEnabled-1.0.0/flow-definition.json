@@ -1,0 +1,15 @@
+{
+    "flowId": "com.ericsson.oss.fa.flows.multipleDirectionsBackEnabled",
+    "flowName": "MultipleDirectionsBackEnabled",
+    "flowVersion": "1.0.0",
+    "description": "Flow with multiple directions with back button enabled",
+    "setup": {
+        "processId": "back-action-setup",
+        "userTask": {
+            "backEnabled": true
+        }
+    },
+    "execute": {
+        "processId": "back-action-execute"
+    }
+}

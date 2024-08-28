@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0x82n8z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="sdk-flow-example-setup" name="sdk flow example setup phase" isExecutable="true">
+    <bpmn:sequenceFlow id="SequenceFlow_1cc8kmu" sourceRef="Task_1c65f6i" targetRef="Task_1g3crq1" />
+    <bpmn:sequenceFlow id="SequenceFlow_1pgfesg" sourceRef="Task_0gg1bqn" targetRef="Task_018mx1a" />
+    <bpmn:endEvent id="EndEvent_1a8tinl" name="End">
+      <bpmn:incoming>SequenceFlow_0ukef16</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0ukef16" sourceRef="Task_018mx1a" targetRef="EndEvent_1a8tinl" />
+    <bpmn:userTask id="Task_1c65f6i" name="Nodes Selection" camunda:formKey="setup:nodeSelection">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="nodesList">${nodesList}</camunda:inputParameter>
+          <camunda:outputParameter name="nodeSelection">${nodeSelection}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1nlad83</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1cc8kmu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Task_1g3crq1" name="Validate Nodes Selection" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1cc8kmu</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0k6qqy8</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+flowInput.nodeSelection = nodeSelection
+
+Reporter.updateReportSummary(execution,"Selected Nodes Validated")
+EventRecorder.info(execution,"Selected Nodes Validated")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="Task_0gg1bqn" name="Software Package Selection" camunda:formKey="setup:softwarePackageSelection">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="softwarePackagesList">${softwarePackagesList}</camunda:inputParameter>
+          <camunda:outputParameter name="softwarePackageSelection">${softwarePackageSelection}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_17pbrsm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1pgfesg</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="Task_018mx1a" name="Validate Software Package" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1pgfesg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0ukef16</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+flowInput.softwarePackageSelection = softwarePackageSelection
+
+Reporter.updateReportSummary(execution,"Software Package Validated")
+EventRecorder.info(execution,"Software Package Validated")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1nlad83" sourceRef="Task_0v94kjw" targetRef="Task_1c65f6i" />
+    <bpmn:scriptTask id="Task_0v94kjw" name="Get Nodes List" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0l552d9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1nlad83</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+
+List nodesList = new ArrayList();
+nodesList.add("RadioNode-1");
+nodesList.add("RadioNode-2");
+nodesList.add("RadioNode-3");
+nodesList.add("RadioNode-4");
+nodesList.add("RadioNode-5");
+
+execution.setVariable("nodesList",nodesList);
+
+Reporter.updateReportSummary(execution,"Getting Nodes List")
+EventRecorder.info(execution,"Getting Nodes List")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0k6qqy8" sourceRef="Task_1g3crq1" targetRef="Task_0hvhmiy" />
+    <bpmn:sequenceFlow id="SequenceFlow_17pbrsm" sourceRef="Task_0hvhmiy" targetRef="Task_0gg1bqn" />
+    <bpmn:scriptTask id="Task_0hvhmiy" name="Software Package Selection" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0k6qqy8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_17pbrsm</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+
+List softwarePackagesList = new ArrayList();
+softwarePackagesList.add("RadioNode-ISO-v1");
+softwarePackagesList.add("RadioNode-ISO-v2");
+softwarePackagesList.add("RadioNode-ISO-v3");
+softwarePackagesList.add("RadioNode-ISO-v4");
+softwarePackagesList.add("RadioNode-ISO-v5");
+
+execution.setVariable("softwarePackagesList",softwarePackagesList);
+
+Reporter.updateReportSummary(execution,"Getting Software Packages List")
+EventRecorder.info(execution,"Getting Software Packages List")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:startEvent id="StartEvent_1j2sglq" name="Start">
+      <bpmn:outgoing>SequenceFlow_0fvkfi6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0p9a8q2" default="SequenceFlow_0l552d9">
+      <bpmn:incoming>SequenceFlow_0fvkfi6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0l552d9</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0kycm25</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0fvkfi6" sourceRef="StartEvent_1j2sglq" targetRef="ExclusiveGateway_0p9a8q2" />
+    <bpmn:sequenceFlow id="SequenceFlow_0l552d9" name="Input not supplied" sourceRef="ExclusiveGateway_0p9a8q2" targetRef="Task_0v94kjw" />
+    <bpmn:sequenceFlow id="SequenceFlow_0kycm25" name="Input supplied" sourceRef="ExclusiveGateway_0p9a8q2" targetRef="Task_0k6nw39">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty execution.getVariable('flowInput')}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Task_0k6nw39" name="Non-interactive mode" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_0kycm25</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1phcq46</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter;
+import com.ericsson.oss.services.flowautomation.flowapi.EventRecorder;
+
+
+Reporter.updateReportSummary(execution,"Flow is being executed in non-interacitve mode")
+EventRecorder.info(execution,"Flow is being executed in non-interacitve mode")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="EndEvent_0xd373l" name="End">
+      <bpmn:incoming>SequenceFlow_1phcq46</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1phcq46" sourceRef="Task_0k6nw39" targetRef="EndEvent_0xd373l" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="sdk-flow-example-setup">
+      <bpmndi:BPMNEdge id="SequenceFlow_1cc8kmu_di" bpmnElement="SequenceFlow_1cc8kmu">
+        <di:waypoint x="660" y="350" />
+        <di:waypoint x="740" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1pgfesg_di" bpmnElement="SequenceFlow_1pgfesg">
+        <di:waypoint x="1210" y="350" />
+        <di:waypoint x="1290" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1a8tinl_di" bpmnElement="EndEvent_1a8tinl">
+        <dc:Bounds x="1462" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1470" y="375" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ukef16_di" bpmnElement="SequenceFlow_0ukef16">
+        <di:waypoint x="1390" y="350" />
+        <di:waypoint x="1462" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1guwfsa_di" bpmnElement="Task_1c65f6i">
+        <dc:Bounds x="560" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0zbbf2p_di" bpmnElement="Task_1g3crq1">
+        <dc:Bounds x="740" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_02yo1ji_di" bpmnElement="Task_0gg1bqn">
+        <dc:Bounds x="1110" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_07u8q4a_di" bpmnElement="Task_018mx1a">
+        <dc:Bounds x="1290" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nlad83_di" bpmnElement="SequenceFlow_1nlad83">
+        <di:waypoint x="490" y="350" />
+        <di:waypoint x="560" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0ugm8eg_di" bpmnElement="Task_0v94kjw">
+        <dc:Bounds x="390" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0k6qqy8_di" bpmnElement="SequenceFlow_0k6qqy8">
+        <di:waypoint x="840" y="350" />
+        <di:waypoint x="920" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_17pbrsm_di" bpmnElement="SequenceFlow_17pbrsm">
+        <di:waypoint x="1020" y="350" />
+        <di:waypoint x="1110" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_071cwj6_di" bpmnElement="Task_0hvhmiy">
+        <dc:Bounds x="920" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_1j2sglq_di" bpmnElement="StartEvent_1j2sglq">
+        <dc:Bounds x="152" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="255" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0p9a8q2_di" bpmnElement="ExclusiveGateway_0p9a8q2" isMarkerVisible="true">
+        <dc:Bounds x="245" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fvkfi6_di" bpmnElement="SequenceFlow_0fvkfi6">
+        <di:waypoint x="188" y="230" />
+        <di:waypoint x="245" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0l552d9_di" bpmnElement="SequenceFlow_0l552d9">
+        <di:waypoint x="270" y="255" />
+        <di:waypoint x="270" y="360" />
+        <di:waypoint x="390" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="276" y="363" width="88" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kycm25_di" bpmnElement="SequenceFlow_0kycm25">
+        <di:waypoint x="270" y="205" />
+        <di:waypoint x="270" y="120" />
+        <di:waypoint x="400" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="270" y="103" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1wqemij_di" bpmnElement="Task_0k6nw39">
+        <dc:Bounds x="400" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0xd373l_di" bpmnElement="EndEvent_0xd373l">
+        <dc:Bounds x="592" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="602" y="145" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1phcq46_di" bpmnElement="SequenceFlow_1phcq46">
+        <di:waypoint x="500" y="120" />
+        <di:waypoint x="592" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

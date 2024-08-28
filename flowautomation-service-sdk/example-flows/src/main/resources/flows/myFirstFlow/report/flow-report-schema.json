@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Example Archetype flow",
+  "description": "Example Archetype flow",
+  "type": "object",
+  "properties": {
+    "message": {
+      "name": "Result of joining strings",
+      "type": "string",
+      "default": "",
+      "objectGen": {
+        "binding": "variable:report:finalMessage"
+      }
+    }
+  },
+  "required": [
+    "message"
+  ]
+}

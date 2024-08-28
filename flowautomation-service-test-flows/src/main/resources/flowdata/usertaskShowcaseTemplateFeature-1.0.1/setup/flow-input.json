@@ -1,0 +1,14 @@
+{
+  "_2DynamicObject" : {
+    "listBox2" : "ITEM6",
+    "task1" : true,
+    "task2" : true,
+    "task3" : false,
+    "task4" : false
+  },
+  "_1DynamicObject" : {
+    "listBox1" : "ITEM3",
+    "task1" : true,
+    "task2" : false
+  }
+}

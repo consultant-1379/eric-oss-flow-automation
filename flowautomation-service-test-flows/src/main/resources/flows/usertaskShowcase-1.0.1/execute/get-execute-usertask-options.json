@@ -1,0 +1,27 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Get Execute Usertask Options usertask schema",
+    "description": "Get Execute Usertask Options usertask schema",
+    "$id": "get-execute-usertask-options-usertask-schema",
+    "name": "Get Execute Usertask Options",
+    "type": "object",
+    "properties":{
+        "getExecuteUsertaskOptions": {
+            "name": "Get Execute Usertask Options",
+            "type": "object",
+            "properties": {
+                "numberOfMultiInstanceInstances": {
+                    "name": "Number Of Multi-instance Instances",
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "default": 0
+                }
+            },
+            "additionalProperties": false,
+            "required": [ "numberOfMultiInstanceInstances" ]
+        }
+    },
+    "additionalProperties": false,
+    "required": [ "getExecuteUsertaskOptions" ]
+}

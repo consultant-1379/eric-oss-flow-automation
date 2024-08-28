@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1tnqwrn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.2.1">
+  <bpmn:process id="parallel-multi-instance-call-activity-map-name" name="Parallel multi-instance call activity map name" isExecutable="true">
+    <bpmn:startEvent id="start">
+      <bpmn:outgoing>SequenceFlow_1ohym33</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="end">
+      <bpmn:incoming>SequenceFlow_0hqj7a4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1ohym33" sourceRef="start" targetRef="get-number-of-instances" />
+    <bpmn:sequenceFlow id="SequenceFlow_1qag9ye" sourceRef="get-number-of-instances" targetRef="init" />
+    <bpmn:userTask id="get-number-of-instances" name="Get number of instances" camunda:formKey="execute:get-number-instances.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="getNumberOfInstances">${getNumberOfInstances}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1ohym33</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1qag9ye</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_17m691u" sourceRef="parallel-m-i-call-activity-map-name" targetRef="update-report" />
+    <bpmn:callActivity id="parallel-m-i-call-activity-map-name" name="Paralllel Multi-instance call activity" calledElement="multi-instance-call-activity-map-name" camunda:calledElementBinding="deployment">
+      <bpmn:extensionElements>
+        <camunda:in source="instance" target="instance" />
+        <camunda:properties>
+          <camunda:property name="faActivityInstanceVariableName" value="name" />
+        </camunda:properties>
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1jnyczd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_17m691u</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:collection="instances" camunda:elementVariable="instance" />
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1jnyczd" sourceRef="init" targetRef="parallel-m-i-call-activity-map-name" />
+    <bpmn:scriptTask id="init" name="Init" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1qag9ye</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1jnyczd</bpmn:outgoing>
+      <bpmn:script>def instances = []
+
+for (i = 0; i &lt; getNumberOfInstances.numInstances; i++) {
+  def instance = [:]
+  instance.name = 'instance' + i
+  instances.add(instance)
+}
+
+execution.setVariable("instances", instances)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0hqj7a4" sourceRef="update-report" targetRef="end" />
+    <bpmn:scriptTask id="update-report" name="Update report" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_17m691u</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0hqj7a4</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, 'Parallel Multi-instance call activity map name done')</bpmn:script>
+    </bpmn:scriptTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="parallel-multi-instance-call-activity-map-name">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1kd5gz1_di" bpmnElement="end">
+        <dc:Bounds x="833" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="806" y="142" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ohym33_di" bpmnElement="SequenceFlow_1ohym33">
+        <di:waypoint x="209" y="120" />
+        <di:waypoint x="250" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="184.5" y="99" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1qag9ye_di" bpmnElement="SequenceFlow_1qag9ye">
+        <di:waypoint x="350" y="120" />
+        <di:waypoint x="400" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="375" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1d2zjyp_di" bpmnElement="get-number-of-instances">
+        <dc:Bounds x="250" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_17m691u_di" bpmnElement="SequenceFlow_17m691u">
+        <di:waypoint x="645" y="120" />
+        <di:waypoint x="695" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_156q59q_di" bpmnElement="parallel-m-i-call-activity-map-name">
+        <dc:Bounds x="545" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1jnyczd_di" bpmnElement="SequenceFlow_1jnyczd">
+        <di:waypoint x="500" y="120" />
+        <di:waypoint x="545" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="522.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1e0m54u_di" bpmnElement="init">
+        <dc:Bounds x="400" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0hqj7a4_di" bpmnElement="SequenceFlow_0hqj7a4">
+        <di:waypoint x="795" y="120" />
+        <di:waypoint x="833" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="814" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0bw7vu7_di" bpmnElement="update-report">
+        <dc:Bounds x="695" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

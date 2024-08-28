@@ -1,0 +1,9 @@
+{
+  "flowId": "com.ericsson.oss.ae.fa.flows.example.simpleCalculatorFlow",
+  "flowName": "Simple Calculator Flow",
+  "flowVersion": "1.0.0",
+  "description": "Simple Calculator",
+  "execute": {
+    "processId": "execute"
+  }
+}

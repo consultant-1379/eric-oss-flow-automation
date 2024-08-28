@@ -1,0 +1,27 @@
+#
+# COPYRIGHT Ericsson 2022
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+apiVersion: v2
+appVersion: "1.0"
+name: ci-internal-database-pg
+version: 0.0.0-1
+description: Chart containing Document Database PG Microservice
+
+dependencies:
+- alias: eric-oss-flow-automation-db-pg
+  name: eric-data-document-database-pg
+  repository: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm/
+  version: 8.1.0+35

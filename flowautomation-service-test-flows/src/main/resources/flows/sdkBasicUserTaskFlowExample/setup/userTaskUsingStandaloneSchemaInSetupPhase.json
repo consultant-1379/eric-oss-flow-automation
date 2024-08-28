@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "description": "User Task Using Standalone Schema In Setup Phase",
+  "properties": {
+    "userTaskUsingStandaloneSchemaInSetupPhase": {
+      "name": "User Task Using Standalone Schema In Setup Phase",
+      "type": "object",
+      "properties": {
+        "textInput": {
+          "name": "Text Input",
+          "type": "string"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

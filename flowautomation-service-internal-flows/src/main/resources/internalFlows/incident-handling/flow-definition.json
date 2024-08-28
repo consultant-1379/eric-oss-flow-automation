@@ -1,0 +1,9 @@
+{
+  "flowId": "com.ericsson.oss.fa.internal.flows.incidentHandling",
+  "flowName": "Flow Automation Incident Handling",
+  "flowVersion": "${fa.internal.flow.version}",
+  "description": "The Incident Handling flow is an internal Flow Automation flow, used to perform certain internal error handling. It is deployed and started when the Flow Automation application is installed. There can only be a single instance of this flow. Authorised users require the Flow Automation REMOVE capability, to view this flow and its instance.",
+  "execute": {
+    "processId": "FA-Incident-Handling"
+  }
+}

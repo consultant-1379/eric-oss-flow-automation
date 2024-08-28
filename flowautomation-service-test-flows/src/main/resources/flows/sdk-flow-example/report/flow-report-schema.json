@@ -1,0 +1,91 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "SDK Flow Example report schema body",
+  "description": "SDK Flow Example report schema body",
+  "type": "object",
+  "properties": {
+    "nodeName": {
+      "name": "Node Name",
+      "description": "Node Name",
+      "type": "string",
+      "default": "NA",
+      "objectGen": {
+        "binding": "variable:report:nodeName"
+      }
+    },
+    "softwarePackage": {
+      "name": "Software Package",
+      "description": "Software Package",
+      "type": "string",
+      "default": "NA",
+      "objectGen": {
+        "binding": "variable:report:softwarePackage"
+      }
+    },
+    "executionReport": {
+      "name": "Node Upgrade Report",
+      "description": "Node Upgrade Report",
+      "type": "array",
+      "objectGen": {
+        "indexBinding": "nodeUpgradeActivities",
+        "indexName": "activityName"
+      },
+      "items": {
+        "name": "Node Upgrade Activities",
+        "description": "Node Upgrade Activities",
+        "type": "object",
+        "properties": {
+          "time": {
+            "name": "Time",
+            "description": "Time",
+            "type": "string",
+            "objectGen": {
+              "binding": "variable:report:{activityName}.time"
+            }
+          },
+          "activityName": {
+            "name": "Activity",
+            "description": "Activity",
+            "type": "string",
+            "objectGen": {
+              "binding": "variable:report:{activityName}.activityName"
+            }
+          },
+          "result": {
+            "name": "Result",
+            "description": "Result",
+            "type": "string",
+            "enum": [
+              "Not Available",
+              "Success",
+              "Failure",
+              "Error"
+            ],
+            "objectGen": {
+              "binding": "variable:report:{activityName}.result"
+            }
+          },
+          "summary": {
+            "name": "Summary",
+            "description": "Summary",
+            "type": "string",
+            "default": "",
+            "objectGen": {
+              "binding": "variable:report:{activityName}.summary"
+            }
+          }
+        },
+        "required": [
+          "time",
+          "activityName",
+          "result",
+          "summary"
+        ]
+      }
+    }
+  },
+  "required": [
+    "nodeName",
+    "softwarePackage"
+  ]
+}

@@ -1,0 +1,1409 @@
+#
+# COPYRIGHT Ericsson 2023
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+openapi: "3.0.2"
+info:
+  x-api-id: a44c03f8-00be-4e78-a74c-1fd466277293
+  x-audience: external-public
+  description: |
+    Flow Automation is a feature deployed on the Automation Platform that is part of
+    the Ericsson Intelligent Automation Platform (EIC).
+  version: "0.0.1"
+  title: "Flow Automation"
+  license:
+    name: "COPYRIGHT Ericsson 2022"
+    url: "https://www.ericsson.com/en/legal"
+  termsOfService: "https://www.ericsson.com/en/legal"
+tags:
+  - name: Flow
+    description: Endpoints related to /v1/flows
+  - name: Flow Execution
+    description: Endpoints related to /v1/executions
+servers:
+  - url: "https://{eiap-domain}/flow-automation"
+    description: The production API server
+    variables:
+      eiap-domain:
+        default: EIAP_DOMAIN
+        description: Change this value to point to your custom EIAP instance.
+  - url: "{auth-url}"
+    description: The authentication url variable
+    variables:
+      auth-url:
+        default: auth-url
+        description: Change this url to point to your authentication server before authenticating
+paths:
+  /v1/flows:
+    get:
+      tags:
+        - Flow
+      summary: Gets the flow definitions for all imported flows
+      operationId: getFlows
+      responses:
+        '200':
+          description: OK. Lists all imported flows.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowDefinition'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+    post:
+      tags:
+        - Flow
+      summary: Import a new flow.
+      operationId: importFlow
+      parameters:
+        - name: UserID
+          in: header
+          required: true
+          schema:
+            type: string
+          description: User ID.
+          example: "fa-user"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              title: FlowPackageInput
+              type: object
+              description: Zip package containing flow information.
+              properties:
+                flow-package:
+                  type: string
+                  format: byte
+                  example: "example-flow-1.0.0.zip"
+      responses:
+        '200':
+          description: OK. Flow imported.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowDefinition'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /v1/flows/{flow-id}:
+    get:
+      tags:
+        - Flow
+      summary: Gets the definition of a flow with the given flow-id.
+      operationId: getFlow
+      parameters:
+        - name: flow-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+      responses:
+        '200':
+          description: OK. Returns the definition of the flow with the given flow-id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowDefinition'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+    delete:
+      tags:
+        - Flow
+      summary: Removes the flow definition with the given flow-id.
+      operationId: deleteFlow
+      parameters:
+        - name: flow-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+        - name: force
+          in: query
+          schema:
+            type: boolean
+          description: Force the flow to be deleted, either true or false.
+          example: true
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '412':
+          description: Flow with execution cannot be deleted when force is false.
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/flows/{flow-id}/execute:
+    post:
+      tags:
+        - Flow
+      summary: Create a flow execution for the flow with the given flow-id.
+      operationId: executeFlow
+      parameters:
+        - name: flow-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+        - name: UserID
+          in: header
+          required: true
+          schema:
+            type: string
+          description: User ID.
+          example: fa-user
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              title: ExecuteInput
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name to use for the created flow execution
+                  example: example-flow
+                file-name:
+                  type: string
+                  description: Name of the file being used to execute a flow
+                  example: "example-flow-1.0.0.zip"
+                flow-input:
+                  type: string
+                  format: byte
+                  description: The file being used to execute the flow.
+                  example: "example-flow-1.0.0.zip"
+              required:
+                - name
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+            example:
+              name: "example-flow"
+      responses:
+        '200':
+          description: OK. Flow execution created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowExecutionName'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/flows/{flow-id}/activate:
+    put:
+      tags:
+        - Flow
+      summary: Activate or deactivate a version of a flow with given flow-id and flow-version.
+      operationId: activateFlowVersion
+      parameters:
+        - name: flow-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+        - name: flow-version
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Version of a flow.
+          example: "1.0.0"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowStatus'
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/flows/{flow-id}/enable:
+    put:
+      tags:
+        - Flow
+      summary: Enable or disable the flow with the given flow-id.
+      operationId: enableFlow
+      parameters:
+        - name: flow-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowStatus'
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /v1/flows/{flow-id}/resource/flow-input-schema:
+    get:
+      tags:
+        - Flow
+      summary: Returns flow input schema for the active version or for a specific version of a flow.
+      operationId: getFlowInputSchema
+      parameters:
+        - name: flow-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+        - name: flow-version
+          in: query
+          schema:
+            type: string
+          description: Version of a flow.
+          example: "1.0.0"
+      responses:
+        '200':
+          description: OK. Returns flow input schema for the active version or for a specific version of a flow.
+          content:
+            application/json:
+              schema:
+                type: string
+                example: { "$schema": "http://json-schema.org/draft-04/schema#", "type": "object", "properties": { "configuration": { "name": "Configuration", "type": "object", "properties": { "numElements": { "name": "Number of Elements", "type": "string", "default": "10"                }, "loadControlPoolSize": { "name": "Load Control Pool Size", "type": "string", "default": "4" } } } } }
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/flows/{flow-id}/{flow-version}/process-details:
+    get:
+      tags:
+        - Flow
+      summary: Returns the process details of the associated flow-id and flow-verison.
+      operationId: getFlowVersionProcessDetails
+      parameters:
+        - name: flow-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+        - name: flow-version
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Version of a flow.
+          example: "1.0.0"
+      responses:
+        '200':
+          description: OK. Returns the flow version process details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlowVersionProcessDetails'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions:
+    get:
+      tags:
+        - Flow Execution
+      summary: Lists executions of all or specific flows
+      operationId: getExecutions
+      parameters:
+        - name: flow-id
+          in: query
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+        - name: flow-execution-name
+          in: query
+          schema:
+            type: string
+          description: Flow execution name.
+          example: "example-flow"
+        - name: flow-version
+          in: query
+          schema:
+            type: string
+          description: Version of a flow.
+          example: "1.0.0"
+        - name: filter-by-user
+          in: query
+          schema:
+            type: boolean
+          description: Filter results by user.
+          example: true
+        - name: UserID
+          in: header
+          schema:
+            type: string
+          description: User ID.
+          example: "fa-user"
+      responses:
+        '200':
+          description: OK. Lists executions of all or specific flows.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowExecution'
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/{flow-execution-name}:
+    delete:
+      tags:
+        - Flow Execution
+      summary: Deletes the execution with the given flow-execution-name. It applies only if the flow execution is in following states - SETTING_UP
+      operationId: deleteExecution
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: example-flow
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/{flow-execution-name}/usertasks:
+    get:
+      tags:
+        - Flow Execution
+      summary: Retrieves user tasks for a flow execution.
+      operationId: getUserTasks
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: "example-flow"
+        - name: flow-id
+          in: query
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+      responses:
+        '200':
+          description: OK. List of user tasks.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserTask'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/usertasks/{task-id}/schema:
+    get:
+      tags:
+        - Flow Execution
+      summary: Retrieves the schema of the usertask with given task-id.
+      operationId: getUserTaskSchema
+      parameters:
+        - name: task-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Task ID of a usertask.
+          example: b0d567c2-be75-11ed-a526-1eddab3b7c95
+      responses:
+        '200':
+          description: OK. Retrieves the schema of the usertask with given task-id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTaskSchema'
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/usertasks/{task-id}/complete:
+    post:
+      tags:
+        - Flow Execution
+      summary: Completes the usertask with the given task-id.
+      operationId: completeUserTask
+      parameters:
+        - name: task-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Task ID of a usertask.
+          example: b0d567c2-be75-11ed-a526-1eddab3b7c95
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              title: CompleteInput
+              type: object
+              properties:
+                usertask-input:
+                  type: string
+                  description: Usertask input
+                  example: '{"houseKeepingUserTask":{"information":{"houseKeepingScheduledDateTime":"2022-03-11 00:00","houseKeepingRunImmediately":""}}}'
+                usertask-input-files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                    description: Usertask input, using a zip file.
+              required:
+                - usertask-input
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/{flow-execution-name}/report:
+    get:
+      tags:
+        - Flow Execution
+      summary: Retrieves report for a specified flow execution.
+      operationId: getExecutionReport
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: example-flow
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: "com.ericsson.oss.ae.example-flow"
+      responses:
+        '200':
+          description: OK. Get the summary report for the execution of the flow instance.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: Returns a string containing JSON.
+                example: { "header": { "reportTime": "2023-03-09T07:41:37-0500", "flowId": "com.ericsson.oss.fa.flows.multiInstanceLoadControl", "flowVersion": "1.0.1", "flowName": "Multi-Instance Load Control", "flowExecutionName": "MLC_115415", "startedBy": "fa-user", "startTime": "2023-03-09T06:54:15-0500", "endTime": "2023-03-09T06:55:21-0500", "status": "COMPLETED" }, "body": { } }
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/{flow-execution-name}/download/report-variable/{name}:
+    get:
+      tags:
+        - Flow Execution
+      summary: Get the requested report variable for a flow execution.
+      operationId: downloadExecutionReportVariable
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: example-flow
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Report variable name.
+          example: uploadedFileContenxt, element0.kpiContent
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+      responses:
+        '200':
+          description: OK. The requested report variable for the flow execution. It is present in the response as a file.
+          content:
+            # if application/json not present here, an Exception occurs stating that no message body writer found of type application/octet-stream.
+            # This happens because other error responses return json while 200 only allowed returning octet-stream.
+            application/json:
+              schema:
+                type: string
+                description: Returns the name contents.
+              example: "This file contains more than 4Kb data This file contains more than 4Kb data" #TOTO check if this change break anything?
+            application/octet-stream:
+              schema:
+                type: string
+                format: byte
+              example: downloadable file
+          headers:
+            Content-Disposition:
+              description: attachment; filename={FILENAME}"
+              schema:
+                type: string
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/{flow-execution-name}/download/{resource}:
+    get:
+      tags:
+        - Flow Execution
+      summary: Downloads a requested resource.
+      operationId: downloadExecutionResource
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: example-flow
+        - name: resource
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Resource Type
+          examples:
+            flowinput :
+              value: flowinput
+              summary: To download the setup configuration used in the setup phase of the flow execution in the zip file format.
+            report:
+              value: report
+              summary: To download the execution report of the flow execution in zip file format.
+            all:
+              value: all
+              summary: To download the setup configuration and execution report of the flow execution in zip file format.
+        - name: flow-id
+          in: query
+          schema:
+            type: string
+          description: ID of a flow.
+          required: true
+          example: com.ericsson.oss.ae.example-flow
+      responses:
+        '200':
+          description: OK. The requested resource for the flow execution. It is present in the response as a file.
+          content:
+            application/json: {}
+            application/octet-stream:
+              schema:
+                type: string
+                format: byte
+          headers:
+            Content-Disposition:
+              description: attachment; filename={FILENAME}
+              schema:
+                type: string
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/{flow-execution-name}/report-schema:
+    get:
+      tags:
+        - Flow Execution
+      summary: Retrieves the report schema of the execution with the given flow-execution-name
+      operationId: getExecutionReportSchema
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: example-flow
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+      responses:
+        '200':
+          description: OK. Retrieves the report schema of the execution with the given flow-execution-name.
+          content:
+            application/json:
+              schema:
+                type: string
+              example: { "$schema": "http://json-schema.org/draft-04/schema#", "title": "Multi-Instance Load Control flow report schema body", "description": "Multi-Instance Load Control flow report schema body", "type": "object", "required": [ "header", "body" ], "properties": { "header": { "type": "object", "properties": { "reportTime": { "name": "Report Time", "description": "Time the report was produced" } } } } }
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /v1/executions/{flow-execution-name}/events:
+    get:
+      tags:
+        - Flow Execution
+      summary: Returns flow instance events using multiple query filters.
+      operationId: getExecutionEvents
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: example-flow
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+        - name: startDate
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateParam'
+          description: Date when the flow was started.
+        - name: endDate
+          in: query
+          schema:
+            $ref: '#/components/schemas/DateParam'
+          description: Date when the flow has ended.
+        - name: resource
+          in: query
+          schema:
+            type: string
+          description: Resource type.
+          examples:
+            flowinput :
+              value: flowinput
+              summary: To download the setup configuration used in the setup phase of the flow execution in the zip file format.
+            report:
+              value: report
+              summary: To download the execution report of the flow execution in zip file format.
+            all:
+              value: all
+              summary: To download the setup configuration and execution report of the flow execution in zip file format.
+        - name: message
+          in: query
+          schema:
+            type: string
+          description: Message corresponding to the event.
+          example: "Performing GET request to http://******"
+        - name: severity
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - INFO
+                - ERROR
+                - WARNING
+          description: Severity level of the event.
+          example: INFO
+        - name: page-num
+          in: query
+          schema:
+            type: integer
+            format: int32
+          description: Page number.
+          example: 1
+        - name: page-size
+          in: query
+          schema:
+            type: integer
+            format: int32
+          description: Number of messages on the page.
+          example: 1
+        - name: sort-by
+          in: query
+          schema:
+            type: string
+            default: eventTime
+          description: Sort the events by a defined method.
+          examples:
+            severity:
+              value: severity
+            eventTime:
+              value: eventTime
+            message:
+              value: message
+            target:
+              value: target
+        - name: sort-order
+          in: query
+          schema:
+            type: string
+          description: Sort the events by a defined order.
+          examples:
+            DESC:
+              value: DESC
+              description: Sort the events in descending order
+            ASC:
+              value: ASC
+              description: Sort the events in ascending order
+        - name: from
+          in: query
+          schema:
+            type: integer
+            format: int32
+          example: "0"
+        - name: to
+          in: query
+          schema:
+            type: integer
+            format: int32
+          example: "100"
+      responses:
+        '200':
+          description: OK. Returns Flow related events that occurred during the life cycle of a Flow Instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDataFlowExecutionEvent'
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/{flow-execution-name}/flowinput-schema-data:
+    get:
+      tags:
+        - Flow Execution
+      summary: Retrieves the flow input schema and data.
+      operationId: getFlowInputSchemaAndData
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow Execution name.
+          example: example-flow
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+      responses:
+        '200':
+          description: OK. Return flow input schema and data.
+          content:
+            application/json:
+              schema:
+                type: string
+              example: { "$schema": "http://json-schema.org/draft-04/schema#", "type": "object", "properties": { "configuration": { "name": "Configuration", "type": "object", "properties": { "schedule": { "name": "Schedule", "type": "object", "properties": { "duration": { "name": "Duration (seconds)", "type": "integer", "minimum": 60, "maximum": 300, "readOnly": true, "default": 60 }, "interval": { "name": "Interval (seconds)", "type": "integer", "minimum": 15, "maximum": 15, "readOnly": true, "default": 15 } } }, "ctsinfo": { "name": "Use Alternate CTS", "type": "object", "format": "checkbox", "properties": { "host": { "name": "Host", "type": "string", "readOnly": true, "default": "eric-oss-cmn-topology-svc-core" }, "port": { "name": "Port", "type": "integer", "readOnly": true, "default": 8080 }, "endpoint": { "name": "End Point", "type": "string", "readOnly": true, "default": "/oss-core-ws/rest/ctw/gnbdu" } } } }, "required": [ "schedule" ] } }, "required": [ "configuration", "gnbdus" ], "title": "Flow Instance Input Data", "name": "Flow Instance Input Data", "description": "Flow Instance Input Data supplied in Setup Phase", "format": "informational" }
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/usertasks/{task-id}/back:
+    post:
+      tags:
+        - Flow Execution
+      summary: Request that a flow execution in setup phase go back to previously active user task.
+      operationId: backUserTask
+      parameters:
+        - name: task-id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Task ID of a usertask.
+          example: b0d567c2-be75-11ed-a526-1eddab3b7c95
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '403':
+          $ref: "#/components/responses/Forbidden"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/{flow-execution-name}/stop:
+    put:
+      tags:
+        - Flow Execution
+      summary: Submits a request to stop an active flow execution
+      operationId: stopExecution
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: example-flow
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/executions/suspend:
+    put:
+      tags:
+        - Flow Execution
+      summary: Suspends all executions for a flow version with given flow-id and flow-version.
+      operationId: suspendAllExecutionsForFlowVersion
+      parameters:
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+        - name: flow-version
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Version of a flow.
+          example: "1.0.0"
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /v1/executions/{flow-execution-name}/suspend:
+    put:
+      tags:
+        - Flow Execution
+      summary: Suspends an active flow execution.
+      operationId: suspendExecution
+      parameters:
+        - name: flow-execution-name
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Flow execution name.
+          example: example-flow
+        - name: flow-id
+          in: query
+          required: true
+          schema:
+            type: string
+          description: ID of a flow.
+          example: com.ericsson.oss.ae.example-flow
+      responses:
+        '204':
+          $ref: "#/components/responses/NoContent"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '409':
+          $ref: "#/components/responses/Conflict"
+        '500':
+          $ref: "#/components/responses/InternalServerError"
+        '503':
+          $ref: "#/components/responses/ServiceUnavailable"
+components:
+  responses:
+    NoContent:
+      description: >
+        NoContent. The request has succeeded, but that the client doesn't need to navigate away from its current page.
+    BadRequest:
+      description: >
+        Bad Request. If the request is malformed or syntactically incorrect.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            status: 400
+            reasonPhrase: "Bad Request"
+            errors:
+              code: "flow-****"
+              errorMessage: "example message describing the error"
+    Forbidden:
+      description: >
+        Forbidden. If the API consumer is not allowed to perform a particular request to a particular resource,
+        the API producer shall respond with this response code.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            status: 403
+            reasonPhrase: "Forbidden"
+            errors:
+              code: "flow-****"
+              errorMessage: "example message describing the error"
+    NotFound:
+      description: >
+        Not Found. The requested resource entity was not found.
+      content:
+        'application/json':
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+          example:
+            status: 404
+            reasonPhrase: "NotFound"
+            errors:
+              code: "flow-****"
+              errorMessage: "example message describing the error"
+    Conflict:
+      description: >
+        Conflict. The request could not be processed because of conflict in the request,
+        such as the requested resource is not in the expected state,
+        or the result of processing the request would create a conflict within the resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            status: 409
+            reasonPhrase: "Conflict"
+            errors:
+              code: "flow-****"
+              errorMessage: "example message describing the error"
+    InternalServerError:
+      description: >
+        Internal Server Error. If there is an application error not related to
+        the client's input that cannot be easily mapped to any other HTTP
+        response code ("catch all error"), the API producer shall respond
+        with this response code.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            status: 500
+            reasonPhrase: "Internal Server Error"
+            errors:
+              code: "flow-****"
+              errorMessage: "example message describing the error"
+    ServiceUnavailable:
+      description: >
+        Service Unavailable. A runtime exception indicating that the requested resource cannot be served.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProblemDetails'
+          example:
+            status: 503
+            reasonPhrase: "Service Unavailable"
+            errors:
+              code: "flow-****"
+              errorMessage: "example message describing the error"
+
+  schemas:
+    ProblemDetails:
+      required:
+        - status
+        - reasonPhrase
+        - errors
+      type: object
+      properties:
+        status:
+          type: integer
+          minimum: 200
+          maximum: 503
+          description: |
+            The HTTP status code for this occurrence of the problem.
+        reasonPhrase:
+          type: string
+          description: A human-readable explanation specific to this occurrence of the problem.
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetails'
+    ErrorDetails:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Flow Automation error code.
+          example: "flow-****"
+        errorMessage:
+          type: string
+          description: Message describing the error.
+          example: "example Message describing the error"
+    FlowDefinition:
+      type: object
+      description: Definition of a flow object.
+      properties:
+        id:
+          type: string
+          description: ID of a Flow
+          example: "com.ericsson.oss.ae.example-flow"
+        name:
+          type: string
+          description: Name of a flow
+          example: "Example Flow"
+        status:
+          type: string
+          description: Status of a flow
+          example: "enabled"
+        source:
+          type: string
+          description: Source of the flow
+          example: "EXTERNAL"
+        flowVersions:
+          type: array
+          description: Versions of the flow.
+          items:
+            $ref: '#/components/schemas/FlowVersion'
+    FlowVersion:
+      type: object
+      description: Description about versions of a flow.
+      properties:
+        version:
+          type: string
+          description: Version of the flow.
+          example: "1.0.0"
+        description:
+          type: string
+          description: Description of the flow.
+          example: "Example Flow description"
+        active:
+          type: boolean
+          description: Is the flow active?
+          example: true
+        createdBy:
+          type: string
+          description: User who imported the flow version.
+          example: "fa-user"
+        createdDate:
+          type: string
+          description: Date when flow was created.
+          example: "2023-03-09 10:24:41.0"
+        setupPhaseRequired:
+          type: boolean
+          description: Does the flow require a setup phase?
+          example: true
+        reportSupported:
+          type: boolean
+          description: Does the flow support a report phase?
+          example: true
+    FlowStatus:
+      type: object
+      description: Value related to the status of a flow.
+      properties:
+        value:
+          type: boolean
+          description: Status of a flow being enabled/disabled or active/deactive.
+          example: false
+    FlowVersionProcessDetails:
+      type: object
+      description: Process details relating to a flow.
+      properties:
+        processId:
+          type: string
+          description: Process id of a flow
+          example: "com.ericsson.oss.ae.example-flow.001.000.005"
+        setupProcessId:
+          type: string
+          description: Setup process id of a flow
+          example: "com.ericsson.oss.ae.example-flow.001.000.005.-.milc-setup"
+        executeProcessId:
+          type: string
+          description: Execute process id of a flow
+          example: "com.ericsson.oss.ae.example-flow.001.000.005.-.milc-execute"
+    FlowExecution:
+      type: object
+      description: Description about a flow execution.
+      properties:
+        name:
+          type: string
+          description: Name of the execution
+          example: "example-flow"
+        flowId:
+          type: string
+          description: ID of a Flow
+          example: "com.ericsson.oss.ae.example-flow"
+        flowName:
+          type: string
+          description: Name of the flow
+          example: "Example Flow"
+        flowVersion:
+          type: string
+          description: Version of the flow
+          example: "1.0.0"
+        createdBy:
+          type: string
+          description: User who imported the flow version
+          example: "fa-user"
+        executedBy:
+          type: string
+          description: User who created the flow execution
+          example: "fa-user"
+        startTime:
+          type: string
+          description: Time when the flow was executed
+          example: "2023-03-09 06:54:15"
+        endTime:
+          type: string
+          description: Time when the flow had finished executing
+          example: "2023-03-09 06:55:21"
+        duration:
+          type: string
+          description: How long the flow was executing for
+          example: "00:01:05"
+        state:
+          type: string
+          description: The current state of the flow
+          example: "COMPLETED"
+        numberActiveUserTasks:
+          type: integer
+          format: int64
+          description: Number of active user tasks associated with the flow execution
+          example: 0
+        flowSource:
+          type: string
+          description: The source of the flow
+          example: "EXTERNAL"
+        summaryReport:
+          type: string
+          description: The summary report of the flow execution
+          example: "Our work is done here"
+        processInstanceId:
+          type: string
+          description: The process instance ID of the flow execution
+          example: "1ddc1df3-be71-11ed-a526-1eddab3b7c95"
+        processInstanceBusinessKey:
+          type: string
+          description: The process instance Business key associated with the flow execution
+          example: "com.ericsson.oss.fa.flows.example-flow.-.example-flow.-.7"
+    FlowExecutionName:
+      required:
+        - name
+      type: object
+      description: The name of the flow execution
+      properties:
+        name:
+          type: string
+          description: Name for the associated flow execution
+          example: "example flow"
+    FlowExecutionEvent:
+      type: object
+      description: Information about an event for a flow execution
+      properties:
+        eventTime:
+          type: string
+          description: The time of the event
+          example: "2023-03-09 06:53:40.208"
+        severity:
+          type: string
+          description: Severity level of the corresponding event
+          example: INFO
+        target:
+          type: string
+          description: The target of the relevant event
+          example: null
+        message:
+          type: string
+          description: Information about the event itself
+          example: Performing GET request to http://*******
+        eventData:
+          type: string
+          description: Data about the associated event
+          example: null
+    PaginatedDataFlowExecutionEvent:
+      type: object
+      description: Information about all the events for a flow execution
+      properties:
+        numberOfRecords:
+          type: integer
+          format: int64
+          description: Number of records associated with the execution event
+          example: 2
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowExecutionEvent'
+    DateParam:
+      type: string
+      description: Date related to event times occurring
+      pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,9})?(Z|(\+|-)\d{4})?$'
+      example: "2023-03-09T00:00:00.000Z" #TODO check id this example is correct
+    UserTask:
+      type: object
+      description: Information about a usertask for a flow execution
+      properties:
+        id:
+          type: string
+          description: ID of a user task
+          example: b0d567c2-be75-11ed-a526-1eddab3b7c95
+        name:
+          type: string
+          description: Name of the usertask
+          example: "Define \nnumbers and \nmath operation"
+        nameExtra:
+          type: string
+          description: Extra name of the usertask
+          example: " "
+        processDefinitionId:
+          type: string
+          description: Process definition of the usertask
+          example: 14f18da7-be71-11ed-a526-1eddab3b7c95
+        taskDefinitionId:
+          type: string
+          description: Task definition id of the usertask
+          example: setupAction
+        status:
+          type: string
+          description: Status of the usertask
+          example: active
+          # TODO jaxrs-resteasy-eap/jaxrs-resteasy generator generates method
+          # signature with ENUM that does not compile
+          # Seems to work in response but not request. Removing all ENUMS for consistency
+    UserTaskSchema:
+      type: object
+      description: Information about a usertask schema for a flow execution
+      properties:
+        schema:
+          type: string
+          description: Schema associated with the usertask
+          example: "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"name\":\"Define two numbers and math operation\",\"type\":\"object\",\"properties\":{\"value1\":{\"name\":\"value1\",\"type\":\"integer\",\"default\":\"1\"},\"value2\":{\"name\":\"value2\",\"type\":\"integer\",\"default\":\"1\"},\"operation\":{\"name\":\"Choose Math operation\",\"type\":\"object\",\"properties\":{\"arithmetic\":{\"name\":\"Arithmetical operations\",\"type\":\"object\",\"format\":\"radio\",\"oneOf\":[{\"properties\":{\"sum\":{\"name\":\"+\",\"type\":\"boolean\"}},\"required\":[\"sum\"],\"additionalProperties\":false},{\"properties\":{\"subtract\":{\"name\":\"-\",\"type\":\"boolean\"}},\"required\":[\"subtract\"],\"additionalProperties\":false},{\"properties\":{\"multiply\":{\"name\":\"*\",\"type\":\"boolean\"}},\"required\":[\"multiply\"],\"additionalProperties\":false}]}},\"additionalProperties\":false}},\"required\":[\"value1\",\"value2\",\"operation\"],\"action\":\"Submit\",\"actions\":[\"Submit\"]}"
+      allOf:
+        - $ref: '#/components/schemas/UserTask'
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: The resources in the API are protected using the OAuth 2.0 protocol with the client credentials grant flow.
+      flows:
+        clientCredentials:
+          tokenUrl: /auth/v1/login
+          scopes:
+            sim-order-service.read: Access right needed to read from the SIM order service.
+            sim-order-service.write: Access right needed to write to the SIM order service.

@@ -1,0 +1,377 @@
+#
+# COPYRIGHT Ericsson 2021
+#
+#
+#
+# The copyright to the computer program(s) herein is the property of
+#
+# Ericsson Inc. The programs may be used and/or copied only with written
+#
+# permission from Ericsson Inc. or in accordance with the terms and
+#
+# conditions stipulated in the agreement/contract under which the
+#
+# program(s) have been supplied.
+#
+
+{{ $dbConfig := index .Values "datasource" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "eric-oss-flow-automation.fullname" . }}
+  labels:
+{{- include "eric-oss-flow-automation.labels" . | nindent 4 }}
+  annotations:
+{{- include "eric-oss-flow-automation.annotations" . | nindent 4 }}
+spec:
+{{- if not .Values.autoScaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "eric-oss-flow-automation.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  strategy:
+    type: {{ .Values.updateStrategy.type | quote }}
+    {{- if and (eq .Values.updateStrategy.type "RollingUpdate") .Values.updateStrategy.rollingUpdate }}
+    rollingUpdate:
+      maxUnavailable: {{ .Values.updateStrategy.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .Values.updateStrategy.rollingUpdate.maxSurge }}
+    {{- end }}
+  template:
+    metadata:
+      labels:
+{{- include "eric-oss-flow-automation.labels" . | nindent 8 }}
+{{- include "eric-oss-flow-automation.service-mesh-inject" .| nindent 8 }}
+{{- include "eric-oss-flow-automation.service-mesh-ism2osm-labels" . | indent 8 }}
+      annotations:
+{{- include "eric-oss-flow-automation.annotations" . | nindent 8 }}
+{{- include "eric-oss-flow-automation.service-mesh-volume" .| nindent 8 }}
+    spec:
+      {{- if (index .Values "podPriority" "eric-oss-flow-automation" "priorityClassName") }}
+      {{ print "priorityClassName: " (index .Values "podPriority" "eric-oss-flow-automation" "priorityClassName" ) }}
+      {{- end }}
+      {{- if include "eric-oss-flow-automation.pullSecret" . }}
+      imagePullSecrets:
+        - name: {{ include "eric-oss-flow-automation.pullSecret" . | quote}}
+      {{- end }}
+      serviceAccountName: {{ template "eric-oss-flow-automation.fullname" . }}-sa
+      securityContext:
+        fsGroup: {{ include "eric-oss-flow-automation.fsGroup.coordinated" . }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ include "eric-oss-flow-automation.name" . }}-configmap
+        - name: jboss-logs
+          emptyDir: {}
+        - name: fa-tmp
+          emptyDir: {}
+        - name: jboss-runtime
+          emptyDir: {}
+        - name: gui-aggregator-config-volume
+          configMap:
+            name: {{ include "eric-oss-flow-automation.name" . }}-gas-configmap
+      containers:
+        {{- if (index .Values "bragent" "enabled") }}
+        - name: {{ .Values.bragent.name }}
+          imagePullPolicy: {{ template "eric-oss-flow-automation.pullPolicy.global" (dict "imageId" "brAgent" "values" .Values) }}
+          image: {{ template "eric-oss-flow-automation.imagePath" (dict "imageId" "brAgent" "values" .Values "files" .Files) }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - all
+          volumeMounts:
+            - name: fa-tmp
+              mountPath: /tmp
+          resources:
+            requests:
+            {{- if (index .Values "resources" "brAgent" "requests" "cpu") }}
+              cpu: {{ (index .Values "resources" "brAgent" "requests" "cpu" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "brAgent" "requests" "memory") }}
+              memory: {{ (index .Values "resources" "brAgent" "requests" "memory" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "brAgent" "requests" "ephemeral-storage") }}
+            {{ println "  ephemeral-storage:" (index .Values "resources" "brAgent" "requests" "ephemeral-storage" | quote) }}
+            {{- end }}
+            limits:
+            {{- if (index .Values "resources" "brAgent" "limits" "cpu") }}
+              cpu: {{ (index .Values "resources" "brAgent" "limits" "cpu" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "brAgent" "limits" "memory") }}
+              memory: {{ (index .Values "resources" "brAgent" "limits" "memory" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "brAgent" "limits" "ephemeral-storage") }}
+            {{ println "  ephemeral-storage:" (index .Values "resources" "brAgent" "limits" "ephemeral-storage" | quote) }}
+            {{- end }}
+          ports:
+            - name: bragent
+              containerPort: 8002
+              protocol: TCP
+          env:
+            - name: TZ
+              value: {{ template "eric-oss-flow-automation.timezone" . }}
+            - name: CONTAINER_NAME
+              value: {{ .Values.bragent.name }}
+            {{- include "eric-oss-flow-automation.loggingEnv" . | indent 12 }}
+          livenessProbe:
+          {{- if (index .Values "probes" "brAgent" "livenessProbe" "initialDelaySeconds") }}
+            {{ print "initialDelaySeconds: " (index .Values "probes" "brAgent" "livenessProbe" "initialDelaySeconds") }}
+          {{- end }}
+          {{- if (index .Values "probes" "brAgent" "livenessProbe" "failureThreshold") }}
+            {{ print "failureThreshold: " (index .Values "probes" "brAgent" "livenessProbe" "failureThreshold") }}
+          {{- end }}
+          {{- if (index .Values "probes" "brAgent" "livenessProbe" "periodSeconds") }}
+            {{ print "periodSeconds: " (index .Values "probes" "brAgent" "livenessProbe" "periodSeconds") }}
+          {{- end }}
+          {{- if (index .Values "probes" "brAgent" "livenessProbe" "timeoutSeconds") }}
+            {{ print "timeoutSeconds: " (index .Values "probes" "brAgent" "livenessProbe" "timeoutSeconds") }}
+          {{- end }}
+            httpGet:
+              path: /actuator/health
+              port: 8002
+          readinessProbe:
+          {{- if (index .Values "probes" "brAgent" "readinessProbe" "initialDelaySeconds") }}
+            {{ print "initialDelaySeconds: " (index .Values "probes" "brAgent" "readinessProbe" "initialDelaySeconds") }}
+          {{- end }}
+          {{- if (index .Values "probes" "brAgent" "readinessProbe" "failureThreshold") }}
+            {{ print "failureThreshold: " (index .Values "probes" "brAgent" "readinessProbe" "failureThreshold") }}
+          {{- end }}
+          {{- if (index .Values "probes" "brAgent" "readinessProbe" "periodSeconds") }}
+            {{ print "periodSeconds: " (index .Values "probes" "brAgent" "readinessProbe" "periodSeconds") }}
+          {{- end }}
+          {{- if (index .Values "probes" "brAgent" "readinessProbe" "timeoutSeconds") }}
+            {{ print "timeoutSeconds: " (index .Values "probes" "brAgent" "readinessProbe" "timeoutSeconds") }}
+          {{- end }}
+            httpGet:
+              path: /actuator/health
+              port: 8002
+        {{- end }}
+        - name: eric-oss-flow-automation
+          image: {{ template "eric-oss-flow-automation.imagePath" (dict "imageId" "eric-oss-flow-automation" "values" .Values "files" .Files) }}
+          imagePullPolicy: {{ template "eric-oss-flow-automation.pullPolicy.global" (dict "imageId" "eric-oss-flow-automation" "values" .Values) }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities:
+              drop:
+              - all
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+            - name: jboss-logs
+              mountPath: /jboss/standalone/log
+            - name: fa-tmp
+              mountPath: /jboss/standalone/tmp
+            - name: jboss-runtime
+              mountPath: /jboss-runtime
+            - name: gui-aggregator-config-volume
+              mountPath: /gas-config
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: metrics
+              containerPort: 9990
+              protocol: TCP
+          livenessProbe:
+          {{- if (index .Values "probes" "eric-oss-flow-automation" "livenessProbe" "initialDelaySeconds") }}
+            {{ print "initialDelaySeconds: " (index .Values "probes" "eric-oss-flow-automation" "livenessProbe" "initialDelaySeconds") }}
+          {{- end }}
+          {{- if (index .Values "probes" "eric-oss-flow-automation" "livenessProbe" "failureThreshold") }}
+            {{ print "failureThreshold: " (index .Values "probes" "eric-oss-flow-automation" "livenessProbe" "failureThreshold") }}
+          {{- end }}
+          {{- if (index .Values "probes" "eric-oss-flow-automation" "livenessProbe" "periodSeconds") }}
+            {{ print "periodSeconds: " (index .Values "probes" "eric-oss-flow-automation" "livenessProbe" "periodSeconds") }}
+          {{- end }}
+          {{- if (index .Values "probes" "eric-oss-flow-automation" "livenessProbe" "timeoutSeconds") }}
+            {{ print "timeoutSeconds: " (index .Values "probes" "eric-oss-flow-automation" "livenessProbe" "timeoutSeconds") }}
+          {{- end }}
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - /jboss/bin/jboss-cli.sh --connect --commands='ls deployment' | grep 'flowautomation-service-ear'
+          readinessProbe:
+          {{- if (index .Values "probes" "eric-oss-flow-automation" "readinessProbe" "initialDelaySeconds") }}
+            {{ print "initialDelaySeconds: " (index .Values "probes" "eric-oss-flow-automation" "readinessProbe" "initialDelaySeconds") }}
+          {{- end }}
+          {{- if (index .Values "probes" "eric-oss-flow-automation" "readinessProbe" "failureThreshold") }}
+            {{ print "failureThreshold: " (index .Values "probes" "eric-oss-flow-automation" "readinessProbe" "failureThreshold") }}
+          {{- end }}
+          {{- if (index .Values "probes" "eric-oss-flow-automation" "readinessProbe" "periodSeconds") }}
+            {{ print "periodSeconds: " (index .Values "probes" "eric-oss-flow-automation" "readinessProbe" "periodSeconds") }}
+          {{- end }}
+          {{- if (index .Values "probes" "eric-oss-flow-automation" "readinessProbe" "timeoutSeconds") }}
+            {{ print "timeoutSeconds: " (index .Values "probes" "eric-oss-flow-automation" "readinessProbe" "timeoutSeconds") }}
+          {{- end }}
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - /jboss/bin/jboss-cli.sh --connect --commands='ls deployment' | grep 'flowautomation-service-ear'
+          env:
+          - name: TZ
+            value: {{ template "eric-oss-flow-automation.timezone" . }}
+          - name: JBOSS_MODULEPATH
+            value: /opt/ericsson/jboss/modules:/jboss/modules:/jboss-runtime/modules
+          - name: USE_JBOSS_DEFAULT_LOGGING
+          {{- if eq .Values.log.streamingMethod "indirect" }}
+            value: "true"
+          {{- else }}
+            value: "false"
+          {{- end }}
+          - name: CONTAINER_NAME
+            value: eric-oss-flow-automation
+          {{- include "eric-oss-flow-automation.loggingEnv" . | indent 10 }}
+          - name: DATASOURCE_URL
+            value: jdbc:postgresql://{{ $dbConfig.postgresHost }}:{{ $dbConfig.postgresPort }}/{{ $dbConfig.databaseName }}
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ $dbConfig.credentials.secret }}
+                key: {{ $dbConfig.credentials.keyForSuperUserId }}
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ $dbConfig.credentials.secret }}
+                key: {{ $dbConfig.credentials.keyForSuperPw }}
+      {{- if .Values.global }}
+        {{- if .Values.global.security }}
+          {{- if .Values.global.security.tls }}
+            {{- if .Values.global.security.tls.enabled }}
+          - name: CONNECT_MODE
+            value: "tls"
+            {{- if (eq .Values.service.endpoints.chassisapi.tls.enforced "required") }}
+          - name: TLS_MODE
+            value: "only_tls"
+            {{- if (eq .Values.service.endpoints.chassisapi.tls.verifyClientCertificate "required") }}
+          - name: TLS_CA
+            value: "ca_path"
+            {{- end }}
+            {{- end }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+          resources:
+            requests:
+            {{- if (index .Values "resources" "eric-oss-flow-automation" "requests" "cpu") }}
+              cpu: {{ (index .Values "resources" "eric-oss-flow-automation" "requests" "cpu" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "eric-oss-flow-automation" "requests" "memory") }}
+              memory: {{ (index .Values "resources" "eric-oss-flow-automation" "requests" "memory" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "eric-oss-flow-automation" "requests" "ephemeral-storage") }}
+            {{ println "  ephemeral-storage:" (index .Values "resources" "eric-oss-flow-automation" "requests" "ephemeral-storage" | quote) }}
+            {{- end }}
+            limits:
+            {{- if (index .Values "resources" "eric-oss-flow-automation" "limits" "cpu") }}
+              cpu: {{ (index .Values "resources" "eric-oss-flow-automation" "limits" "cpu" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "eric-oss-flow-automation" "limits" "memory") }}
+              memory: {{ (index .Values "resources" "eric-oss-flow-automation" "limits" "memory" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "eric-oss-flow-automation" "limits" "ephemeral-storage") }}
+            {{ println "  ephemeral-storage:" (index .Values "resources" "eric-oss-flow-automation" "limits" "ephemeral-storage" | quote) }}
+            {{- end }}
+      {{- include "eric-oss-flow-automation.nodeSelector" . | nindent 6 }}
+      {{- with .Values.tolerations.deployment }}
+      tolerations:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- with .Values.topologySpreadConstraints.deployment }}
+      topologySpreadConstraints:
+        {{- toYaml . | nindent 6 }}
+      {{- end }}
+      {{- if .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds:
+        {{- include "eric-oss-flow-automation.terminationGracePeriodSeconds" . | nindent 8 }}
+      {{- end }}
+      {{- if eq .Values.affinity.podAntiAffinity "hard" }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - {{ include "eric-oss-flow-automation.name" . }}
+            topologyKey: "kubernetes.io/hostname"
+      {{- else if eq .Values.affinity.podAntiAffinity  "soft" }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - {{ include "eric-oss-flow-automation.name" . }}
+              topologyKey: "kubernetes.io/hostname"
+      {{- end }}
+      initContainers:
+        - name: create-db-schema
+          image: {{ template "eric-oss-flow-automation.imagePath" (dict "imageId" "eric-oss-flow-automation-db" "values" .Values "files" .Files) }}
+          imagePullPolicy: {{ template "eric-oss-flow-automation.pullPolicy.global" (dict "imageId" "eric-oss-flow-automation-db" "values" .Values) }}
+          securityContext:
+            allowPrivilegeEscalation: true
+            runAsNonRoot: false
+            runAsUser: 0
+            readOnlyRootFilesystem: true
+          env:
+            - name: TZ
+              value: {{ template "eric-oss-flow-automation.timezone" . }}
+            - name: POSTGRES_HOST
+              value:  {{ $dbConfig.postgresHost }}.{{ .Release.Namespace }}
+            - name: POSTGRES_PORT
+              value: {{ $dbConfig.postgresPort | quote }}
+            - name: POSTGRES_DB
+              value: {{ $dbConfig.databaseName }}
+            - name: STARTUP_WAIT
+              value: {{ $dbConfig.creationTime | quote }}
+            - name: CONTAINER_NAME
+              value: create-db-schema
+            {{- include "eric-oss-flow-automation.loggingEnv" . | indent 12 }}
+            - name: DATASOURCE_URL
+              value: jdbc:postgresql://{{ $dbConfig.postgresHost }}:{{ $dbConfig.postgresPort }}/{{ $dbConfig.databaseName }}
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $dbConfig.credentials.secret }}
+                  key: {{ $dbConfig.credentials.keyForSuperUserId }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $dbConfig.credentials.secret }}
+                  key: {{ $dbConfig.credentials.keyForSuperPw }}
+          resources:
+            requests:
+            {{- if (index .Values "resources" "create-db-schema" "requests" "cpu") }}
+              cpu: {{ (index .Values "resources" "create-db-schema" "requests" "cpu" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "create-db-schema" "requests" "memory") }}
+              memory: {{ (index .Values "resources" "create-db-schema" "requests" "memory" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "create-db-schema" "requests" "ephemeral-storage") }}
+            {{ println "  ephemeral-storage:" (index .Values "resources" "create-db-schema" "requests" "ephemeral-storage" | quote) }}
+            {{- end }}
+            limits:
+            {{- if (index .Values "resources" "create-db-schema" "limits" "cpu") }}
+              cpu: {{ (index .Values "resources" "create-db-schema" "limits" "cpu" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "create-db-schema" "limits" "memory") }}
+              memory: {{ (index .Values "resources" "create-db-schema" "limits" "memory" | quote) }}
+            {{- end }}
+            {{- if (index .Values "resources" "create-db-schema" "limits" "ephemeral-storage") }}
+            {{ println "  ephemeral-storage:" (index .Values "resources" "create-db-schema" "limits" "ephemeral-storage" | quote) }}
+            {{- end }}

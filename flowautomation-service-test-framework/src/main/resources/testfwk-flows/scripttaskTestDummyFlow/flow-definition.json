@@ -1,0 +1,9 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.scripttaskTestDummyFlow",
+    "flowName" : "Script task test dummy flow",
+    "flowVersion" : "1.0.1",
+    "description" : "Script task test dummy flow",
+    "execute" : {
+        "processId" : "scripttaskTestDummy-execute"
+    }
+}

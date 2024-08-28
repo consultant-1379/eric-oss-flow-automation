@@ -1,0 +1,12 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.informational-user-task-in-setup",
+  "flowName": "Informational User Task in Setup phase",
+  "flowVersion": "1.0.0",
+  "description": "Informational User Task in Setup phase",
+  "setup": {
+    "processId": "setup-flow"
+  },
+  "execute": {
+    "processId": "execute-flow"
+  }
+}

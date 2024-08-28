@@ -1,0 +1,12 @@
+{
+    "flowId" : "com.ericsson.oss.fa.flows.uiProgressShowcase",
+    "flowName" : "UI Progress Showcase",
+    "flowVersion" : "1.0.1",
+    "description" : "UI Progress Showcase",
+    "setup" : {
+        "processId" : "uiProgressShowcase-setup"
+    },
+    "execute" : {
+        "processId" : "uiProgressShowcase-execute"
+    }
+}

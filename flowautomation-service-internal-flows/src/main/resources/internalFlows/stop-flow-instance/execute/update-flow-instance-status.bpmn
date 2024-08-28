@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1rbuqf7" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="FA-Update-Flow-Instance-Status" name="Update Flow Instance Status" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" camunda:asyncBefore="true">
+      <bpmn:outgoing>SequenceFlow_1vipxoe</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_1n5puf9">
+      <bpmn:incoming>SequenceFlow_09oz4fz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_09oz4fz" sourceRef="Task_0rjjy9c" targetRef="EndEvent_1n5puf9" />
+    <bpmn:serviceTask id="Task_0rjjy9c" name="Update status as STOPPED" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.stopflowinstance.FlowExecutionStoppedStatusUpdateDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="suspendedFlowExecutionIds">${suspendedFlowExecutionIds}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_02pb7sh</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_09oz4fz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1vipxoe" sourceRef="StartEvent_1" targetRef="Task_0l4znym" />
+    <bpmn:serviceTask id="Task_0inzlrz" name="Check flow instances suspended completely" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.stopflowinstance.FlowExecutionSuspendCheckDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="flowExecutionIdsMarkedAsStopping">${flowExecutionIdsMarkedAsStopping}</camunda:inputParameter>
+          <camunda:outputParameter name="suspendedFlowExecutionIds">${suspendedFlowExecutionIds}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1siwjwa</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07zfk9v</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_05tq6ji" default="SequenceFlow_1doubjv">
+      <bpmn:incoming>SequenceFlow_07zfk9v</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02pb7sh</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1doubjv</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_02pb7sh" name="Flow instances Suspended" sourceRef="ExclusiveGateway_05tq6ji" targetRef="Task_0rjjy9c">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty suspendedFlowExecutionIds}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="EndEvent_185j10z">
+      <bpmn:incoming>SequenceFlow_1i8h5vv</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1doubjv" name="No flow instances suspended yet" sourceRef="ExclusiveGateway_05tq6ji" targetRef="Task_0rrtgwj" />
+    <bpmn:sequenceFlow id="SequenceFlow_1i8h5vv" sourceRef="Task_0rrtgwj" targetRef="EndEvent_185j10z" />
+    <bpmn:scriptTask id="Task_0rrtgwj" name="No flow instances suspended yet" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1doubjv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1i8h5vv</bpmn:outgoing>
+      <bpmn:script>import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+Logger logger = LoggerFactory.getLogger("FA-STOP-FLOW-INSTANCE")
+logger.debug("No flow instances suspended yet")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1nsww7q" sourceRef="Task_0l4znym" targetRef="ExclusiveGateway_1tids3q" />
+    <bpmn:serviceTask id="Task_0l4znym" name="Get All flow instance ids marked as  STOPPING" camunda:asyncAfter="true" camunda:class="com.ericsson.oss.services.flowautomation.internalflows.stopflowinstance.FlowExecutionStoppingStatusRetrieveDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="flowExecutionIdsMarkedAsStopping">${flowExecutionIdsMarkedAsStopping}</camunda:outputParameter>
+          <camunda:outputParameter name="stopFlowInstance">${stopFlowInstance}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1vipxoe</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1nsww7q</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_07zfk9v" sourceRef="Task_0inzlrz" targetRef="ExclusiveGateway_05tq6ji" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1tids3q" default="SequenceFlow_13vrm4j">
+      <bpmn:incoming>SequenceFlow_1nsww7q</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13vrm4j</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1siwjwa</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_158aniy">
+      <bpmn:incoming>SequenceFlow_111kfvh</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_111kfvh" sourceRef="Task_06thnqx" targetRef="EndEvent_158aniy" />
+    <bpmn:scriptTask id="Task_06thnqx" name="No flow instances marked as STOPPING" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_13vrm4j</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_111kfvh</bpmn:outgoing>
+      <bpmn:script>import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+Logger logger = LoggerFactory.getLogger("FA-STOP-FLOW-INSTANCE")
+logger.debug("No flow instances marked as STOPPING")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_13vrm4j" name="No flow instances marked as STOPPING" sourceRef="ExclusiveGateway_1tids3q" targetRef="Task_06thnqx" />
+    <bpmn:sequenceFlow id="SequenceFlow_1siwjwa" name="Flow instances marked as STOPPING" sourceRef="ExclusiveGateway_1tids3q" targetRef="Task_0inzlrz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!empty flowExecutionIdsMarkedAsStopping &amp;&amp; !stopFlowInstance}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="FA-Update-Flow-Instance-Status">
+      <bpmndi:BPMNEdge id="SequenceFlow_1siwjwa_di" bpmnElement="SequenceFlow_1siwjwa">
+        <di:waypoint x="489" y="145" />
+        <di:waypoint x="652" y="145" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="530" y="100" width="74" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_13vrm4j_di" bpmnElement="SequenceFlow_13vrm4j">
+        <di:waypoint x="464" y="170" />
+        <di:waypoint x="464" y="297" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="468" y="220" width="57" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_111kfvh_di" bpmnElement="SequenceFlow_111kfvh">
+        <di:waypoint x="514" y="337" />
+        <di:waypoint x="625" y="337" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07zfk9v_di" bpmnElement="SequenceFlow_07zfk9v">
+        <di:waypoint x="752" y="145" />
+        <di:waypoint x="860" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1nsww7q_di" bpmnElement="SequenceFlow_1nsww7q">
+        <di:waypoint x="352" y="145" />
+        <di:waypoint x="439" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i8h5vv_di" bpmnElement="SequenceFlow_1i8h5vv">
+        <di:waypoint x="1179" y="337" />
+        <di:waypoint x="1328" y="337" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1098.5" y="312" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1doubjv_di" bpmnElement="SequenceFlow_1doubjv">
+        <di:waypoint x="885" y="170" />
+        <di:waypoint x="885" y="337" />
+        <di:waypoint x="1079" y="337" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="895" y="299" width="87" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_02pb7sh_di" bpmnElement="SequenceFlow_02pb7sh">
+        <di:waypoint x="910" y="145" />
+        <di:waypoint x="1174" y="145" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1061" y="116" width="74" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1vipxoe_di" bpmnElement="SequenceFlow_1vipxoe">
+        <di:waypoint x="196" y="145" />
+        <di:waypoint x="252" y="145" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_09oz4fz_di" bpmnElement="SequenceFlow_09oz4fz">
+        <di:waypoint x="1274" y="145" />
+        <di:waypoint x="1328" y="145" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1146" y="120" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="160" y="127" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1n5puf9_di" bpmnElement="EndEvent_1n5puf9">
+        <dc:Bounds x="1328" y="127" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1191" y="163" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1kjzuh6_di" bpmnElement="Task_0rjjy9c">
+        <dc:Bounds x="1174" y="105" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0n2gr00_di" bpmnElement="Task_0inzlrz">
+        <dc:Bounds x="652" y="105" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_05tq6ji_di" bpmnElement="ExclusiveGateway_05tq6ji" isMarkerVisible="true">
+        <dc:Bounds x="860" y="120" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="730" y="90" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_185j10z_di" bpmnElement="EndEvent_185j10z">
+        <dc:Bounds x="1328" y="319" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1191" y="355" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0u55e94_di" bpmnElement="Task_0rrtgwj">
+        <dc:Bounds x="1079" y="297" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_12xqz2d_di" bpmnElement="Task_0l4znym">
+        <dc:Bounds x="252" y="105" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1tids3q_di" bpmnElement="ExclusiveGateway_1tids3q" isMarkerVisible="true">
+        <dc:Bounds x="439" y="120" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_158aniy_di" bpmnElement="EndEvent_158aniy">
+        <dc:Bounds x="625" y="319" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_1e4udns_di" bpmnElement="Task_06thnqx">
+        <dc:Bounds x="414" y="297" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

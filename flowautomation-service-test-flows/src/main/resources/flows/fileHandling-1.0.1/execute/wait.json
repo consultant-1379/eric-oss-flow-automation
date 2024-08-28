@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "Wait usertask schema",
+    "description": "Wait usertask schema",
+    "$id": "wait-usertask-schema",
+    "name": "Wait",
+    "type": "object",
+    "properties":{
+        "wait": {
+            "name": "Wait",
+            "type" : "object",
+            "format": "informational",
+            "properties" : {
+                "message": {
+                    "name": "Press Submit to continue",
+                    "type": "string",
+                    "format": "informational"
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}

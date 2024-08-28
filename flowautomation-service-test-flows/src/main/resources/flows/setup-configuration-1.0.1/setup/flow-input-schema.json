@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Setup phase configuration export example",
+  "type": "object",
+  "properties": {
+    "usertask1": {
+      "name": "Input",
+      "type": "string"
+    },
+    "usertask2": {
+      "name": "Input",
+      "type": "string"
+    },
+    "usertask3": {
+      "name": "Input",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "usertask1",
+    "usertask2",
+    "usertask3"
+  ]
+}

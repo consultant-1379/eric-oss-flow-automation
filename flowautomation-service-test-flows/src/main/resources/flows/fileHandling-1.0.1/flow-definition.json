@@ -1,0 +1,9 @@
+{
+  "flowId": "com.ericsson.oss.fa.flows.fileHandling",
+  "flowName": "File Handling",
+  "flowVersion": "1.0.1",
+  "description": "File Handling",
+  "execute": {
+    "processId": "fileHandling-execute"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "flowId" : "com.ericsson.oss.fa.flows.usertaskvalidation",
+  "flowName" : "Flow with user task and validation after it",
+  "flowVersion" : "1.0.1",
+  "description" : "Flow with user task and validation after it.",
+  "execute" : {
+     "processId" : "execute-usertaskvalidation"
+  }
+}

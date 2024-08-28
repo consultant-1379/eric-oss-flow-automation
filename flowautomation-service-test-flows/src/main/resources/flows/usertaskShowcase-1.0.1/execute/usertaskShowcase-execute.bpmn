@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.12.0">
+  <bpmn:process id="usertaskShowcase-execute" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_1cpwmpi</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_0gx8usv">
+      <bpmn:incoming>SequenceFlow_0sfyj62</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0sfyj62" sourceRef="update-report-summary" targetRef="EndEvent_0gx8usv" />
+    <bpmn:scriptTask id="update-report-summary" name="Update Report Summary" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_1wq8ykb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0sfyj62</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+Reporter.updateReportSummary(execution, "Our work is done here")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1cpwmpi" sourceRef="StartEvent_1" targetRef="get-execute-usertask-options" />
+    <bpmn:userTask id="get-execute-usertask-options" name="Get Execute Usertask Options" camunda:formKey="execute:get-execute-usertask-options.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="getExecuteUsertaskOptions">${getExecuteUsertaskOptions}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1cpwmpi</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0jsb5ag</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0eqyjw8" default="SequenceFlow_06yl0y6">
+      <bpmn:incoming>SequenceFlow_0jsb5ag</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_19vbzls</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_06yl0y6</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0jsb5ag" sourceRef="get-execute-usertask-options" targetRef="ExclusiveGateway_0eqyjw8" />
+    <bpmn:sequenceFlow id="SequenceFlow_19vbzls" name="number if instances &#62; 0" sourceRef="ExclusiveGateway_0eqyjw8" targetRef="Task_0fd42of">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${getExecuteUsertaskOptions.numberOfMultiInstanceInstances &gt; 0}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:subProcess id="Task_1hakppj">
+      <bpmn:incoming>SequenceFlow_04zezlr</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02v5qis</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:exclusive="false" camunda:collection="instanceNames" camunda:elementVariable="instanceName" />
+      <bpmn:startEvent id="StartEvent_1ngc5cx">
+        <bpmn:outgoing>SequenceFlow_12lowid</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_12lowid" sourceRef="StartEvent_1ngc5cx" targetRef="multi-instance-usertask" />
+      <bpmn:endEvent id="EndEvent_14fcd5n">
+        <bpmn:incoming>SequenceFlow_1h60wwk</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="SequenceFlow_1h60wwk" sourceRef="multi-instance-usertask" targetRef="EndEvent_14fcd5n" />
+      <bpmn:userTask id="multi-instance-usertask" name="Multi-instance Usertask" camunda:formKey="execute:multi-instance-usertask.json">
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="instanceName">${instanceName}</camunda:inputParameter>
+            <camunda:inputParameter name="nameExtra">${instanceName}</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>SequenceFlow_12lowid</bpmn:incoming>
+        <bpmn:outgoing>SequenceFlow_1h60wwk</bpmn:outgoing>
+      </bpmn:userTask>
+    </bpmn:subProcess>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0d6gu01">
+      <bpmn:incoming>SequenceFlow_02v5qis</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_06yl0y6</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1wq8ykb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_02v5qis" sourceRef="Task_1hakppj" targetRef="ExclusiveGateway_0d6gu01" />
+    <bpmn:sequenceFlow id="SequenceFlow_1wq8ykb" sourceRef="ExclusiveGateway_0d6gu01" targetRef="update-report-summary" />
+    <bpmn:sequenceFlow id="SequenceFlow_06yl0y6" sourceRef="ExclusiveGateway_0eqyjw8" targetRef="ExclusiveGateway_0d6gu01" />
+    <bpmn:sequenceFlow id="SequenceFlow_04zezlr" sourceRef="Task_0fd42of" targetRef="Task_1hakppj" />
+    <bpmn:scriptTask id="Task_0fd42of" name="Initialise Multi-instance" scriptFormat="groovy">
+      <bpmn:incoming>SequenceFlow_19vbzls</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_04zezlr</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+def instanceNames = []
+
+def numInstances = getExecuteUsertaskOptions.numberOfMultiInstanceInstances
+
+def states = ["Queued", "Executing", "Completed"]
+def results = ["Success", "Failure", "Error"]
+def r = new Random()
+
+for (i = 0; i &lt; numInstances; i++) {
+   def instanceName = "Instance"+i
+   instanceNames.add(instanceName)
+   
+   def randomState = states.get(r.nextInt(states.size()))
+   def randomResult = results.get(r.nextInt(results.size()))
+
+   Reporter.updateReportVariable(execution, instanceName +".instanceName", instanceName)
+   Reporter.updateReportVariable(execution, instanceName +".state", randomState)
+   if(randomState == "Completed"){
+        Reporter.updateReportVariable(execution, instanceName +".result", randomResult)
+   } else{
+        Reporter.updateReportVariable(execution, instanceName +".result", "Not Available")
+   }
+}
+
+execution.setVariable("instanceNames", instanceNames)
+
+Reporter.updateReportVariable(execution, "instanceNames", instanceNames.join(","))
+Reporter.updateReportVariable(execution, "numInstances", instanceNames.size())
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:textAnnotation id="TextAnnotation_12geuvu">
+      <bpmn:text>create collection of instance names for following multi-instance activity</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_19oti0p" sourceRef="Task_0fd42of" targetRef="TextAnnotation_12geuvu" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="usertaskShowcase-execute">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="182" y="289" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="325" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0gx8usv_di" bpmnElement="EndEvent_0gx8usv">
+        <dc:Bounds x="1360" y="289" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1333" y="329" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0sfyj62_di" bpmnElement="SequenceFlow_0sfyj62">
+        <di:waypoint x="1310" y="307" />
+        <di:waypoint x="1360" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1290" y="286" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_0y3sm4i_di" bpmnElement="update-report-summary">
+        <dc:Bounds x="1210" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1cpwmpi_di" bpmnElement="SequenceFlow_1cpwmpi">
+        <di:waypoint x="218" y="307" />
+        <di:waypoint x="268" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="243" y="286" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1e1zpzu_di" bpmnElement="get-execute-usertask-options">
+        <dc:Bounds x="268" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0eqyjw8_di" bpmnElement="ExclusiveGateway_0eqyjw8" isMarkerVisible="true">
+        <dc:Bounds x="418" y="282" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="398" y="342" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jsb5ag_di" bpmnElement="SequenceFlow_0jsb5ag">
+        <di:waypoint x="368" y="307" />
+        <di:waypoint x="418" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="393" y="286" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_19vbzls_di" bpmnElement="SequenceFlow_19vbzls">
+        <di:waypoint x="468" y="307" />
+        <di:waypoint x="546" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="471" y="273" width="65" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SubProcess_159jho3_di" bpmnElement="Task_1hakppj" isExpanded="true">
+        <dc:Bounds x="720" y="207" width="350" height="195" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0d6gu01_di" bpmnElement="ExclusiveGateway_0d6gu01" isMarkerVisible="true">
+        <dc:Bounds x="1117" y="280" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1097" y="340" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_02v5qis_di" bpmnElement="SequenceFlow_02v5qis">
+        <di:waypoint x="1070" y="305" />
+        <di:waypoint x="1117" y="305" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1048.5" y="284" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1wq8ykb_di" bpmnElement="SequenceFlow_1wq8ykb">
+        <di:waypoint x="1167" y="305" />
+        <di:waypoint x="1210" y="306" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1143.5" y="284.5" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_06yl0y6_di" bpmnElement="SequenceFlow_06yl0y6">
+        <di:waypoint x="443" y="282" />
+        <di:waypoint x="443" y="148" />
+        <di:waypoint x="1142" y="148" />
+        <di:waypoint x="1142" y="280" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="747.5" y="127" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="StartEvent_1ngc5cx_di" bpmnElement="StartEvent_1ngc5cx">
+        <dc:Bounds x="758" y="290" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="776" y="330" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_12lowid_di" bpmnElement="SequenceFlow_12lowid">
+        <di:waypoint x="794" y="308" />
+        <di:waypoint x="848" y="308" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="776" y="287" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_14fcd5n_di" bpmnElement="EndEvent_14fcd5n">
+        <dc:Bounds x="1002" y="290" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1020" y="330" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1h60wwk_di" bpmnElement="SequenceFlow_1h60wwk">
+        <di:waypoint x="948" y="308" />
+        <di:waypoint x="1002" y="308" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="975" y="287" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0b75jqc_di" bpmnElement="multi-instance-usertask">
+        <dc:Bounds x="848" y="268" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_04zezlr_di" bpmnElement="SequenceFlow_04zezlr">
+        <di:waypoint x="646" y="307" />
+        <di:waypoint x="720" y="307" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="638" y="286" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_1kgz56j_di" bpmnElement="Task_0fd42of">
+        <dc:Bounds x="546" y="267" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_12geuvu_di" bpmnElement="TextAnnotation_12geuvu">
+        <dc:Bounds x="469" y="381" width="164" height="63" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_19oti0p_di" bpmnElement="Association_19oti0p">
+        <di:waypoint x="579" y="347" />
+        <di:waypoint x="565" y="381" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

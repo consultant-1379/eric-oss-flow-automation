@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_14sfwtv" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.7.0">
+  <bpmn:process id="validateUserTaskSchema-execute" name="Execute" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0u0l4we</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_0gx8usv">
+      <bpmn:incoming>Flow_1oywyn4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="generateReportScript" name="Generate report" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0mipect</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oywyn4</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Flow executed successfully")</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1oywyn4" sourceRef="generateReportScript" targetRef="EndEvent_0gx8usv" />
+    <bpmn:userTask id="dateTimeInExecutePhaseUserTask" name="Date-Time in the Execute Phase" camunda:formKey="execute:dateTimeInExecutePhase.json">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="nameExtra">Test Validate Schema Execute Phase</camunda:inputParameter>
+          <camunda:inputParameter name="executeDateTimeInput">${executeDateTimeInput}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0jm39ka</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mipect</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:scriptTask id="prepareDateTimeInExecutePhaseScript" name="Prepare User  Task" scriptFormat="groovy">
+      <bpmn:incoming>Flow_0u0l4we</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jm39ka</bpmn:outgoing>
+      <bpmn:script>import com.ericsson.oss.services.flowautomation.flowapi.Reporter
+
+Reporter.updateReportSummary(execution, "Executing")
+
+dateTime = "2022-10-10T12:30:00";
+execution.setVariable("executeDateTimeInput", dateTime);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0jm39ka" sourceRef="prepareDateTimeInExecutePhaseScript" targetRef="dateTimeInExecutePhaseUserTask" />
+    <bpmn:sequenceFlow id="Flow_0mipect" sourceRef="dateTimeInExecutePhaseUserTask" targetRef="generateReportScript" />
+    <bpmn:sequenceFlow id="Flow_0u0l4we" sourceRef="StartEvent_1" targetRef="prepareDateTimeInExecutePhaseScript" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="validateUserTaskSchema-execute">
+      <bpmndi:BPMNEdge id="Flow_0jm39ka_di" bpmnElement="Flow_0jm39ka">
+        <di:waypoint x="350" y="120" />
+        <di:waypoint x="410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mipect_di" bpmnElement="Flow_0mipect">
+        <di:waypoint x="510" y="120" />
+        <di:waypoint x="560" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u0l4we_di" bpmnElement="Flow_0u0l4we">
+        <di:waypoint x="198" y="120" />
+        <di:waypoint x="250" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oywyn4_di" bpmnElement="Flow_1oywyn4">
+        <di:waypoint x="660" y="120" />
+        <di:waypoint x="712" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="155" y="325" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1h42vgn_di" bpmnElement="dateTimeInExecutePhaseUserTask">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ir1qyb_di" bpmnElement="prepareDateTimeInExecutePhaseScript">
+        <dc:Bounds x="250" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ScriptTask_0y3sm4i_di" bpmnElement="generateReportScript">
+        <dc:Bounds x="560" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0gx8usv_di" bpmnElement="EndEvent_0gx8usv">
+        <dc:Bounds x="712" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1333" y="329" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
